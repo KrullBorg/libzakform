@@ -25,102 +25,102 @@
 #include "formelementivalidator.h"
 #include "formelementvalidatorregex.h"
 
-static void zak_cgi_form_element_validator_regex_class_init (ZakCgiFormElementValidatorRegexClass *class);
-static void zak_cgi_form_element_validator_regex_interface_init (ZakCgiFormElementIValidatorInterface *iface);
-static void zak_cgi_form_element_validator_regex_init (ZakCgiFormElementValidatorRegex *zak_cgi_form_element);
+static void zak_form_element_validator_regex_class_init (ZakFormElementValidatorRegexClass *class);
+static void zak_form_element_validator_regex_interface_init (ZakFormElementIValidatorInterface *iface);
+static void zak_form_element_validator_regex_init (ZakFormElementValidatorRegex *zak_form_element);
 
-static void zak_cgi_form_element_validator_regex_set_property (GObject *object,
+static void zak_form_element_validator_regex_set_property (GObject *object,
                                guint property_id,
                                const GValue *value,
                                GParamSpec *pspec);
-static void zak_cgi_form_element_validator_regex_get_property (GObject *object,
+static void zak_form_element_validator_regex_get_property (GObject *object,
                                guint property_id,
                                GValue *value,
                                GParamSpec *pspec);
 
-static void zak_cgi_form_element_validator_regex_dispose (GObject *gobject);
-static void zak_cgi_form_element_validator_regex_finalize (GObject *gobject);
+static void zak_form_element_validator_regex_dispose (GObject *gobject);
+static void zak_form_element_validator_regex_finalize (GObject *gobject);
 
-static gboolean zak_cgi_form_element_validator_regex_validate (ZakCgiFormElementIValidator *validator_regex, GValue *value);
+static gboolean zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_regex, GValue *value);
 
-struct _ZakCgiFormElementValidatorRegex
+struct _ZakFormElementValidatorRegex
 {
 	GObject parent_instance;
 
 	/* Other members, including private data. */
 };
 
-#define ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_CGI_TYPE_FORM_ELEMENT_VALIDATOR_REGEX, ZakCgiFormElementValidatorRegexPrivate))
+#define ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_VALIDATOR_REGEX, ZakFormElementValidatorRegexPrivate))
 
-typedef struct _ZakCgiFormElementValidatorRegexPrivate ZakCgiFormElementValidatorRegexPrivate;
-struct _ZakCgiFormElementValidatorRegexPrivate
+typedef struct _ZakFormElementValidatorRegexPrivate ZakFormElementValidatorRegexPrivate;
+struct _ZakFormElementValidatorRegexPrivate
 	{
 		gchar *regex;
 	};
 
-G_DEFINE_TYPE_WITH_CODE (ZakCgiFormElementValidatorRegex, zak_cgi_form_element_validator_regex, G_TYPE_OBJECT,
-						 G_IMPLEMENT_INTERFACE (ZAK_CGI_TYPE_FORM_ELEMENT_IVALIDATOR,
-												zak_cgi_form_element_validator_regex_interface_init))
+G_DEFINE_TYPE_WITH_CODE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, G_TYPE_OBJECT,
+						 G_IMPLEMENT_INTERFACE (ZAK_TYPE_FORM_ELEMENT_IVALIDATOR,
+												zak_form_element_validator_regex_interface_init))
 
 static void
-zak_cgi_form_element_validator_regex_class_init (ZakCgiFormElementValidatorRegexClass *class)
+zak_form_element_validator_regex_class_init (ZakFormElementValidatorRegexClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-	object_class->set_property = zak_cgi_form_element_validator_regex_set_property;
-	object_class->get_property = zak_cgi_form_element_validator_regex_get_property;
-	object_class->dispose = zak_cgi_form_element_validator_regex_dispose;
-	object_class->finalize = zak_cgi_form_element_validator_regex_finalize;
+	object_class->set_property = zak_form_element_validator_regex_set_property;
+	object_class->get_property = zak_form_element_validator_regex_get_property;
+	object_class->dispose = zak_form_element_validator_regex_dispose;
+	object_class->finalize = zak_form_element_validator_regex_finalize;
 
-	g_type_class_add_private (object_class, sizeof (ZakCgiFormElementValidatorRegexPrivate));
+	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorRegexPrivate));
 }
 
 static void
-zak_cgi_form_element_validator_regex_interface_init (ZakCgiFormElementIValidatorInterface *iface)
+zak_form_element_validator_regex_interface_init (ZakFormElementIValidatorInterface *iface)
 {
-	iface->validate = zak_cgi_form_element_validator_regex_validate;
+	iface->validate = zak_form_element_validator_regex_validate;
 }
 
 static void
-zak_cgi_form_element_validator_regex_init (ZakCgiFormElementValidatorRegex *zak_cgi_form_element)
+zak_form_element_validator_regex_init (ZakFormElementValidatorRegex *zak_form_element)
 {
-	ZakCgiFormElementValidatorRegexPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_form_element);
 
 	priv->regex = NULL;
 }
 
 /**
- * zak_cgi_form_element_validator_regex_new:
+ * zak_form_element_validator_regex_new:
  * @regex:
  *
- * Returns: the newly created #ZakCgiFormElementValidatorRegex object.
+ * Returns: the newly created #ZakFormElementValidatorRegex object.
  */
-ZakCgiFormElementValidatorRegex
-*zak_cgi_form_element_validator_regex_new (const gchar *regex)
+ZakFormElementValidatorRegex
+*zak_form_element_validator_regex_new (const gchar *regex)
 {
-	ZakCgiFormElementValidatorRegex *zak_cgi_form_element_validator_regex;
+	ZakFormElementValidatorRegex *zak_form_element_validator_regex;
 
-	zak_cgi_form_element_validator_regex = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX (g_object_new (zak_cgi_form_element_validator_regex_get_type (), NULL));
+	zak_form_element_validator_regex = ZAK_FORM_ELEMENT_VALIDATOR_REGEX (g_object_new (zak_form_element_validator_regex_get_type (), NULL));
 
-	ZakCgiFormElementValidatorRegexPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_cgi_form_element_validator_regex);
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_form_element_validator_regex);
 
 	if (regex != NULL)
 		{
 			priv->regex = g_strdup (regex);
 		}
 
-	return zak_cgi_form_element_validator_regex;
+	return zak_form_element_validator_regex;
 }
 
 /* PRIVATE */
 static void
-zak_cgi_form_element_validator_regex_set_property (GObject *object,
+zak_form_element_validator_regex_set_property (GObject *object,
                    guint property_id,
                    const GValue *value,
                    GParamSpec *pspec)
 {
-	ZakCgiFormElementValidatorRegex *zak_cgi_form_element = (ZakCgiFormElementValidatorRegex *)object;
-	ZakCgiFormElementValidatorRegexPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorRegex *zak_form_element = (ZakFormElementValidatorRegex *)object;
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_form_element);
 
 	switch (property_id)
 		{
@@ -131,13 +131,13 @@ zak_cgi_form_element_validator_regex_set_property (GObject *object,
 }
 
 static void
-zak_cgi_form_element_validator_regex_get_property (GObject *object,
+zak_form_element_validator_regex_get_property (GObject *object,
                    guint property_id,
                    GValue *value,
                    GParamSpec *pspec)
 {
-	ZakCgiFormElementValidatorRegex *zak_cgi_form_element = (ZakCgiFormElementValidatorRegex *)object;
-	ZakCgiFormElementValidatorRegexPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorRegex *zak_form_element = (ZakFormElementValidatorRegex *)object;
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_form_element);
 
 	switch (property_id)
 		{
@@ -148,10 +148,10 @@ zak_cgi_form_element_validator_regex_get_property (GObject *object,
 }
 
 static void
-zak_cgi_form_element_validator_regex_dispose (GObject *gobject)
+zak_form_element_validator_regex_dispose (GObject *gobject)
 {
-	ZakCgiFormElementValidatorRegex *zak_cgi_form_element = (ZakCgiFormElementValidatorRegex *)gobject;
-	ZakCgiFormElementValidatorRegexPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorRegex *zak_form_element = (ZakFormElementValidatorRegex *)gobject;
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_form_element);
 
 
 
@@ -160,10 +160,10 @@ zak_cgi_form_element_validator_regex_dispose (GObject *gobject)
 }
 
 static void
-zak_cgi_form_element_validator_regex_finalize (GObject *gobject)
+zak_form_element_validator_regex_finalize (GObject *gobject)
 {
-	ZakCgiFormElementValidatorRegex *zak_cgi_form_element = (ZakCgiFormElementValidatorRegex *)gobject;
-	ZakCgiFormElementValidatorRegexPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorRegex *zak_form_element = (ZakFormElementValidatorRegex *)gobject;
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_form_element);
 
 
 
@@ -172,7 +172,7 @@ zak_cgi_form_element_validator_regex_finalize (GObject *gobject)
 }
 
 static gboolean
-zak_cgi_form_element_validator_regex_validate (ZakCgiFormElementIValidator *validator_regex,
+zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_regex,
 											   GValue *value)
 {
 	gboolean ret;
@@ -180,7 +180,7 @@ zak_cgi_form_element_validator_regex_validate (ZakCgiFormElementIValidator *vali
 	GRegex *regex;
 	GError *error;
 
-	ZakCgiFormElementValidatorRegexPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (validator_regex);
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (validator_regex);
 
 	if (G_VALUE_HOLDS (value, G_TYPE_STRING))
 		{

@@ -18,18 +18,18 @@
 
 #include "formelementifilter.h"
 
-G_DEFINE_INTERFACE (ZakCgiFormElementIFilter, zak_cgi_form_element_ifilter, G_TYPE_OBJECT);
+G_DEFINE_INTERFACE (ZakFormElementIFilter, zak_form_element_ifilter, G_TYPE_OBJECT);
 
 static void
-zak_cgi_form_element_ifilter_default_init (ZakCgiFormElementIFilterInterface *iface)
+zak_form_element_ifilter_default_init (ZakFormElementIFilterInterface *iface)
 {
     /* add properties and signals to the interface here */
 }
 
 GValue
-*zak_cgi_form_element_ifilter_filter (ZakCgiFormElementIFilter *self, GValue *value)
+*zak_form_element_ifilter_filter (ZakFormElementIFilter *self, GValue *value)
 {
-	g_return_val_if_fail (ZAK_CGI_IS_FORM_ELEMENT_IFILTER (self), NULL);
+	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_IFILTER (self), NULL);
 
-	return ZAK_CGI_FORM_ELEMENT_IFILTER_GET_IFACE (self)->filter (self, value);
+	return ZAK_FORM_ELEMENT_IFILTER_GET_IFACE (self)->filter (self, value);
 }

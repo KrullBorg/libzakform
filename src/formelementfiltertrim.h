@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_H__
-#define __ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_H__
+#ifndef __ZAK_FORM_ELEMENT_FILTER_TRIM_H__
+#define __ZAK_FORM_ELEMENT_FILTER_TRIM_H__
 
 
 #include <glib-object.h>
@@ -26,13 +26,13 @@
 G_BEGIN_DECLS
 
 
-#define ZAK_CGI_TYPE_FORM_ELEMENT_FILTER_TRIM zak_cgi_form_element_filter_trim_get_type ()
-G_DECLARE_FINAL_TYPE (ZakCgiFormElementFilterTrim, zak_cgi_form_element_filter_trim, ZAK_CGI, FORM_ELEMENT_FILTER_TRIM, GObject)
+#define ZAK_TYPE_FORM_ELEMENT_FILTER_TRIM zak_form_element_filter_trim_get_type ()
+G_DECLARE_FINAL_TYPE (ZakFormElementFilterTrim, zak_form_element_filter_trim, ZAK_FORM, ELEMENT_FILTER_TRIM, GObject)
 
-ZakCgiFormElementFilterTrim *zak_cgi_form_element_filter_trim_new (void);
+ZakFormElementFilterTrim *zak_form_element_filter_trim_new (void);
 
 
 G_END_DECLS
 
 
-#endif /* __ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_H__ */
+#endif /* __ZAK_FORM_ELEMENT_FILTER_TRIM_H__ */

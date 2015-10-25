@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __ZAK_CGI_FORM_ELEMENT_IVALIDATOR_H__
-#define __ZAK_CGI_FORM_ELEMENT_IVALIDATOR_H__
+#ifndef __ZAK_FORM_ELEMENT_IVALIDATOR_H__
+#define __ZAK_FORM_ELEMENT_IVALIDATOR_H__
 
 #include <glib-object.h>
 
@@ -25,20 +25,20 @@
 G_BEGIN_DECLS
 
 
-#define ZAK_CGI_TYPE_FORM_ELEMENT_IVALIDATOR zak_cgi_form_element_ivalidator_get_type ()
-G_DECLARE_INTERFACE (ZakCgiFormElementIValidator, zak_cgi_form_element_ivalidator, ZAK_CGI, FORM_ELEMENT_IVALIDATOR, GObject)
+#define ZAK_TYPE_FORM_ELEMENT_IVALIDATOR zak_form_element_ivalidator_get_type ()
+G_DECLARE_INTERFACE (ZakFormElementIValidator, zak_form_element_ivalidator, ZAK_FORM, ELEMENT_IVALIDATOR, GObject)
 
-struct _ZakCgiFormElementIValidatorInterface
+struct _ZakFormElementIValidatorInterface
 {
 	GTypeInterface parent_iface;
 
-	gboolean (*validate) (ZakCgiFormElementIValidator *self, GValue *value);
+	gboolean (*validate) (ZakFormElementIValidator *self, GValue *value);
 };
 
-gboolean zak_cgi_form_element_ivalidator_validate (ZakCgiFormElementIValidator *self, GValue *value);
+gboolean zak_form_element_ivalidator_validate (ZakFormElementIValidator *self, GValue *value);
 
 
 G_END_DECLS
 
 
-#endif /* __ZAK_CGI_FOR_ELEMENT_IVALIDATOR_H__ */
+#endif /* __ZAK_FORM_ELEMENT_IVALIDATOR_H__ */

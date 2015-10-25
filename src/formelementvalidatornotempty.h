@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_H__
-#define __ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_H__
+#ifndef __ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_H__
+#define __ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_H__
 
 
 #include <glib-object.h>
@@ -26,13 +26,13 @@
 G_BEGIN_DECLS
 
 
-#define ZAK_CGI_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY zak_cgi_form_element_validator_notempty_get_type ()
-G_DECLARE_FINAL_TYPE (ZakCgiFormElementValidatorNotempty, zak_cgi_form_element_validator_notempty, ZAK_CGI, FORM_ELEMENT_VALIDATOR_NOTEMPTY, GObject)
+#define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY zak_form_element_validator_notempty_get_type ()
+G_DECLARE_FINAL_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM, ELEMENT_VALIDATOR_NOTEMPTY, GObject)
 
-ZakCgiFormElementValidatorNotempty *zak_cgi_form_element_validator_notempty_new (void);
+ZakFormElementValidatorNotempty *zak_form_element_validator_notempty_new (void);
 
 
 G_END_DECLS
 
 
-#endif /* __ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_H__ */
+#endif /* __ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_H__ */

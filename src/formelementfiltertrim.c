@@ -23,92 +23,92 @@
 #include "formelementifilter.h"
 #include "formelementfiltertrim.h"
 
-static void zak_cgi_form_element_filter_trim_class_init (ZakCgiFormElementFilterTrimClass *class);
-static void zak_cgi_form_element_filter_trim_interface_init (ZakCgiFormElementIFilterInterface *iface);
-static void zak_cgi_form_element_filter_trim_init (ZakCgiFormElementFilterTrim *zak_cgi_form_element);
+static void zak_form_element_filter_trim_class_init (ZakFormElementFilterTrimClass *class);
+static void zak_form_element_filter_trim_interface_init (ZakFormElementIFilterInterface *iface);
+static void zak_form_element_filter_trim_init (ZakFormElementFilterTrim *zak_form_element);
 
-static void zak_cgi_form_element_filter_trim_set_property (GObject *object,
+static void zak_form_element_filter_trim_set_property (GObject *object,
                                guint property_id,
                                const GValue *value,
                                GParamSpec *pspec);
-static void zak_cgi_form_element_filter_trim_get_property (GObject *object,
+static void zak_form_element_filter_trim_get_property (GObject *object,
                                guint property_id,
                                GValue *value,
                                GParamSpec *pspec);
 
-static void zak_cgi_form_element_filter_trim_dispose (GObject *gobject);
-static void zak_cgi_form_element_filter_trim_finalize (GObject *gobject);
+static void zak_form_element_filter_trim_dispose (GObject *gobject);
+static void zak_form_element_filter_trim_finalize (GObject *gobject);
 
-static GValue *zak_cgi_form_element_filter_trim_filter (ZakCgiFormElementIFilter *filter_trim, GValue *value);
+static GValue *zak_form_element_filter_trim_filter (ZakFormElementIFilter *filter_trim, GValue *value);
 
-struct _ZakCgiFormElementFilterTrim
+struct _ZakFormElementFilterTrim
 {
 	GObject parent_instance;
 
 	/* Other members, including private data. */
 };
 
-#define ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_CGI_TYPE_FORM_ELEMENT_FILTER_TRIM, ZakCgiFormElementFilterTrimPrivate))
+#define ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_FILTER_TRIM, ZakFormElementFilterTrimPrivate))
 
-typedef struct _ZakCgiFormElementFilterTrimPrivate ZakCgiFormElementFilterTrimPrivate;
-struct _ZakCgiFormElementFilterTrimPrivate
+typedef struct _ZakFormElementFilterTrimPrivate ZakFormElementFilterTrimPrivate;
+struct _ZakFormElementFilterTrimPrivate
 	{
 		gpointer nothing;
 	};
 
-G_DEFINE_TYPE_WITH_CODE (ZakCgiFormElementFilterTrim, zak_cgi_form_element_filter_trim, G_TYPE_OBJECT,
-						 G_IMPLEMENT_INTERFACE (ZAK_CGI_TYPE_FORM_ELEMENT_IFILTER,
-												zak_cgi_form_element_filter_trim_interface_init))
+G_DEFINE_TYPE_WITH_CODE (ZakFormElementFilterTrim, zak_form_element_filter_trim, G_TYPE_OBJECT,
+						 G_IMPLEMENT_INTERFACE (ZAK_TYPE_FORM_ELEMENT_IFILTER,
+												zak_form_element_filter_trim_interface_init))
 
 static void
-zak_cgi_form_element_filter_trim_class_init (ZakCgiFormElementFilterTrimClass *class)
+zak_form_element_filter_trim_class_init (ZakFormElementFilterTrimClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-	object_class->set_property = zak_cgi_form_element_filter_trim_set_property;
-	object_class->get_property = zak_cgi_form_element_filter_trim_get_property;
-	object_class->dispose = zak_cgi_form_element_filter_trim_dispose;
-	object_class->finalize = zak_cgi_form_element_filter_trim_finalize;
+	object_class->set_property = zak_form_element_filter_trim_set_property;
+	object_class->get_property = zak_form_element_filter_trim_get_property;
+	object_class->dispose = zak_form_element_filter_trim_dispose;
+	object_class->finalize = zak_form_element_filter_trim_finalize;
 
-	g_type_class_add_private (object_class, sizeof (ZakCgiFormElementFilterTrimPrivate));
+	g_type_class_add_private (object_class, sizeof (ZakFormElementFilterTrimPrivate));
 }
 
 static void
-zak_cgi_form_element_filter_trim_interface_init (ZakCgiFormElementIFilterInterface *iface)
+zak_form_element_filter_trim_interface_init (ZakFormElementIFilterInterface *iface)
 {
-	iface->filter = zak_cgi_form_element_filter_trim_filter;
+	iface->filter = zak_form_element_filter_trim_filter;
 }
 
 static void
-zak_cgi_form_element_filter_trim_init (ZakCgiFormElementFilterTrim *zak_cgi_form_element)
+zak_form_element_filter_trim_init (ZakFormElementFilterTrim *zak_form_element)
 {
-	ZakCgiFormElementFilterTrimPrivate *priv = ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementFilterTrimPrivate *priv = ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_form_element);
 }
 
 /**
- * zak_cgi_form_element_filter_trim_new:
+ * zak_form_element_filter_trim_new:
  *
- * Returns: the newly created #ZakCgiFormElementFilterTrim object.
+ * Returns: the newly created #ZakFormElementFilterTrim object.
  */
-ZakCgiFormElementFilterTrim
-*zak_cgi_form_element_filter_trim_new ()
+ZakFormElementFilterTrim
+*zak_form_element_filter_trim_new ()
 {
-	ZakCgiFormElementFilterTrim *zak_cgi_form_element_filter_trim;
+	ZakFormElementFilterTrim *zak_form_element_filter_trim;
 
-	zak_cgi_form_element_filter_trim = ZAK_CGI_FORM_ELEMENT_FILTER_TRIM (g_object_new (zak_cgi_form_element_filter_trim_get_type (), NULL));
+	zak_form_element_filter_trim = ZAK_FORM_ELEMENT_FILTER_TRIM (g_object_new (zak_form_element_filter_trim_get_type (), NULL));
 
-	return zak_cgi_form_element_filter_trim;
+	return zak_form_element_filter_trim;
 }
 
 /* PRIVATE */
 static void
-zak_cgi_form_element_filter_trim_set_property (GObject *object,
+zak_form_element_filter_trim_set_property (GObject *object,
                    guint property_id,
                    const GValue *value,
                    GParamSpec *pspec)
 {
-	ZakCgiFormElementFilterTrim *zak_cgi_form_element = (ZakCgiFormElementFilterTrim *)object;
-	ZakCgiFormElementFilterTrimPrivate *priv = ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementFilterTrim *zak_form_element = (ZakFormElementFilterTrim *)object;
+	ZakFormElementFilterTrimPrivate *priv = ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_form_element);
 
 	switch (property_id)
 		{
@@ -119,13 +119,13 @@ zak_cgi_form_element_filter_trim_set_property (GObject *object,
 }
 
 static void
-zak_cgi_form_element_filter_trim_get_property (GObject *object,
+zak_form_element_filter_trim_get_property (GObject *object,
                    guint property_id,
                    GValue *value,
                    GParamSpec *pspec)
 {
-	ZakCgiFormElementFilterTrim *zak_cgi_form_element = (ZakCgiFormElementFilterTrim *)object;
-	ZakCgiFormElementFilterTrimPrivate *priv = ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementFilterTrim *zak_form_element = (ZakFormElementFilterTrim *)object;
+	ZakFormElementFilterTrimPrivate *priv = ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_form_element);
 
 	switch (property_id)
 		{
@@ -136,10 +136,10 @@ zak_cgi_form_element_filter_trim_get_property (GObject *object,
 }
 
 static void
-zak_cgi_form_element_filter_trim_dispose (GObject *gobject)
+zak_form_element_filter_trim_dispose (GObject *gobject)
 {
-	ZakCgiFormElementFilterTrim *zak_cgi_form_element = (ZakCgiFormElementFilterTrim *)gobject;
-	ZakCgiFormElementFilterTrimPrivate *priv = ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementFilterTrim *zak_form_element = (ZakFormElementFilterTrim *)gobject;
+	ZakFormElementFilterTrimPrivate *priv = ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_form_element);
 
 
 
@@ -148,10 +148,10 @@ zak_cgi_form_element_filter_trim_dispose (GObject *gobject)
 }
 
 static void
-zak_cgi_form_element_filter_trim_finalize (GObject *gobject)
+zak_form_element_filter_trim_finalize (GObject *gobject)
 {
-	ZakCgiFormElementFilterTrim *zak_cgi_form_element = (ZakCgiFormElementFilterTrim *)gobject;
-	ZakCgiFormElementFilterTrimPrivate *priv = ZAK_CGI_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementFilterTrim *zak_form_element = (ZakFormElementFilterTrim *)gobject;
+	ZakFormElementFilterTrimPrivate *priv = ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE (zak_form_element);
 
 
 
@@ -160,8 +160,8 @@ zak_cgi_form_element_filter_trim_finalize (GObject *gobject)
 }
 
 static GValue
-*zak_cgi_form_element_filter_trim_filter (ZakCgiFormElementIFilter *filter_trim,
-										  GValue *value)
+*zak_form_element_filter_trim_filter (ZakFormElementIFilter *filter_trim,
+									  GValue *value)
 {
 	GValue *ret;
 	gchar *_value;

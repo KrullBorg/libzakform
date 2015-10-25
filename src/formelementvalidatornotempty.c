@@ -23,92 +23,92 @@
 #include "formelementivalidator.h"
 #include "formelementvalidatornotempty.h"
 
-static void zak_cgi_form_element_validator_notempty_class_init (ZakCgiFormElementValidatorNotemptyClass *class);
-static void zak_cgi_form_element_validator_notempty_interface_init (ZakCgiFormElementIValidatorInterface *iface);
-static void zak_cgi_form_element_validator_notempty_init (ZakCgiFormElementValidatorNotempty *zak_cgi_form_element);
+static void zak_form_element_validator_notempty_class_init (ZakFormElementValidatorNotemptyClass *class);
+static void zak_form_element_validator_notempty_interface_init (ZakFormElementIValidatorInterface *iface);
+static void zak_form_element_validator_notempty_init (ZakFormElementValidatorNotempty *zak_form_element);
 
-static void zak_cgi_form_element_validator_notempty_set_property (GObject *object,
+static void zak_form_element_validator_notempty_set_property (GObject *object,
                                guint property_id,
                                const GValue *value,
                                GParamSpec *pspec);
-static void zak_cgi_form_element_validator_notempty_get_property (GObject *object,
+static void zak_form_element_validator_notempty_get_property (GObject *object,
                                guint property_id,
                                GValue *value,
                                GParamSpec *pspec);
 
-static void zak_cgi_form_element_validator_notempty_dispose (GObject *gobject);
-static void zak_cgi_form_element_validator_notempty_finalize (GObject *gobject);
+static void zak_form_element_validator_notempty_dispose (GObject *gobject);
+static void zak_form_element_validator_notempty_finalize (GObject *gobject);
 
-static gboolean zak_cgi_form_element_validator_notempty_validate (ZakCgiFormElementIValidator *validator_notempty, GValue *value);
+static gboolean zak_form_element_validator_notempty_validate (ZakFormElementIValidator *validator_notempty, GValue *value);
 
-struct _ZakCgiFormElementValidatorNotempty
+struct _ZakFormElementValidatorNotempty
 {
 	GObject parent_instance;
 
 	/* Other members, including private data. */
 };
 
-#define ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_CGI_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY, ZakCgiFormElementValidatorNotemptyPrivate))
+#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyPrivate))
 
-typedef struct _ZakCgiFormElementValidatorNotemptyPrivate ZakCgiFormElementValidatorNotemptyPrivate;
-struct _ZakCgiFormElementValidatorNotemptyPrivate
+typedef struct _ZakFormElementValidatorNotemptyPrivate ZakFormElementValidatorNotemptyPrivate;
+struct _ZakFormElementValidatorNotemptyPrivate
 	{
 		gpointer nothing;
 	};
 
-G_DEFINE_TYPE_WITH_CODE (ZakCgiFormElementValidatorNotempty, zak_cgi_form_element_validator_notempty, G_TYPE_OBJECT,
-						 G_IMPLEMENT_INTERFACE (ZAK_CGI_TYPE_FORM_ELEMENT_IVALIDATOR,
-												zak_cgi_form_element_validator_notempty_interface_init))
+G_DEFINE_TYPE_WITH_CODE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, G_TYPE_OBJECT,
+						 G_IMPLEMENT_INTERFACE (ZAK_TYPE_FORM_ELEMENT_IVALIDATOR,
+												zak_form_element_validator_notempty_interface_init))
 
 static void
-zak_cgi_form_element_validator_notempty_class_init (ZakCgiFormElementValidatorNotemptyClass *class)
+zak_form_element_validator_notempty_class_init (ZakFormElementValidatorNotemptyClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-	object_class->set_property = zak_cgi_form_element_validator_notempty_set_property;
-	object_class->get_property = zak_cgi_form_element_validator_notempty_get_property;
-	object_class->dispose = zak_cgi_form_element_validator_notempty_dispose;
-	object_class->finalize = zak_cgi_form_element_validator_notempty_finalize;
+	object_class->set_property = zak_form_element_validator_notempty_set_property;
+	object_class->get_property = zak_form_element_validator_notempty_get_property;
+	object_class->dispose = zak_form_element_validator_notempty_dispose;
+	object_class->finalize = zak_form_element_validator_notempty_finalize;
 
-	g_type_class_add_private (object_class, sizeof (ZakCgiFormElementValidatorNotemptyPrivate));
+	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorNotemptyPrivate));
 }
 
 static void
-zak_cgi_form_element_validator_notempty_interface_init (ZakCgiFormElementIValidatorInterface *iface)
+zak_form_element_validator_notempty_interface_init (ZakFormElementIValidatorInterface *iface)
 {
-	iface->validate = zak_cgi_form_element_validator_notempty_validate;
+	iface->validate = zak_form_element_validator_notempty_validate;
 }
 
 static void
-zak_cgi_form_element_validator_notempty_init (ZakCgiFormElementValidatorNotempty *zak_cgi_form_element)
+zak_form_element_validator_notempty_init (ZakFormElementValidatorNotempty *zak_form_element)
 {
-	ZakCgiFormElementValidatorNotemptyPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
 }
 
 /**
- * zak_cgi_form_element_validator_notempty_new:
+ * zak_form_element_validator_notempty_new:
  *
- * Returns: the newly created #ZakCgiFormElementValidatorNotempty object.
+ * Returns: the newly created #ZakFormElementValidatorNotempty object.
  */
-ZakCgiFormElementValidatorNotempty
-*zak_cgi_form_element_validator_notempty_new ()
+ZakFormElementValidatorNotempty
+*zak_form_element_validator_notempty_new ()
 {
-	ZakCgiFormElementValidatorNotempty *zak_cgi_form_element_validator_notempty;
+	ZakFormElementValidatorNotempty *zak_form_element_validator_notempty;
 
-	zak_cgi_form_element_validator_notempty = ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY (g_object_new (zak_cgi_form_element_validator_notempty_get_type (), NULL));
+	zak_form_element_validator_notempty = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY (g_object_new (zak_form_element_validator_notempty_get_type (), NULL));
 
-	return zak_cgi_form_element_validator_notempty;
+	return zak_form_element_validator_notempty;
 }
 
 /* PRIVATE */
 static void
-zak_cgi_form_element_validator_notempty_set_property (GObject *object,
+zak_form_element_validator_notempty_set_property (GObject *object,
                    guint property_id,
                    const GValue *value,
                    GParamSpec *pspec)
 {
-	ZakCgiFormElementValidatorNotempty *zak_cgi_form_element = (ZakCgiFormElementValidatorNotempty *)object;
-	ZakCgiFormElementValidatorNotemptyPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)object;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
 
 	switch (property_id)
 		{
@@ -119,13 +119,13 @@ zak_cgi_form_element_validator_notempty_set_property (GObject *object,
 }
 
 static void
-zak_cgi_form_element_validator_notempty_get_property (GObject *object,
+zak_form_element_validator_notempty_get_property (GObject *object,
                    guint property_id,
                    GValue *value,
                    GParamSpec *pspec)
 {
-	ZakCgiFormElementValidatorNotempty *zak_cgi_form_element = (ZakCgiFormElementValidatorNotempty *)object;
-	ZakCgiFormElementValidatorNotemptyPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)object;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
 
 	switch (property_id)
 		{
@@ -136,10 +136,10 @@ zak_cgi_form_element_validator_notempty_get_property (GObject *object,
 }
 
 static void
-zak_cgi_form_element_validator_notempty_dispose (GObject *gobject)
+zak_form_element_validator_notempty_dispose (GObject *gobject)
 {
-	ZakCgiFormElementValidatorNotempty *zak_cgi_form_element = (ZakCgiFormElementValidatorNotempty *)gobject;
-	ZakCgiFormElementValidatorNotemptyPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)gobject;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
 
 
 
@@ -148,10 +148,10 @@ zak_cgi_form_element_validator_notempty_dispose (GObject *gobject)
 }
 
 static void
-zak_cgi_form_element_validator_notempty_finalize (GObject *gobject)
+zak_form_element_validator_notempty_finalize (GObject *gobject)
 {
-	ZakCgiFormElementValidatorNotempty *zak_cgi_form_element = (ZakCgiFormElementValidatorNotempty *)gobject;
-	ZakCgiFormElementValidatorNotemptyPrivate *priv = ZAK_CGI_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_cgi_form_element);
+	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)gobject;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
 
 
 
@@ -160,7 +160,7 @@ zak_cgi_form_element_validator_notempty_finalize (GObject *gobject)
 }
 
 static gboolean
-zak_cgi_form_element_validator_notempty_validate (ZakCgiFormElementIValidator *validator_notempty,
+zak_form_element_validator_notempty_validate (ZakFormElementIValidator *validator_notempty,
 										  GValue *value)
 {
 	gboolean ret;

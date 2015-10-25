@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __ZAK_CGI_FORM_ELEMENT_IFILTER_H__
-#define __ZAK_CGI_FORM_ELEMENT_IFILTER_H__
+#ifndef __ZAK_FORM_ELEMENT_IFILTER_H__
+#define __ZAK_FORM_ELEMENT_IFILTER_H__
 
 #include <glib-object.h>
 
@@ -25,20 +25,20 @@
 G_BEGIN_DECLS
 
 
-#define ZAK_CGI_TYPE_FORM_ELEMENT_IFILTER zak_cgi_form_element_ifilter_get_type ()
-G_DECLARE_INTERFACE (ZakCgiFormElementIFilter, zak_cgi_form_element_ifilter, ZAK_CGI, FORM_ELEMENT_IFILTER, GObject)
+#define ZAK_TYPE_FORM_ELEMENT_IFILTER zak_form_element_ifilter_get_type ()
+G_DECLARE_INTERFACE (ZakFormElementIFilter, zak_form_element_ifilter, ZAK_FORM, ELEMENT_IFILTER, GObject)
 
-struct _ZakCgiFormElementIFilterInterface
+struct _ZakFormElementIFilterInterface
 {
 	GTypeInterface parent_iface;
 
-	GValue *(*filter) (ZakCgiFormElementIFilter *self, GValue *value);
+	GValue *(*filter) (ZakFormElementIFilter *self, GValue *value);
 };
 
-GValue *zak_cgi_form_element_ifilter_filter (ZakCgiFormElementIFilter *self, GValue *value);
+GValue *zak_form_element_ifilter_filter (ZakFormElementIFilter *self, GValue *value);
 
 
 G_END_DECLS
 
 
-#endif /* __ZAK_CGI_FOR_ELEMENT_IFILTER_H__ */
+#endif /* __ZAK_FORM_ELEMENT_IFILTER_H__ */

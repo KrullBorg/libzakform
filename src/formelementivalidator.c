@@ -18,18 +18,18 @@
 
 #include "formelementivalidator.h"
 
-G_DEFINE_INTERFACE (ZakCgiFormElementIValidator, zak_cgi_form_element_ivalidator, G_TYPE_OBJECT);
+G_DEFINE_INTERFACE (ZakFormElementIValidator, zak_form_element_ivalidator, G_TYPE_OBJECT);
 
 static void
-zak_cgi_form_element_ivalidator_default_init (ZakCgiFormElementIValidatorInterface *iface)
+zak_form_element_ivalidator_default_init (ZakFormElementIValidatorInterface *iface)
 {
     /* add properties and signals to the interface here */
 }
 
 gboolean
-zak_cgi_form_element_ivalidator_validate (ZakCgiFormElementIValidator *self, GValue *value)
+zak_form_element_ivalidator_validate (ZakFormElementIValidator *self, GValue *value)
 {
-	g_return_val_if_fail (ZAK_CGI_IS_FORM_ELEMENT_IVALIDATOR (self), FALSE);
+	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_IVALIDATOR (self), FALSE);
 
-	return ZAK_CGI_FORM_ELEMENT_IVALIDATOR_GET_IFACE (self)->validate (self, value);
+	return ZAK_FORM_ELEMENT_IVALIDATOR_GET_IFACE (self)->validate (self, value);
 }

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_H__
-#define __ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_H__
+#ifndef __ZAK_FORM_ELEMENT_VALIDATOR_REGEX_H__
+#define __ZAK_FORM_ELEMENT_VALIDATOR_REGEX_H__
 
 
 #include <glib-object.h>
@@ -26,13 +26,13 @@
 G_BEGIN_DECLS
 
 
-#define ZAK_CGI_TYPE_FORM_ELEMENT_VALIDATOR_REGEX zak_cgi_form_element_validator_regex_get_type ()
-G_DECLARE_FINAL_TYPE (ZakCgiFormElementValidatorRegex, zak_cgi_form_element_validator_regex, ZAK_CGI, FORM_ELEMENT_VALIDATOR_REGEX, GObject)
+#define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_REGEX zak_form_element_validator_regex_get_type ()
+G_DECLARE_FINAL_TYPE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, ZAK_FORM, ELEMENT_VALIDATOR_REGEX, GObject)
 
-ZakCgiFormElementValidatorRegex *zak_cgi_form_element_validator_regex_new (const gchar *regex);
+ZakFormElementValidatorRegex *zak_form_element_validator_regex_new (const gchar *regex);
 
 
 G_END_DECLS
 
 
-#endif /* __ZAK_CGI_FORM_ELEMENT_VALIDATOR_REGEX_H__ */
+#endif /* __ZAK_FORM_ELEMENT_VALIDATOR_REGEX_H__ */
