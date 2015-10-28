@@ -27,7 +27,7 @@ zak_form_element_ivalidator_default_init (ZakFormElementIValidatorInterface *ifa
 }
 
 gboolean
-zak_form_element_ivalidator_validate (ZakFormElementIValidator *self, GValue *value)
+zak_form_element_ivalidator_validate (ZakFormElementIValidator *self, const gchar *value)
 {
 	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_IVALIDATOR (self), FALSE);
 

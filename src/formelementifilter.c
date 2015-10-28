@@ -26,8 +26,8 @@ zak_form_element_ifilter_default_init (ZakFormElementIFilterInterface *iface)
     /* add properties and signals to the interface here */
 }
 
-GValue
-*zak_form_element_ifilter_filter (ZakFormElementIFilter *self, GValue *value)
+gchar
+*zak_form_element_ifilter_filter (ZakFormElementIFilter *self, const gchar *value)
 {
 	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_IFILTER (self), NULL);
 

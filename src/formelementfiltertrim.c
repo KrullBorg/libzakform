@@ -39,7 +39,7 @@ static void zak_form_element_filter_trim_get_property (GObject *object,
 static void zak_form_element_filter_trim_dispose (GObject *gobject);
 static void zak_form_element_filter_trim_finalize (GObject *gobject);
 
-static GValue *zak_form_element_filter_trim_filter (ZakFormElementIFilter *filter_trim, GValue *value);
+static gchar *zak_form_element_filter_trim_filter (ZakFormElementIFilter *filter_trim, const gchar *value);
 
 struct _ZakFormElementFilterTrim
 {
@@ -159,22 +159,18 @@ zak_form_element_filter_trim_finalize (GObject *gobject)
 	parent_class->finalize (gobject);
 }
 
-static GValue
+static gchar
 *zak_form_element_filter_trim_filter (ZakFormElementIFilter *filter_trim,
-									  GValue *value)
+									  const gchar *value)
 {
-	GValue *ret;
+	gchar *ret;
 	gchar *_value;
 
-	ret = g_new0 (GValue, 1);
-	g_value_init (ret, G_TYPE_STRING);
-	g_value_set_string (ret, g_strdup (""));
+	g_return_val_if_fail (value != NULL, g_strdup (""));
 
-	g_return_val_if_fail (value != NULL, ret);
+	_value = g_strdup (value);
 
-	_value = g_strdup (g_value_get_string (value));
-
-	g_value_set_string (ret, g_strdup (g_strstrip (_value)));
+    ret = g_strdup (g_strstrip (_value));
 
 	return ret;
 }

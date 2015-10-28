@@ -26,7 +26,7 @@
 G_BEGIN_DECLS
 
 
-#define ZAK_TYPE_FORM_FORM zak_form_form_get_type ()
+#define ZAK_FORM_TYPE_FORM zak_form_form_get_type ()
 G_DECLARE_DERIVABLE_TYPE (ZakFormForm, zak_form_form, ZAK_FORM, FORM, GObject)
 
 struct _ZakFormFormClass

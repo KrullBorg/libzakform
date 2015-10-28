@@ -32,10 +32,10 @@ struct _ZakFormElementIFilterInterface
 {
 	GTypeInterface parent_iface;
 
-	GValue *(*filter) (ZakFormElementIFilter *self, GValue *value);
+	gchar *(*filter) (ZakFormElementIFilter *self, const gchar *value);
 };
 
-GValue *zak_form_element_ifilter_filter (ZakFormElementIFilter *self, GValue *value);
+gchar *zak_form_element_ifilter_filter (ZakFormElementIFilter *self, const gchar *value);
 
 
 G_END_DECLS

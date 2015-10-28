@@ -41,7 +41,7 @@ static void zak_form_element_validator_regex_get_property (GObject *object,
 static void zak_form_element_validator_regex_dispose (GObject *gobject);
 static void zak_form_element_validator_regex_finalize (GObject *gobject);
 
-static gboolean zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_regex, GValue *value);
+static gboolean zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_regex, const gchar *value);
 
 struct _ZakFormElementValidatorRegex
 {
@@ -173,33 +173,28 @@ zak_form_element_validator_regex_finalize (GObject *gobject)
 
 static gboolean
 zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_regex,
-											   GValue *value)
+											   const gchar *value)
 {
 	gboolean ret;
 
 	GRegex *regex;
 	GError *error;
 
+	g_return_val_if_fail (value != NULL, FALSE);
+
 	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (validator_regex);
 
-	if (G_VALUE_HOLDS (value, G_TYPE_STRING))
+	error = NULL;
+	regex = g_regex_new (priv->regex, 0, 0, &error);
+	if (regex == NULL
+		|| error != NULL)
 		{
-			error = NULL;
-			regex = g_regex_new (priv->regex, 0, 0, &error);
-			if (regex == NULL
-				|| error != NULL)
-				{
-					syslog (LOG_MAKEPRI(LOG_SYSLOG, LOG_DEBUG), "Error on creating regex: %s.",
-							error->message != NULL ? error->message : "no details");
-					return FALSE;
-				}
+			syslog (LOG_MAKEPRI(LOG_SYSLOG, LOG_DEBUG), "Error on creating regex: %s.",
+					error->message != NULL ? error->message : "no details");
+			return FALSE;
+		}
 
-			ret = g_regex_match ((const GRegex *)regex, g_value_get_string (value), 0, NULL);
-		}
-	else
-		{
-			ret = FALSE;
-		}
+	ret = g_regex_match ((const GRegex *)regex, value, 0, NULL);
 
 	return ret;
 }

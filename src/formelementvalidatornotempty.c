@@ -39,7 +39,7 @@ static void zak_form_element_validator_notempty_get_property (GObject *object,
 static void zak_form_element_validator_notempty_dispose (GObject *gobject);
 static void zak_form_element_validator_notempty_finalize (GObject *gobject);
 
-static gboolean zak_form_element_validator_notempty_validate (ZakFormElementIValidator *validator_notempty, GValue *value);
+static gboolean zak_form_element_validator_notempty_validate (ZakFormElementIValidator *validator_notempty, const gchar *value);
 
 struct _ZakFormElementValidatorNotempty
 {
@@ -161,13 +161,13 @@ zak_form_element_validator_notempty_finalize (GObject *gobject)
 
 static gboolean
 zak_form_element_validator_notempty_validate (ZakFormElementIValidator *validator_notempty,
-										  GValue *value)
+										  const gchar *value)
 {
 	gboolean ret;
 
 	g_return_val_if_fail (value != NULL, FALSE);
 
-	ret = (g_strcmp0 (g_value_get_string (value), "") != 0);
+	ret = (g_strcmp0 (value, "") != 0);
 
 	return ret;
 }

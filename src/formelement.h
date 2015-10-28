@@ -16,29 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __ZAK_FORM_ELEMENT_IVALIDATOR_H__
-#define __ZAK_FORM_ELEMENT_IVALIDATOR_H__
+#ifndef __ZAK_FORM_ELEMENT_H__
+#define __ZAK_FORM_ELEMENT_H__
+
 
 #include <glib-object.h>
+
+#include "formelementifilter.h"
+#include "formelementivalidator.h"
 
 
 G_BEGIN_DECLS
 
 
-#define ZAK_TYPE_FORM_ELEMENT_IVALIDATOR zak_form_element_ivalidator_get_type ()
-G_DECLARE_INTERFACE (ZakFormElementIValidator, zak_form_element_ivalidator, ZAK_FORM, ELEMENT_IVALIDATOR, GObject)
+#define ZAK_FORM_TYPE_ELEMENT zak_form_element_get_type ()
+G_DECLARE_DERIVABLE_TYPE (ZakFormElement, zak_form_element, ZAK_FORM, ELEMENT, GObject)
 
-struct _ZakFormElementIValidatorInterface
-{
-	GTypeInterface parent_iface;
+struct _ZakFormElementClass
+	{
+		GObjectClass parent_class;
+	};
 
-	gboolean (*validate) (ZakFormElementIValidator *self, const gchar *value);
-};
 
-gboolean zak_form_element_ivalidator_validate (ZakFormElementIValidator *self, const gchar *value);
+void zak_form_element_set_value (ZakFormElement *element, const gchar *value);
+gchar *zak_form_element_get_value (ZakFormElement *element);
+
+void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementIFilter *filter);
+void zak_form_element_filter (ZakFormElement *element);
+
+void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementIValidator *validator);
+gboolean zak_form_element_is_valid (ZakFormElement *element);
 
 
 G_END_DECLS
 
 
-#endif /* __ZAK_FORM_ELEMENT_IVALIDATOR_H__ */
+#endif /* __ZAK_FORM_ELEMENT_H__ */
