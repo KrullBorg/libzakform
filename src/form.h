@@ -16,18 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __LIBZAKFORM_H__
-#define __LIBZAKFORM_H__
+#ifndef __ZAK_FORM_FORM_H__
+#define __ZAK_FORM_FORM_H__
 
 
-#include <libzakform/form.h>
-
-#include <libzakform/formelementifilter.h>
-#include <libzakform/formelementfiltertrim.h>
-
-#include <libzakform/formelementivalidator.h>
-#include <libzakform/formelementvalidatorempty.h>
-#include <libzakform/formelementvalidatorregex.h>
+#include <glib-object.h>
 
 
-#endif /* __LIBZAKFORM_H__ */
+G_BEGIN_DECLS
+
+
+#define ZAK_TYPE_FORM_FORM zak_form_form_get_type ()
+G_DECLARE_DERIVABLE_TYPE (ZakFormForm, zak_form_form, ZAK_FORM, FORM, GObject)
+
+struct _ZakFormFormClass
+{
+	GObjectClass parent_class;
+};
+
+
+G_END_DECLS
+
+
+#endif /* __ZAK_FORM_FORM_H__ */

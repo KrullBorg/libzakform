@@ -6,6 +6,7 @@ AM_CPPFLAGS = $(ZAKFORM_CFLAGS) \
 lib_LTLIBRARIES = libzakform.la
 
 libzakform_la_SOURCES = \
+                        form.c \
                         formelementifilter.c \
                         formelementfiltertrim.c \
                         formelementivalidator.c \
@@ -16,6 +17,7 @@ libzakform_la_LDFLAGS = -no-undefined
 
 libzakform_include_HEADERS = \
                              libzakform.h \
+                             form.h \
                              formelementifilter.h \
                              formelementfiltertrim.h \
                              formelementivalidator.h \
