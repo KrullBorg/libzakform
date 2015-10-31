@@ -28,7 +28,7 @@
 #include <libzakform/formelementfiltertrim.h>
 
 #include <libzakform/formelementivalidator.h>
-#include <libzakform/formelementvalidatorempty.h>
+#include <libzakform/formelementvalidatornotempty.h>
 #include <libzakform/formelementvalidatorregex.h>
 
 
