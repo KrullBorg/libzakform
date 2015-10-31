@@ -39,6 +39,8 @@ struct _ZakFormFormClass
 
 gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element);
 
+gboolean zak_form_form_is_valid (ZakFormForm *zakform);
+
 
 G_END_DECLS
 

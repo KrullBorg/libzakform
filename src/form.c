@@ -60,7 +60,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 {
 	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zak_form_form);
 
-	priv->ar_elems = NULL;
+	priv->ar_elements = NULL;
 }
 
 /**
@@ -84,6 +84,38 @@ zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
 
 	return ret;
 }
+
+/**
+ * zak_form_form_is_valid:
+ * @zakform:
+ *
+ * Returns:
+ */
+gboolean
+zak_form_form_is_valid (ZakFormForm *zakform)
+{
+	guint i;
+
+	gboolean ret;
+
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	ret = TRUE;
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+			if (!zak_form_element_is_valid (element))
+				{
+					ret = FALSE;
+				}
+		}
+
+	return ret;
+}
+
 
 /* PRIVATE */
 static void
