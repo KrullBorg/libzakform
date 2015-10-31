@@ -64,7 +64,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 {
 	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zak_form_form);
 
-	priv->ar_elements = NULL;
+	priv->ar_elements = g_ptr_array_new ();
 }
 
 /**
