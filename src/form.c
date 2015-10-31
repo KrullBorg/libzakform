@@ -37,6 +37,8 @@ static void zak_form_form_get_property (GObject *object,
 static void zak_form_form_dispose (GObject *gobject);
 static void zak_form_form_finalize (GObject *gobject);
 
+static GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
+
 typedef struct
 	{
 		GPtrArray *ar_elements;
@@ -53,6 +55,8 @@ zak_form_form_class_init (ZakFormFormClass *class)
 	object_class->get_property = zak_form_form_get_property;
 	object_class->dispose = zak_form_form_dispose;
 	object_class->finalize = zak_form_form_finalize;
+
+	class->get_elements = zak_form_form_get_elements;
 }
 
 static void
@@ -174,4 +178,12 @@ zak_form_form_finalize (GObject *gobject)
 
 	GObjectClass *parent_class = g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject));
 	parent_class->finalize (gobject);
+}
+
+static GPtrArray
+*zak_form_form_get_elements (ZakFormForm *zakform)
+{
+	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
+
+	return priv->ar_elements;
 }

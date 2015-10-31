@@ -34,6 +34,8 @@ G_DECLARE_DERIVABLE_TYPE (ZakFormForm, zak_form_form, ZAK_FORM, FORM, GObject)
 struct _ZakFormFormClass
 {
 	GObjectClass parent_class;
+
+	GPtrArray *(*get_elements) (ZakFormForm *zakform);
 };
 
 
