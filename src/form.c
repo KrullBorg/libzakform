@@ -39,7 +39,7 @@ static void zak_form_form_finalize (GObject *gobject);
 
 typedef struct
 	{
-		gpointer nothing;
+		GPtrArray *ar_elements;
 	} ZakFormFormPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormForm, zak_form_form, G_TYPE_OBJECT)
@@ -59,6 +59,30 @@ static void
 zak_form_form_init (ZakFormForm *zak_form_form)
 {
 	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zak_form_form);
+
+	priv->ar_elems = NULL;
+}
+
+/**
+ * zak_form_form_add_element:
+ * @zakform:
+ * @element:
+ *
+ * Returns: #TRUE if @element is added; FALSE otherwise.
+ */
+gboolean
+zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
+{
+	gboolean ret;
+
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	g_ptr_array_add (priv->ar_elements, g_object_ref (element));
+	ret = TRUE;
+
+	return ret;
 }
 
 /* PRIVATE */

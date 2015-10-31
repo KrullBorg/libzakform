@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include "formelement.h"
+
 
 G_BEGIN_DECLS
 
@@ -33,6 +35,9 @@ struct _ZakFormFormClass
 {
 	GObjectClass parent_class;
 };
+
+
+gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element);
 
 
 G_END_DECLS
