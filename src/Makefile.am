@@ -10,7 +10,7 @@ libzakform_la_SOURCES = \
                         formelement.c \
                         formelementifilter.c \
                         formelementfiltertrim.c \
-                        formelementivalidator.c \
+                        formelementvalidator.c \
                         formelementvalidatornotempty.c \
                         formelementvalidatorregex.c
 
@@ -22,7 +22,7 @@ libzakform_include_HEADERS = \
                              formelement.h \
                              formelementifilter.h \
                              formelementfiltertrim.h \
-                             formelementivalidator.h \
+                             formelementvalidator.h \
                              formelementvalidatornotempty.h \
                              formelementvalidatorregex.h
 

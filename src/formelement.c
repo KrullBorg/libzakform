@@ -167,7 +167,7 @@ gchar
  *
  */
 void
-zak_form_element_add_validator (ZakFormElement *element, ZakFormElementIValidator *validator)
+zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator *validator)
 {
 	ZakFormElementPrivate *priv;
 
@@ -208,7 +208,7 @@ zak_form_element_is_valid (ZakFormElement *element)
 
 			for (i = 0; i < priv->pa_validators->len; i++)
 				{
-					if (!zak_form_element_ivalidator_validate ((ZakFormElementIValidator *)g_ptr_array_index (priv->pa_validators, i),
+					if (!zak_form_element_validator_validate ((ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i),
 																   value))
 						{
 							ret = FALSE;

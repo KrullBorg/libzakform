@@ -23,7 +23,7 @@
 #include <glib-object.h>
 
 #include "formelementifilter.h"
-#include "formelementivalidator.h"
+#include "formelementvalidator.h"
 
 
 G_BEGIN_DECLS
@@ -44,7 +44,7 @@ gchar *zak_form_element_get_value (ZakFormElement *element);
 void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementIFilter *filter);
 void zak_form_element_filter (ZakFormElement *element);
 
-void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementIValidator *validator);
+void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator *validator);
 gboolean zak_form_element_is_valid (ZakFormElement *element);
 
 

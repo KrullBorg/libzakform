@@ -22,12 +22,14 @@
 
 #include <glib-object.h>
 
+#include <formelementvalidator.h>
+
 
 G_BEGIN_DECLS
 
 
 #define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY zak_form_element_validator_notempty_get_type ()
-G_DECLARE_FINAL_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM, ELEMENT_VALIDATOR_NOTEMPTY, GObject)
+G_DECLARE_FINAL_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM, ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidator)
 
 ZakFormElementValidatorNotempty *zak_form_element_validator_notempty_new (void);
 

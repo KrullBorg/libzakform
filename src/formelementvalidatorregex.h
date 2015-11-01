@@ -22,12 +22,14 @@
 
 #include <glib-object.h>
 
+#include <formelementvalidator.h>
+
 
 G_BEGIN_DECLS
 
 
 #define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_REGEX zak_form_element_validator_regex_get_type ()
-G_DECLARE_FINAL_TYPE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, ZAK_FORM, ELEMENT_VALIDATOR_REGEX, GObject)
+G_DECLARE_FINAL_TYPE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, ZAK_FORM, ELEMENT_VALIDATOR_REGEX, ZakFormElementValidator)
 
 ZakFormElementValidatorRegex *zak_form_element_validator_regex_new (const gchar *regex);
 

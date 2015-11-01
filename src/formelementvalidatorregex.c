@@ -20,13 +20,10 @@
 	#include <config.h>
 #endif
 
-#include <syslog.h>
-
-#include "formelementivalidator.h"
+#include "formelementvalidator.h"
 #include "formelementvalidatorregex.h"
 
 static void zak_form_element_validator_regex_class_init (ZakFormElementValidatorRegexClass *class);
-static void zak_form_element_validator_regex_interface_init (ZakFormElementIValidatorInterface *iface);
 static void zak_form_element_validator_regex_init (ZakFormElementValidatorRegex *zak_form_element);
 
 static void zak_form_element_validator_regex_set_property (GObject *object,
@@ -41,7 +38,7 @@ static void zak_form_element_validator_regex_get_property (GObject *object,
 static void zak_form_element_validator_regex_dispose (GObject *gobject);
 static void zak_form_element_validator_regex_finalize (GObject *gobject);
 
-static gboolean zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_regex, const gchar *value);
+static gboolean zak_form_element_validator_regex_validate (ZakFormElementValidator *validator_regex, const gchar *value);
 
 struct _ZakFormElementValidatorRegex
 {
@@ -58,27 +55,22 @@ struct _ZakFormElementValidatorRegexPrivate
 		gchar *regex;
 	};
 
-G_DEFINE_TYPE_WITH_CODE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, G_TYPE_OBJECT,
-						 G_IMPLEMENT_INTERFACE (ZAK_TYPE_FORM_ELEMENT_IVALIDATOR,
-												zak_form_element_validator_regex_interface_init))
+G_DEFINE_TYPE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, ZAK_FORM_TYPE_ELEMENT_VALIDATOR)
 
 static void
 zak_form_element_validator_regex_class_init (ZakFormElementValidatorRegexClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
+	ZakFormElementValidatorClass *parent_class = ZAK_FORM_ELEMENT_VALIDATOR_CLASS (class);
 
 	object_class->set_property = zak_form_element_validator_regex_set_property;
 	object_class->get_property = zak_form_element_validator_regex_get_property;
 	object_class->dispose = zak_form_element_validator_regex_dispose;
 	object_class->finalize = zak_form_element_validator_regex_finalize;
 
-	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorRegexPrivate));
-}
+	parent_class->validate = zak_form_element_validator_regex_validate;
 
-static void
-zak_form_element_validator_regex_interface_init (ZakFormElementIValidatorInterface *iface)
-{
-	iface->validate = zak_form_element_validator_regex_validate;
+	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorRegexPrivate));
 }
 
 static void
@@ -172,7 +164,7 @@ zak_form_element_validator_regex_finalize (GObject *gobject)
 }
 
 static gboolean
-zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_regex,
+zak_form_element_validator_regex_validate (ZakFormElementValidator *validator_regex,
 											   const gchar *value)
 {
 	gboolean ret;
@@ -189,8 +181,8 @@ zak_form_element_validator_regex_validate (ZakFormElementIValidator *validator_r
 	if (regex == NULL
 		|| error != NULL)
 		{
-			syslog (LOG_MAKEPRI(LOG_SYSLOG, LOG_DEBUG), "Error on creating regex: %s.",
-					error->message != NULL ? error->message : "no details");
+			g_warning ("Error on creating regex: %s.",
+					   error->message != NULL ? error->message : "no details");
 			return FALSE;
 		}
 

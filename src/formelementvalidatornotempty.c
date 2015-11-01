@@ -20,11 +20,10 @@
 	#include <config.h>
 #endif
 
-#include "formelementivalidator.h"
+#include "formelementvalidator.h"
 #include "formelementvalidatornotempty.h"
 
 static void zak_form_element_validator_notempty_class_init (ZakFormElementValidatorNotemptyClass *class);
-static void zak_form_element_validator_notempty_interface_init (ZakFormElementIValidatorInterface *iface);
 static void zak_form_element_validator_notempty_init (ZakFormElementValidatorNotempty *zak_form_element);
 
 static void zak_form_element_validator_notempty_set_property (GObject *object,
@@ -39,7 +38,7 @@ static void zak_form_element_validator_notempty_get_property (GObject *object,
 static void zak_form_element_validator_notempty_dispose (GObject *gobject);
 static void zak_form_element_validator_notempty_finalize (GObject *gobject);
 
-static gboolean zak_form_element_validator_notempty_validate (ZakFormElementIValidator *validator_notempty, const gchar *value);
+static gboolean zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator_notempty, const gchar *value);
 
 struct _ZakFormElementValidatorNotempty
 {
@@ -56,27 +55,22 @@ struct _ZakFormElementValidatorNotemptyPrivate
 		gpointer nothing;
 	};
 
-G_DEFINE_TYPE_WITH_CODE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, G_TYPE_OBJECT,
-						 G_IMPLEMENT_INTERFACE (ZAK_TYPE_FORM_ELEMENT_IVALIDATOR,
-												zak_form_element_validator_notempty_interface_init))
+G_DEFINE_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM_TYPE_ELEMENT_VALIDATOR)
 
 static void
 zak_form_element_validator_notempty_class_init (ZakFormElementValidatorNotemptyClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
+	ZakFormElementValidatorClass *parent_class = ZAK_FORM_ELEMENT_VALIDATOR_CLASS (class);
 
 	object_class->set_property = zak_form_element_validator_notempty_set_property;
 	object_class->get_property = zak_form_element_validator_notempty_get_property;
 	object_class->dispose = zak_form_element_validator_notempty_dispose;
 	object_class->finalize = zak_form_element_validator_notempty_finalize;
 
-	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorNotemptyPrivate));
-}
+	parent_class->validate = zak_form_element_validator_notempty_validate;
 
-static void
-zak_form_element_validator_notempty_interface_init (ZakFormElementIValidatorInterface *iface)
-{
-	iface->validate = zak_form_element_validator_notempty_validate;
+	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorNotemptyPrivate));
 }
 
 static void
@@ -160,7 +154,7 @@ zak_form_element_validator_notempty_finalize (GObject *gobject)
 }
 
 static gboolean
-zak_form_element_validator_notempty_validate (ZakFormElementIValidator *validator_notempty,
+zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator_notempty,
 										  const gchar *value)
 {
 	gboolean ret;
