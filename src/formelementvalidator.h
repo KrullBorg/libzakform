@@ -37,6 +37,10 @@ struct _ZakFormElementValidatorClass
 
 gboolean zak_form_element_validator_validate (ZakFormElementValidator *self, const gchar *value);
 
+void zak_form_element_validator_set_message (ZakFormElementValidator *validator,
+											 const gchar *message);
+gchar *zak_form_element_validator_get_message (ZakFormElementValidator *validator);
+
 
 G_END_DECLS
 

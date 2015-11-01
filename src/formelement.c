@@ -46,11 +46,14 @@ static void zak_form_element_get_property (GObject *object,
 static void zak_form_element_dispose (GObject *gobject);
 static void zak_form_element_finalize (GObject *gobject);
 
+static GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
+
 typedef struct
 	{
 		gchar *value;
 		GPtrArray *pa_filters;
 		GPtrArray *pa_validators;
+		GPtrArray *pa_messages;
 	} ZakFormElementPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormElement, zak_form_element, G_TYPE_OBJECT)
@@ -64,6 +67,8 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	object_class->get_property = zak_form_element_get_property;
 	object_class->dispose = zak_form_element_dispose;
 	object_class->finalize = zak_form_element_finalize;
+
+	class->get_messages = zak_form_element_get_messages;
 }
 
 static void
@@ -74,6 +79,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->value = NULL;
 	priv->pa_filters = NULL;
 	priv->pa_validators = NULL;
+	priv->pa_messages = NULL;
 }
 
 /**
@@ -202,15 +208,27 @@ zak_form_element_is_valid (ZakFormElement *element)
 
 	zak_form_element_filter (element);
 
+	if (priv->pa_messages != NULL)
+		{
+			g_ptr_array_unref (priv->pa_messages);
+			priv->pa_messages = NULL;
+		}
+
 	if (priv->pa_validators != NULL)
 		{
 			value = zak_form_element_get_value (element);
 
 			for (i = 0; i < priv->pa_validators->len; i++)
 				{
-					if (!zak_form_element_validator_validate ((ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i),
-																   value))
+					ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
+					if (!zak_form_element_validator_validate (validator, value))
 						{
+							if (priv->pa_messages == NULL)
+								{
+									priv->pa_messages = g_ptr_array_new ();
+								}
+							g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
+
 							ret = FALSE;
 						}
 				}
@@ -276,4 +294,12 @@ zak_form_element_finalize (GObject *gobject)
 
 	GObjectClass *parent_class = g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject));
 	parent_class->finalize (gobject);
+}
+
+static GPtrArray
+*zak_form_element_get_messages (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	return priv->pa_messages;
 }

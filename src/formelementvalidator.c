@@ -22,6 +22,12 @@
 
 #include "formelementvalidator.h"
 
+enum
+	{
+		PROP_0,
+		PROP_MESSAGE
+	};
+
 static void zak_form_element_validator_class_init (ZakFormElementValidatorClass *class);
 static void zak_form_element_validator_init (ZakFormElementValidator *zak_form_element_validator);
 
@@ -39,7 +45,7 @@ static void zak_form_element_validator_finalize (GObject *gobject);
 
 typedef struct
 	{
-	    gpointer nothing;
+	    gchar *message;
 	} ZakFormElementValidatorPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormElementValidator, zak_form_element_validator, G_TYPE_OBJECT)
@@ -53,6 +59,13 @@ zak_form_element_validator_class_init (ZakFormElementValidatorClass *class)
 	object_class->get_property = zak_form_element_validator_get_property;
 	object_class->dispose = zak_form_element_validator_dispose;
 	object_class->finalize = zak_form_element_validator_finalize;
+
+	g_object_class_install_property (object_class, PROP_MESSAGE,
+	                                 g_param_spec_string ("message",
+	                                                      "Message",
+	                                                      "Message",
+	                                                      "Invalid value",
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -76,6 +89,35 @@ zak_form_element_validator_validate (ZakFormElementValidator *self, const gchar 
 	return ret;
 }
 
+/**
+ * zak_form_element_validator_set_message:
+ * @validator:
+ * @message:
+ *
+ */
+void
+zak_form_element_validator_set_message (ZakFormElementValidator *validator,
+										const gchar *message)
+{
+	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
+
+	priv->message = g_strdup (message);
+}
+
+/**
+ * zak_form_element_validator_get_message:
+ * @validator:
+ *
+ * Returns:
+ */
+gchar
+*zak_form_element_validator_get_message (ZakFormElementValidator *validator)
+{
+	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
+
+    return g_strdup (priv->message);
+}
+
 /* PRIVATE */
 static void
 zak_form_element_validator_set_property (GObject *object,
@@ -88,9 +130,13 @@ zak_form_element_validator_set_property (GObject *object,
 
 	switch (property_id)
 		{
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
+		case PROP_MESSAGE:
+		    zak_form_element_validator_set_message (zak_form_element_validator, g_value_dup_string (value));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
 		}
 }
 
@@ -105,9 +151,13 @@ zak_form_element_validator_get_property (GObject *object,
 
 	switch (property_id)
 		{
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
+		case PROP_MESSAGE:
+			g_value_set_string (value, zak_form_element_validator_get_message (zak_form_element_validator));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
 		}
 }
 
