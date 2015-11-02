@@ -24,7 +24,9 @@
 
 enum
 {
-	PROP_0
+	PROP_0,
+	PROP_VALUE,
+	PROP_DEFAULT_VALUE
 };
 
 static void zak_form_element_class_init (ZakFormElementClass *class);
@@ -51,6 +53,7 @@ static GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 typedef struct
 	{
 		gchar *value;
+		gchar *default_value;
 		GPtrArray *pa_filters;
 		GPtrArray *pa_validators;
 		GPtrArray *pa_messages;
@@ -69,6 +72,20 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	object_class->finalize = zak_form_element_finalize;
 
 	class->get_messages = zak_form_element_get_messages;
+
+	g_object_class_install_property (object_class, PROP_VALUE,
+	                                 g_param_spec_string ("value",
+	                                                      "Value",
+	                                                      "Value",
+	                                                      "",
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+	g_object_class_install_property (object_class, PROP_DEFAULT_VALUE,
+	                                 g_param_spec_string ("default-value",
+	                                                      "Default value",
+	                                                      "Default value",
+	                                                      "",
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -76,7 +93,6 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 {
 	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (zak_form_element);
 
-	priv->value = NULL;
 	priv->pa_filters = NULL;
 	priv->pa_validators = NULL;
 	priv->pa_messages = NULL;
@@ -148,6 +164,11 @@ zak_form_element_set_value (ZakFormElement *element, const gchar *value)
 
 	priv = zak_form_element_get_instance_private (element);
 
+	if (priv->value != NULL)
+		{
+			g_free (priv->value);
+		}
+
 	priv->value = g_strdup (value);
 }
 
@@ -164,6 +185,42 @@ gchar
 	priv = zak_form_element_get_instance_private (element);
 
 	return g_strdup (priv->value);
+}
+
+/**
+ * zak_form_element_set_default_value:
+ * @element:
+ * @value:
+ *
+ */
+void
+zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (priv->default_value != NULL)
+		{
+			g_free (priv->default_value);
+		}
+
+	priv->default_value = g_strdup (value);
+}
+
+/**
+ * zak_form_element_get_default_value:
+ * @element:
+ *
+ */
+gchar
+*zak_form_element_get_default_value (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return g_strdup (priv->default_value);
 }
 
 /**
@@ -249,9 +306,17 @@ zak_form_element_set_property (GObject *object,
 
 	switch (property_id)
 		{
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
+		case PROP_VALUE:
+		    zak_form_element_set_value (zak_form_element, g_value_dup_string (value));
+			break;
+
+		case PROP_DEFAULT_VALUE:
+		    zak_form_element_set_default_value (zak_form_element, g_value_get_string (value));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
 		}
 }
 
@@ -266,9 +331,17 @@ zak_form_element_get_property (GObject *object,
 
 	switch (property_id)
 		{
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
+		case PROP_VALUE:
+			g_value_set_string (value, zak_form_element_get_value (zak_form_element));
+			break;
+
+		case PROP_DEFAULT_VALUE:
+			g_value_set_string (value, zak_form_element_get_default_value (zak_form_element));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
 		}
 }
 
