@@ -42,7 +42,7 @@ static gboolean zak_form_element_validator_notempty_validate (ZakFormElementVali
 
 struct _ZakFormElementValidatorNotempty
 {
-	GObject parent_instance;
+	ZakFormElementValidator parent_instance;
 
 	/* Other members, including private data. */
 };

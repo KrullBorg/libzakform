@@ -42,7 +42,7 @@ static gboolean zak_form_element_validator_regex_validate (ZakFormElementValidat
 
 struct _ZakFormElementValidatorRegex
 {
-	GObject parent_instance;
+	ZakFormElementValidator parent_instance;
 
 	/* Other members, including private data. */
 };

@@ -16,20 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "formelementifilter.h"
+#ifndef __ZAK_FORM_ELEMENT_FILTER_H__
+#define __ZAK_FORM_ELEMENT_FILTER_H__
 
-G_DEFINE_INTERFACE (ZakFormElementIFilter, zak_form_element_ifilter, G_TYPE_OBJECT);
+#include <glib-object.h>
 
-static void
-zak_form_element_ifilter_default_init (ZakFormElementIFilterInterface *iface)
+
+G_BEGIN_DECLS
+
+
+#define ZAK_FORM_TYPE_ELEMENT_FILTER zak_form_element_filter_get_type ()
+G_DECLARE_DERIVABLE_TYPE (ZakFormElementFilter, zak_form_element_filter, ZAK_FORM, ELEMENT_FILTER, GObject)
+
+struct _ZakFormElementFilterClass
 {
-    /* add properties and signals to the interface here */
-}
+	GObjectClass parent_cleass;
 
-gchar
-*zak_form_element_ifilter_filter (ZakFormElementIFilter *self, const gchar *value)
-{
-	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_IFILTER (self), NULL);
+	gchar *(*filter) (ZakFormElementFilter *self, const gchar *value);
+};
 
-	return ZAK_FORM_ELEMENT_IFILTER_GET_IFACE (self)->filter (self, value);
-}
+gchar *zak_form_element_filter_filter (ZakFormElementFilter *self, const gchar *value);
+
+
+G_END_DECLS
+
+
+#endif /* __ZAK_FORM_ELEMENT_FILTER_H__ */

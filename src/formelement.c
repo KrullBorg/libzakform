@@ -105,7 +105,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
  *
  */
 void
-zak_form_element_add_filter (ZakFormElement *element, ZakFormElementIFilter *filter)
+zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filter)
 {
 	ZakFormElementPrivate *priv;
 
@@ -145,8 +145,8 @@ zak_form_element_filter (ZakFormElement *element)
 
 			value = zak_form_element_get_value (element);
 
-			val = zak_form_element_ifilter_filter ((ZakFormElementIFilter *)g_ptr_array_index (priv->pa_filters, i),
-													   value);
+			val = zak_form_element_filter_filter ((ZakFormElementFilter *)g_ptr_array_index (priv->pa_filters, i),
+												  value);
 			zak_form_element_set_value (element, val);
 		}
 }

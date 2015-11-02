@@ -20,11 +20,10 @@
 	#include <config.h>
 #endif
 
-#include "formelementifilter.h"
+#include "formelementfilter.h"
 #include "formelementfiltertrim.h"
 
 static void zak_form_element_filter_trim_class_init (ZakFormElementFilterTrimClass *class);
-static void zak_form_element_filter_trim_interface_init (ZakFormElementIFilterInterface *iface);
 static void zak_form_element_filter_trim_init (ZakFormElementFilterTrim *zak_form_element);
 
 static void zak_form_element_filter_trim_set_property (GObject *object,
@@ -39,16 +38,16 @@ static void zak_form_element_filter_trim_get_property (GObject *object,
 static void zak_form_element_filter_trim_dispose (GObject *gobject);
 static void zak_form_element_filter_trim_finalize (GObject *gobject);
 
-static gchar *zak_form_element_filter_trim_filter (ZakFormElementIFilter *filter_trim, const gchar *value);
+static gchar *zak_form_element_filter_trim_filter (ZakFormElementFilter *filter_trim, const gchar *value);
 
 struct _ZakFormElementFilterTrim
 {
-	GObject parent_instance;
+	ZakFormElementFilter parent_instance;
 
 	/* Other members, including private data. */
 };
 
-#define ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_FILTER_TRIM, ZakFormElementFilterTrimPrivate))
+#define ZAK_FORM_ELEMENT_FILTER_TRIM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM, ZakFormElementFilterTrimPrivate))
 
 typedef struct _ZakFormElementFilterTrimPrivate ZakFormElementFilterTrimPrivate;
 struct _ZakFormElementFilterTrimPrivate
@@ -56,27 +55,22 @@ struct _ZakFormElementFilterTrimPrivate
 		gpointer nothing;
 	};
 
-G_DEFINE_TYPE_WITH_CODE (ZakFormElementFilterTrim, zak_form_element_filter_trim, G_TYPE_OBJECT,
-						 G_IMPLEMENT_INTERFACE (ZAK_TYPE_FORM_ELEMENT_IFILTER,
-												zak_form_element_filter_trim_interface_init))
+G_DEFINE_TYPE (ZakFormElementFilterTrim, zak_form_element_filter_trim, ZAK_FORM_TYPE_ELEMENT_FILTER)
 
 static void
 zak_form_element_filter_trim_class_init (ZakFormElementFilterTrimClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
+	ZakFormElementFilterClass *parent_class = ZAK_FORM_ELEMENT_FILTER_CLASS (class);
 
 	object_class->set_property = zak_form_element_filter_trim_set_property;
 	object_class->get_property = zak_form_element_filter_trim_get_property;
 	object_class->dispose = zak_form_element_filter_trim_dispose;
 	object_class->finalize = zak_form_element_filter_trim_finalize;
 
-	g_type_class_add_private (object_class, sizeof (ZakFormElementFilterTrimPrivate));
-}
+	parent_class->filter = zak_form_element_filter_trim_filter;
 
-static void
-zak_form_element_filter_trim_interface_init (ZakFormElementIFilterInterface *iface)
-{
-	iface->filter = zak_form_element_filter_trim_filter;
+	g_type_class_add_private (object_class, sizeof (ZakFormElementFilterTrimPrivate));
 }
 
 static void
@@ -160,7 +154,7 @@ zak_form_element_filter_trim_finalize (GObject *gobject)
 }
 
 static gchar
-*zak_form_element_filter_trim_filter (ZakFormElementIFilter *filter_trim,
+*zak_form_element_filter_trim_filter (ZakFormElementFilter *filter_trim,
 									  const gchar *value)
 {
 	gchar *ret;

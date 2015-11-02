@@ -22,12 +22,14 @@
 
 #include <glib-object.h>
 
+#include "formelementfilter.h"
+
 
 G_BEGIN_DECLS
 
 
-#define ZAK_TYPE_FORM_ELEMENT_FILTER_TRIM zak_form_element_filter_trim_get_type ()
-G_DECLARE_FINAL_TYPE (ZakFormElementFilterTrim, zak_form_element_filter_trim, ZAK_FORM, ELEMENT_FILTER_TRIM, GObject)
+#define ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM zak_form_element_filter_trim_get_type ()
+G_DECLARE_FINAL_TYPE (ZakFormElementFilterTrim, zak_form_element_filter_trim, ZAK_FORM, ELEMENT_FILTER_TRIM, ZakFormElementFilter)
 
 ZakFormElementFilterTrim *zak_form_element_filter_trim_new (void);
 

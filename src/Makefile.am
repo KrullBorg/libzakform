@@ -8,7 +8,7 @@ lib_LTLIBRARIES = libzakform.la
 libzakform_la_SOURCES = \
                         form.c \
                         formelement.c \
-                        formelementifilter.c \
+                        formelementfilter.c \
                         formelementfiltertrim.c \
                         formelementvalidator.c \
                         formelementvalidatornotempty.c \
@@ -20,7 +20,7 @@ libzakform_include_HEADERS = \
                              libzakform.h \
                              form.h \
                              formelement.h \
-                             formelementifilter.h \
+                             formelementfilter.h \
                              formelementfiltertrim.h \
                              formelementvalidator.h \
                              formelementvalidatornotempty.h \
