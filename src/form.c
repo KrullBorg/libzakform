@@ -90,6 +90,30 @@ zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
 }
 
 /**
+ * zak_form_form_clear:
+ * @zakform: a #ZakFormForm object.
+ *
+ */
+void
+zak_form_form_clear (ZakFormForm *zakform)
+{
+	guint i;
+
+	ZakFormFormPrivate *priv;
+
+	g_return_if_fail (ZAK_FORM_IS_FORM (zakform));
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			zak_form_element_clear (element);
+		}
+}
+
+/**
  * zak_form_form_is_valid:
  * @zakform:
  *

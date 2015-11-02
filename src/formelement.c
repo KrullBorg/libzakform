@@ -224,6 +224,21 @@ gchar
 }
 
 /**
+ * zak_form_element_clear:
+ * @element:
+ *
+ */
+void
+zak_form_element_clear (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	zak_form_element_set_value (element, priv->default_value);
+}
+
+/**
  * zak_form_element_add_validator:
  * @element:
  * @validator:
