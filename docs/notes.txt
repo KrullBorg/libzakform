@@ -1,11 +1,10 @@
 FORM
 - defined as abstract
-- implement html and gtk (each implementation could have extensions (for example gtk can link to gtkbuilder))
+- implement html and gtk (each implementation could have extensions (for example gtk can link to gtkbuilder; or html can have render method))
 - load definition and elements from xml (and xml file)
+	- use of gmodule to call elements/filters/validators/etc.
 - set/get table for sql
 - add/remove/get element
-- each element must parse own definition from xml
-- each element is bounded to a db field
 - set/get key for sql
 - bind (load values from http, database (ex gdaex), xml, ghashtable, etc.)
 - get sql
@@ -14,20 +13,26 @@ FORM
 ELEMENT
 - defined as abstract
 - implement html and gtk
-
+- properties:
+	- default
+	- to-load
+	- to-save
+- each element must parse own definition from xml
+- each element is bounded to a db field
+- each element could have specifics properties/methods
 
 ELEMENT FILTER
 - to be transformed from interface to abstract
 
 
 ELEMENT VALIDATOR
-- to be transformed from interface to abstract
+- to be transformed from interface to abstract (OK did it)
 
 
-FIELD
+FIELD/DB
 - boolean, integer, float, string, datetime
 
 
-DB
+GROUP OF ELEMENTS ???
 
 
