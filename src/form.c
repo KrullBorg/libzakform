@@ -20,7 +20,14 @@
 	#include <config.h>
 #endif
 
+#include <glib/gi18n-lib.h>
+#include <gmodule.h>
+
 #include "form.h"
+
+#ifdef G_OS_WIN32
+	#include <windows.h>
+#endif
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
 static void zak_form_form_init (ZakFormForm *zak_form_form);
@@ -37,14 +44,40 @@ static void zak_form_form_get_property (GObject *object,
 static void zak_form_form_dispose (GObject *gobject);
 static void zak_form_form_finalize (GObject *gobject);
 
+static void zak_form_form_load_modules (ZakFormForm *zakform);
 static GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
 
 typedef struct
 	{
+		GPtrArray *ar_modules;
 		GPtrArray *ar_elements;
 	} ZakFormFormPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormForm, zak_form_form, G_TYPE_OBJECT)
+
+#ifdef G_OS_WIN32
+static HMODULE backend_dll = NULL;
+
+BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved);
+
+BOOL WINAPI
+DllMain (HINSTANCE hinstDLL,
+         DWORD     fdwReason,
+         LPVOID    lpReserved)
+{
+	switch (fdwReason)
+		{
+		case DLL_PROCESS_ATTACH:
+			backend_dll = (HMODULE) hinstDLL;
+			break;
+		case DLL_THREAD_ATTACH:
+		case DLL_THREAD_DETACH:
+		case DLL_PROCESS_DETACH:
+			break;
+		}
+	return TRUE;
+}
+#endif
 
 static void
 zak_form_form_class_init (ZakFormFormClass *class)
@@ -62,9 +95,45 @@ zak_form_form_class_init (ZakFormFormClass *class)
 static void
 zak_form_form_init (ZakFormForm *zak_form_form)
 {
+	gchar *localedir;
+
 	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zak_form_form);
 
+	priv->ar_modules = NULL;
 	priv->ar_elements = g_ptr_array_new ();
+
+#ifdef G_OS_WIN32
+
+	gchar *moddir;
+	gchar *p;
+
+	moddir = g_win32_get_package_installation_directory_of_module (backend_dll);
+
+	p = g_strrstr (moddir, g_strdup_printf ("%c", G_DIR_SEPARATOR));
+	if (p != NULL
+	    && (g_ascii_strcasecmp (p + 1, "src") == 0
+	        || g_ascii_strcasecmp (p + 1, ".libs") == 0))
+		{
+			localedir = g_strdup (LOCALEDIR);
+		}
+	else
+		{
+			localedir = g_build_filename (moddir, "share", "locale", NULL);
+		}
+
+	g_free (moddir);
+
+#else
+
+	localedir = g_strdup (LOCALEDIR);
+
+#endif
+
+	bindtextdomain (GETTEXT_PACKAGE, localedir);
+	textdomain (GETTEXT_PACKAGE);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+
+	zak_form_form_load_modules (zak_form_form);
 }
 
 /**
@@ -202,6 +271,88 @@ zak_form_form_finalize (GObject *gobject)
 
 	GObjectClass *parent_class = g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject));
 	parent_class->finalize (gobject);
+}
+
+static void
+zak_form_form_load_modules (ZakFormForm* zakform)
+{
+	ZakFormFormPrivate *priv;
+
+	gchar *modulesdir;
+	GDir *dir;
+	GError *error;
+
+	GModule *module;
+	const gchar *filename;
+
+	if (g_module_supported ())
+		{
+			priv = zak_form_form_get_instance_private (zakform);
+
+			modulesdir = (gchar *)g_getenv ("LIBZAKFORM_MODULESDIR");
+			if (modulesdir == NULL)
+				{
+#ifdef G_OS_WIN32
+
+					gchar *moddir;
+					gchar *p;
+
+					moddir = g_win32_get_package_installation_directory_of_module (backend_dll);
+
+					p = g_strrstr (moddir, g_strdup_printf ("%c", G_DIR_SEPARATOR));
+					if (p != NULL
+						&& (g_ascii_strcasecmp (p + 1, "src") == 0
+							|| g_ascii_strcasecmp (p + 1, ".libs") == 0))
+						{
+							modulesdir = g_strdup (MODULESDIR);
+						}
+					else
+						{
+							modulesdir = g_build_filename (moddir, "lib", PACKAGE, "modules", NULL);
+						}
+
+#else
+
+					modulesdir = g_strdup (MODULESDIR);
+
+#endif
+				}
+
+			/* for each file in MODULESDIR */
+			error = NULL;
+			dir = g_dir_open (modulesdir, 0, &error);
+			if (dir != NULL && error == NULL)
+				{
+					while ((filename = g_dir_read_name (dir)) != NULL)
+						{
+							/* trying to open the module */
+							module = g_module_open (filename, G_MODULE_BIND_LAZY);
+							if (module != NULL)
+								{
+									if (priv->ar_modules == NULL)
+										{
+											priv->ar_modules = g_ptr_array_new ();
+										}
+								    g_ptr_array_add (priv->ar_modules, (gpointer)module);
+								}
+							else
+								{
+									g_warning (_("Unable to load %s: %s."), filename, g_module_error ());
+								}
+						}
+
+					g_dir_close (dir);
+				}
+			else
+				{
+					g_warning (_("Unable to open modules dir: %s."),
+							   error != NULL && error->message != NULL ? error->message : _("no details"));
+				}
+		}
+	else
+		{
+			g_warning (_("Modules not supported by this operating system."));
+		}
 }
 
 static GPtrArray

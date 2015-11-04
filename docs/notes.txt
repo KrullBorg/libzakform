@@ -14,7 +14,7 @@ ELEMENT
 - defined as abstract
 - implement html and gtk
 - properties:
-	- default
+	- default (OK did it)
 	- to-load
 	- to-save
 - each element must parse own definition from xml
@@ -22,7 +22,7 @@ ELEMENT
 - each element could have specifics properties/methods
 
 ELEMENT FILTER
-- to be transformed from interface to abstract
+- to be transformed from interface to abstract (OK did it)
 
 
 ELEMENT VALIDATOR
@@ -34,5 +34,3 @@ FIELD/DB
 
 
 GROUP OF ELEMENTS ???
-
-

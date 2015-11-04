@@ -1,6 +1,8 @@
 LIBS = $(ZAKFORM_LIBS)
 
 AM_CPPFLAGS = $(ZAKFORM_CFLAGS) \
+              -DLOCALEDIR=\"$(localedir)\" \
+              -DMODULESDIR=\""$(libdir)/$(PACKAGE)/modules"\" \
               -DG_LOG_DOMAIN=\"ZakForm\"
 
 lib_LTLIBRARIES = libzakform.la
@@ -27,3 +29,9 @@ libzakform_include_HEADERS = \
                              formelementvalidatorregex.h
 
 libzakform_includedir = $(includedir)/libzakform
+
+install-exec-hook:
+	mkdir -p "$(libdir)/$(PACKAGE)/modules"
+
+uninstall-hook:
+	rm -rf "$(libdir)/$(PACKAGE)"
