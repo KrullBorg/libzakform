@@ -23,11 +23,17 @@
 #include <glib/gi18n-lib.h>
 #include <gmodule.h>
 
+#include <libxml/xpath.h>
+
 #include "form.h"
+#include "formelement.h"
 
 #ifdef G_OS_WIN32
 	#include <windows.h>
 #endif
+
+typedef ZakFormElement *(* FormElementConstructorFunc) (void);
+typedef gboolean (* FormElementXmlParsingFunc) (ZakFormElement *, xmlNodePtr);
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
 static void zak_form_form_init (ZakFormForm *zak_form_form);
@@ -134,6 +140,123 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 
 	zak_form_form_load_modules (zak_form_form);
+}
+
+/**
+ * zak_form_form_load_from_xml:
+ * @zakform:
+ * @xmldoc:
+ *
+ */
+gboolean
+zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
+{
+	ZakFormFormPrivate *priv;
+	xmlNode *cur;
+
+	gboolean ret;
+
+	ZakFormElement *element;
+	gchar *type;
+	guint i;
+
+	FormElementConstructorFunc element_constructor;
+	FormElementXmlParsingFunc element_xml_parsing;
+
+	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), FALSE);
+	g_return_val_if_fail (xmldoc != NULL, FALSE);
+
+	ret = FALSE;
+
+	cur = xmlDocGetRootElement (xmldoc);
+	if (cur != NULL)
+		{
+			if (xmlStrcmp (cur->name, (const xmlChar *)"zakform") == 0)
+				{
+					ret = TRUE;
+
+					priv = zak_form_form_get_instance_private (zakform);
+
+					cur = cur->children;
+					while (cur)
+						{
+							if (xmlStrcmp (cur->name, (const xmlChar *)"element") == 0)
+								{
+								    element = NULL;
+
+									type = xmlGetProp (cur, (const xmlChar *)"type");
+
+									/* for each module */
+									for (i = 0; i < priv->ar_modules->len; i++)
+										{
+											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+																 g_strconcat (type, "_new", NULL),
+																 (gpointer *)&element_constructor))
+												{
+													if (element_constructor != NULL)
+														{
+															element = element_constructor ();
+															if (element != NULL)
+																{
+																	zak_form_form_add_element (zakform, element);
+																	if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+																		                 g_strconcat (type, "_xml_parsing", NULL),
+																						 (gpointer *)&element_xml_parsing))
+																		{
+																			if (element_xml_parsing != NULL)
+																				{
+																					element_xml_parsing (element, cur);
+																				}
+																		}
+																}
+															break;
+														}
+												}
+										}
+
+									if (element == NULL)
+										{
+											g_warning (_("Unknown element type «%s»."), type);
+										}
+								}
+
+							cur = cur->next;
+						}
+				}
+			else
+				{
+					g_warning (_("The file is not a valid ZakForm definition file."));
+				}
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_form_load_from_file:
+ * @zakform:
+ * @filename:
+ *
+ */
+gboolean
+zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filename)
+{
+	xmlDoc *xdoc;
+
+	gboolean ret;
+
+	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), FALSE);
+	g_return_val_if_fail (filename != NULL, FALSE);
+
+	ret = FALSE;
+
+	xdoc = xmlParseFile (filename);
+	if (xdoc != NULL)
+		{
+			ret = zak_form_form_load_from_xml (zakform, xdoc);
+		}
+
+	return ret;
 }
 
 /**

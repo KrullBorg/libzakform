@@ -41,7 +41,8 @@ AM_GLIB_GNU_GETTEXT
 # Checks for libraries.
 PKG_CHECK_MODULES(ZAKFORM, [glib-2.0 >= 2.36
                             gobject-2.0 >= 2.36
-                            gmodule-2.0 >= 2.0.0])
+                            gmodule-2.0 >= 2.0.0
+                            libxml-2.0 >= 2.0.0])
 
 AC_SUBST(ZAKFORM_CFLAGS)
 AC_SUBST(ZAKFORM_LIBS)

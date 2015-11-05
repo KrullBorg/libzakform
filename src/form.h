@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include <libxml/tree.h>
+
 #include "formelement.h"
 
 
@@ -38,6 +40,9 @@ struct _ZakFormFormClass
 	GPtrArray *(*get_elements) (ZakFormForm *zakform);
 };
 
+
+gboolean zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc);
+gboolean zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filename);
 
 gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element);
 
