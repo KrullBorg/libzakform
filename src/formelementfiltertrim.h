@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include <libxml/tree.h>
+
 #include "formelementfilter.h"
 
 
@@ -32,6 +34,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ZakFormElementFilterTrim, zak_form_element_filter_trim, ZAK_FORM, ELEMENT_FILTER_TRIM, ZakFormElementFilter)
 
 ZakFormElementFilterTrim *zak_form_element_filter_trim_new (void);
+gboolean zak_form_element_filter_trim_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
 
 
 G_END_DECLS

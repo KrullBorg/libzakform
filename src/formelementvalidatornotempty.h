@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include <libxml/tree.h>
+
 #include "formelementvalidator.h"
 
 
@@ -32,6 +34,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM, ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidator)
 
 ZakFormElementValidatorNotempty *zak_form_element_validator_notempty_new (void);
+gboolean zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
 
 
 G_END_DECLS

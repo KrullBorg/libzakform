@@ -104,6 +104,27 @@ ZakFormElementValidatorRegex
 	return zak_form_element_validator_regex;
 }
 
+/**
+ * zak_form_element_validator_regex_xml_parsing:
+ * @validator:
+ * @xnode:
+ *
+ */
+gboolean
+zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
+{
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (validator);
+
+	if (priv->regex != NULL)
+		{
+			g_free (priv->regex);
+		}
+	priv->regex = g_strdup ((gchar *)xmlNodeGetContent (xnode));
+	g_message ("regex: %s", priv->regex);
+
+	return TRUE;
+}
+
 /* PRIVATE */
 static void
 zak_form_element_validator_regex_set_property (GObject *object,
@@ -176,6 +197,11 @@ zak_form_element_validator_regex_validate (ZakFormElementValidator *validator_re
 
 	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (validator_regex);
 
+	if (priv->regex == NULL)
+		{
+			return TRUE;
+		}
+
 	error = NULL;
 	regex = g_regex_new (priv->regex, 0, 0, &error);
 	if (regex == NULL
@@ -187,6 +213,10 @@ zak_form_element_validator_regex_validate (ZakFormElementValidator *validator_re
 		}
 
 	ret = g_regex_match ((const GRegex *)regex, value, 0, NULL);
+	if (!ret)
+		{
+			g_warning ("Value «%s» not valid for regex «%s».", value, priv->regex);
+		}
 
 	return ret;
 }

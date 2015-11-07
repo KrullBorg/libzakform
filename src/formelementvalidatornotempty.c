@@ -94,6 +94,19 @@ ZakFormElementValidatorNotempty
 	return zak_form_element_validator_notempty;
 }
 
+/**
+ * zak_form_element_validator_notempty_xml_parsing:
+ * @validator:
+ * @xnode:
+ *
+ */
+gboolean
+zak_form_elemen_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
+{
+	/* nothing to do */
+	return TRUE;
+}
+
 /* PRIVATE */
 static void
 zak_form_element_validator_notempty_set_property (GObject *object,

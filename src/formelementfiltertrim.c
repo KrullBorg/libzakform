@@ -94,6 +94,23 @@ ZakFormElementFilterTrim
 	return zak_form_element_filter_trim;
 }
 
+/**
+ * zak_form_element_filter_trim_xml_parsing:
+ * @filter:
+ * @xnode:
+ *
+ */
+gboolean
+zak_form_element_filter_trim_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode)
+{
+	/* nothing to do */
+
+	/* TODO
+	 * add properties: left, right, both
+	 */
+	return TRUE;
+}
+
 /* PRIVATE */
 static void
 zak_form_element_filter_trim_set_property (GObject *object,
