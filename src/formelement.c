@@ -27,7 +27,8 @@ enum
 	PROP_0,
 	PROP_VALUE,
 	PROP_DEFAULT_VALUE,
-	PROP_VISIBLE
+	PROP_VISIBLE,
+	PROP_EDITABLE
 };
 
 static void zak_form_element_class_init (ZakFormElementClass *class);
@@ -56,6 +57,7 @@ typedef struct
 		gchar *value;
 		gchar *default_value;
 		gboolean visible;
+		gboolean editable;
 		GPtrArray *pa_filters;
 		GPtrArray *pa_validators;
 		GPtrArray *pa_messages;
@@ -89,10 +91,17 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                      "",
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
-	g_object_class_install_property (object_class, PROP_DEFAULT_VALUE,
+	g_object_class_install_property (object_class, PROP_VISIBLE,
 	                                 g_param_spec_boolean ("visible",
 	                                                       "Visible",
 	                                                       "Visible",
+	                                                       TRUE,
+	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+	g_object_class_install_property (object_class, PROP_EDITABLE,
+	                                 g_param_spec_boolean ("editable",
+	                                                       "Editable",
+	                                                       "Editable",
 	                                                       TRUE,
 	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
@@ -264,6 +273,37 @@ zak_form_element_get_visible (ZakFormElement *element)
 }
 
 /**
+ * zak_form_element_set_editable:
+ * @element:
+ * @editable:
+ *
+ */
+void
+zak_form_element_set_editable (ZakFormElement *element, gboolean editable)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	priv->editable = editable;
+}
+
+/**
+ * zak_form_element_get_editable:
+ * @element:
+ *
+ */
+gboolean
+zak_form_element_get_editable (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return priv->editable;
+}
+
+/**
  * zak_form_element_clear:
  * @element:
  *
@@ -369,6 +409,14 @@ zak_form_element_set_property (GObject *object,
 		    zak_form_element_set_default_value (zak_form_element, g_value_get_string (value));
 			break;
 
+		case PROP_VISIBLE:
+		    zak_form_element_set_visible (zak_form_element, g_value_get_boolean (value));
+			break;
+
+		case PROP_EDITABLE:
+		    zak_form_element_set_editable (zak_form_element, g_value_get_boolean (value));
+			break;
+
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 			break;
@@ -392,6 +440,14 @@ zak_form_element_get_property (GObject *object,
 
 		case PROP_DEFAULT_VALUE:
 			g_value_set_string (value, zak_form_element_get_default_value (zak_form_element));
+			break;
+
+		case PROP_VISIBLE:
+			g_value_set_boolean (value, zak_form_element_get_visible (zak_form_element));
+			break;
+
+		case PROP_EDITABLE:
+			g_value_set_boolean (value, zak_form_element_get_editable (zak_form_element));
 			break;
 
 		default:
