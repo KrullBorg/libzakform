@@ -15,8 +15,11 @@ ELEMENT
 - implement html and gtk
 - properties:
 	- default (OK did it)
+	- is editable
+	- is visible
 	- to-load
 	- to-save
+	- original value
 - each element must parse own definition from xml
 - each element is bounded to a db field
 - each element could have specifics properties/methods
@@ -29,8 +32,9 @@ ELEMENT VALIDATOR
 - to be transformed from interface to abstract (OK did it)
 
 
-FIELD/DB
+FIELD/DB (LOADERS AND SAVERS)
 - boolean, integer, float, string, datetime
+- load from xml
 
 
 GROUP OF ELEMENTS ???

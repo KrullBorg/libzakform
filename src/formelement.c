@@ -26,7 +26,8 @@ enum
 {
 	PROP_0,
 	PROP_VALUE,
-	PROP_DEFAULT_VALUE
+	PROP_DEFAULT_VALUE,
+	PROP_VISIBLE
 };
 
 static void zak_form_element_class_init (ZakFormElementClass *class);
@@ -54,6 +55,7 @@ typedef struct
 	{
 		gchar *value;
 		gchar *default_value;
+		gboolean visible;
 		GPtrArray *pa_filters;
 		GPtrArray *pa_validators;
 		GPtrArray *pa_messages;
@@ -86,6 +88,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                      "Default value",
 	                                                      "",
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+	g_object_class_install_property (object_class, PROP_DEFAULT_VALUE,
+	                                 g_param_spec_boolean ("visible",
+	                                                       "Visible",
+	                                                       "Visible",
+	                                                       TRUE,
+	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -221,6 +230,37 @@ gchar
 	priv = zak_form_element_get_instance_private (element);
 
 	return g_strdup (priv->default_value);
+}
+
+/**
+ * zak_form_element_set_visible:
+ * @element:
+ * @visible:
+ *
+ */
+void
+zak_form_element_set_visible (ZakFormElement *element, gboolean visible)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	priv->visible = visible;
+}
+
+/**
+ * zak_form_element_get_visible:
+ * @element:
+ *
+ */
+gboolean
+zak_form_element_get_visible (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return priv->visible;
 }
 
 /**

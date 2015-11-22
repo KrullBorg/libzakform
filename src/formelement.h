@@ -46,6 +46,9 @@ gchar *zak_form_element_get_value (ZakFormElement *element);
 void zak_form_element_set_default_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_default_value (ZakFormElement *element);
 
+void zak_form_element_set_visible (ZakFormElement *element, gboolean visible);
+gboolean zak_form_element_get_visible (ZakFormElement *element);
+
 void zak_form_element_clear (ZakFormElement *element);
 
 void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filter);
