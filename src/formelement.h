@@ -36,17 +36,26 @@ struct _ZakFormElementClass
 	{
 		GObjectClass parent_class;
 
+		gboolean (*set_value) (ZakFormElement *element, const gchar *value);
+		gchar *(*get_value) (ZakFormElement *element);
+
+		void (*set_visible) (ZakFormElement *element, gboolean visible);
+		gboolean (*get_visible) (ZakFormElement *element);
+
+		void (*set_editable) (ZakFormElement *element, gboolean editable);
+		gboolean (*get_editable) (ZakFormElement *element);
+
 		GPtrArray *(*get_messages) (ZakFormElement *element);
 	};
 
 
-void zak_form_element_set_value (ZakFormElement *element, const gchar *value);
+gboolean zak_form_element_set_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_value (ZakFormElement *element);
 
-void zak_form_element_set_default_value (ZakFormElement *element, const gchar *value);
+gboolean zak_form_element_set_default_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_default_value (ZakFormElement *element);
 
-void zak_form_element_set_original_value (ZakFormElement *element, const gchar *value);
+gboolean zak_form_element_set_original_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_original_value (ZakFormElement *element);
 void zak_form_element_set_as_original_value (ZakFormElement *element);
 gboolean zak_form_element_is_changed (ZakFormElement *element);

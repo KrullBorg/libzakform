@@ -184,10 +184,14 @@ zak_form_element_filter (ZakFormElement *element)
  * @value:
  *
  */
-void
+gboolean
 zak_form_element_set_value (ZakFormElement *element, const gchar *value)
 {
 	ZakFormElementPrivate *priv;
+
+	gboolean ret;
+
+	ret = TRUE;
 
 	priv = zak_form_element_get_instance_private (element);
 
@@ -197,6 +201,13 @@ zak_form_element_set_value (ZakFormElement *element, const gchar *value)
 		}
 
 	priv->value = g_strdup (value);
+
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->set_value != NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->set_value (element, priv->value);
+		}
+
+	return ret;
 }
 
 /**
@@ -209,9 +220,20 @@ gchar
 {
 	ZakFormElementPrivate *priv;
 
+	gchar *ret;
+
 	priv = zak_form_element_get_instance_private (element);
 
-	return g_strdup (priv->value);
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->get_value != NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->get_value (element);
+		}
+	else
+		{
+			ret = g_strdup (priv->value);
+		}
+
+	return ret;
 }
 
 /**
@@ -220,10 +242,14 @@ gchar
  * @value:
  *
  */
-void
+gboolean
 zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
 {
 	ZakFormElementPrivate *priv;
+
+	gboolean ret;
+
+	ret = TRUE;
 
 	priv = zak_form_element_get_instance_private (element);
 
@@ -233,6 +259,8 @@ zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
 		}
 
 	priv->default_value = g_strdup (value);
+
+	return ret;
 }
 
 /**
@@ -256,10 +284,14 @@ gchar
  * @value:
  *
  */
-void
+gboolean
 zak_form_element_set_original_value (ZakFormElement *element, const gchar *value)
 {
 	ZakFormElementPrivate *priv;
+
+	gboolean ret;
+
+	ret = TRUE;
 
 	priv = zak_form_element_get_instance_private (element);
 
@@ -269,6 +301,8 @@ zak_form_element_set_original_value (ZakFormElement *element, const gchar *value
 		}
 
 	priv->original_value = g_strdup (value);
+
+	return ret;
 }
 
 /**
@@ -322,6 +356,11 @@ zak_form_element_set_visible (ZakFormElement *element, gboolean visible)
 	priv = zak_form_element_get_instance_private (element);
 
 	priv->visible = visible;
+
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->set_visible != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->set_visible (element, priv->visible);
+		}
 }
 
 /**
@@ -334,9 +373,20 @@ zak_form_element_get_visible (ZakFormElement *element)
 {
 	ZakFormElementPrivate *priv;
 
+	gboolean ret;
+
 	priv = zak_form_element_get_instance_private (element);
 
-	return priv->visible;
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->get_visible != NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->get_visible (element);
+		}
+	else
+		{
+			ret = priv->visible;
+		}
+
+	return ret;
 }
 
 /**
@@ -353,6 +403,11 @@ zak_form_element_set_editable (ZakFormElement *element, gboolean editable)
 	priv = zak_form_element_get_instance_private (element);
 
 	priv->editable = editable;
+
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->set_editable != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->set_editable (element, priv->editable);
+		}
 }
 
 /**
@@ -365,9 +420,20 @@ zak_form_element_get_editable (ZakFormElement *element)
 {
 	ZakFormElementPrivate *priv;
 
+	gboolean ret;
+
 	priv = zak_form_element_get_instance_private (element);
 
-	return priv->editable;
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->get_editable != NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->get_editable (element);
+		}
+	else
+		{
+			ret = priv->editable;
+		}
+
+	return ret;
 }
 
 /**
