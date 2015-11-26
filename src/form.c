@@ -377,6 +377,11 @@ zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
 	g_ptr_array_add (priv->ar_elements, g_object_ref (element));
 	ret = TRUE;
 
+	if (ZAK_FORM_FORM_GET_CLASS (zakform)->element_added != NULL)
+		{
+			ZAK_FORM_FORM_GET_CLASS (zakform)->element_added (zakform, element);
+		}
+
 	return ret;
 }
 

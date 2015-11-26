@@ -38,6 +38,8 @@ struct _ZakFormFormClass
 	GObjectClass parent_class;
 
 	GPtrArray *(*get_elements) (ZakFormForm *zakform);
+
+	void (*element_added) (ZakFormForm *zakform, ZakFormElement *element);
 };
 
 

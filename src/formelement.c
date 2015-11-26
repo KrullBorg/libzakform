@@ -84,7 +84,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                      "Value",
 	                                                      "Value",
 	                                                      "",
-	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                                      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_DEFAULT_VALUE,
 	                                 g_param_spec_string ("default-value",
@@ -105,14 +105,14 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                       "Visible",
 	                                                       "Visible",
 	                                                       TRUE,
-	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                                       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_EDITABLE,
 	                                 g_param_spec_boolean ("editable",
 	                                                       "Editable",
 	                                                       "Editable",
 	                                                       TRUE,
-	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                                       G_PARAM_READWRITE));
 }
 
 static void
@@ -120,6 +120,9 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 {
 	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (zak_form_element);
 
+	priv->value = g_strdup ("");
+	priv->visible = TRUE;
+	priv->editable = TRUE;
 	priv->pa_filters = NULL;
 	priv->pa_validators = NULL;
 	priv->pa_messages = NULL;
