@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include <libxml/tree.h>
+
 #include "formelementfilter.h"
 #include "formelementvalidator.h"
 
@@ -35,6 +37,8 @@ G_DECLARE_DERIVABLE_TYPE (ZakFormElement, zak_form_element, ZAK_FORM, ELEMENT, G
 struct _ZakFormElementClass
 	{
 		GObjectClass parent_class;
+
+		void (*xml_parsing) (ZakFormElement *element, xmlNode *xmlnode);
 
 		gboolean (*set_value) (ZakFormElement *element, const gchar *value);
 		gchar *(*get_value) (ZakFormElement *element);

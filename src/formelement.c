@@ -51,6 +51,8 @@ static void zak_form_element_get_property (GObject *object,
 static void zak_form_element_dispose (GObject *gobject);
 static void zak_form_element_finalize (GObject *gobject);
 
+static void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode);
+
 static GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 
 typedef struct
@@ -77,6 +79,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	object_class->dispose = zak_form_element_dispose;
 	object_class->finalize = zak_form_element_finalize;
 
+	class->xml_parsing = zak_form_element_xml_parsing;
 	class->get_messages = zak_form_element_get_messages;
 
 	g_object_class_install_property (object_class, PROP_VALUE,
@@ -622,6 +625,23 @@ zak_form_element_finalize (GObject *gobject)
 
 	GObjectClass *parent_class = g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject));
 	parent_class->finalize (gobject);
+}
+
+static void
+zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
+{
+	xmlNode *cur;
+
+	cur = xmlnode->children;
+	while (cur)
+		{
+		    if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
+				{
+					zak_form_element_set_default_value (element, (const gchar *)xmlNodeGetContent (cur));
+				}
+
+			cur = cur->next;
+		}
 }
 
 static GPtrArray
