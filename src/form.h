@@ -25,6 +25,7 @@
 #include <libxml/tree.h>
 
 #include "formelement.h"
+#include "formiprovider.h"
 
 
 G_BEGIN_DECLS
@@ -51,6 +52,11 @@ gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *elemen
 void zak_form_form_clear (ZakFormForm *zakform);
 
 gboolean zak_form_form_is_valid (ZakFormForm *zakform);
+
+gboolean zak_form_form_load (ZakFormForm *zakform, ZakFormIProvider *provider);
+gboolean zak_form_form_insert (ZakFormForm *zakform, ZakFormIProvider *provider);
+gboolean zak_form_form_update (ZakFormForm *zakform, ZakFormIProvider *provider);
+gboolean zak_form_form_delete (ZakFormForm *zakform, ZakFormIProvider *provider);
 
 
 G_END_DECLS

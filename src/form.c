@@ -440,6 +440,69 @@ zak_form_form_is_valid (ZakFormForm *zakform)
 	return ret;
 }
 
+/**
+ * zak_form_form_load:
+ * @zakform:
+ * @provider:
+ *
+ */
+gboolean
+zak_form_form_load (ZakFormForm *zakform, ZakFormIProvider *provider)
+{
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	return zak_form_iprovider_load (provider, priv->ar_elements);
+}
+
+/**
+ * zak_form_form_insert:
+ * @zakform:
+ * @provider:
+ *
+ */
+gboolean
+zak_form_form_insert (ZakFormForm *zakform, ZakFormIProvider *provider)
+{
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	return zak_form_iprovider_insert (provider, priv->ar_elements);
+}
+
+/**
+ * zak_form_form_update:
+ * @zakform:
+ * @provider:
+ *
+ */
+gboolean
+zak_form_form_update (ZakFormForm *zakform, ZakFormIProvider *provider)
+{
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	return zak_form_iprovider_update (provider, priv->ar_elements);
+}
+
+/**
+ * zak_form_form_delete:
+ * @zakform:
+ * @provider:
+ *
+ */
+gboolean
+zak_form_form_delete (ZakFormForm *zakform, ZakFormIProvider *provider)
+{
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	return zak_form_iprovider_delete (provider, priv->ar_elements);
+}
 
 /* PRIVATE */
 static void

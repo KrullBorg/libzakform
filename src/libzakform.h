@@ -31,5 +31,7 @@
 #include <libzakform/formelementvalidatornotempty.h>
 #include <libzakform/formelementvalidatorregex.h>
 
+#include <libzakform/formiprovider.h>
+
 
 #endif /* __LIBZAKFORM_H__ */
