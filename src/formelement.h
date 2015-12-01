@@ -53,6 +53,9 @@ struct _ZakFormElementClass
 	};
 
 
+void zak_form_element_set_to_is_key (ZakFormElement *element, gboolean is_key);
+gboolean zak_form_element_get_is_key (ZakFormElement *element);
+
 gboolean zak_form_element_set_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_value (ZakFormElement *element);
 

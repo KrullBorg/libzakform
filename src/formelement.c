@@ -25,6 +25,7 @@
 enum
 {
 	PROP_0,
+	PROP_IS_KEY,
 	PROP_VALUE,
 	PROP_DEFAULT_VALUE,
 	PROP_ORIGINAL_VALUE,
@@ -59,6 +60,7 @@ static GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 
 typedef struct
 	{
+		gboolean is_key;
 		gchar *value;
 		gchar *default_value;
 		gchar *original_value;
@@ -86,6 +88,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 
 	class->xml_parsing = zak_form_element_xml_parsing;
 	class->get_messages = zak_form_element_get_messages;
+
+	g_object_class_install_property (object_class, PROP_IS_KEY,
+	                                 g_param_spec_boolean ("is-key",
+	                                                       "Is key",
+	                                                       "Is key",
+	                                                       TRUE,
+	                                                       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_VALUE,
 	                                 g_param_spec_string ("value",
@@ -142,6 +151,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 {
 	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (zak_form_element);
 
+	priv->is_key = TRUE;
 	priv->value = g_strdup ("");
 	priv->visible = TRUE;
 	priv->editable = TRUE;
@@ -204,6 +214,37 @@ zak_form_element_filter (ZakFormElement *element)
 												  value);
 			zak_form_element_set_value (element, val);
 		}
+}
+
+/**
+ * zak_form_element_set_is_key:
+ * @element:
+ * @is_key:
+ *
+ */
+void
+zak_form_element_set_is_key (ZakFormElement *element, gboolean is_key)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	priv->is_key = is_key;
+}
+
+/**
+ * zak_form_element_get_is_key:
+ * @element:
+ *
+ */
+gboolean
+zak_form_element_get_is_key (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return priv->is_key;
 }
 
 /**
@@ -624,6 +665,10 @@ zak_form_element_set_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_IS_KEY:
+		    zak_form_element_set_is_key (zak_form_element, g_value_get_boolean (value));
+			break;
+
 		case PROP_VALUE:
 		    zak_form_element_set_value (zak_form_element, g_value_dup_string (value));
 			break;
@@ -669,6 +714,10 @@ zak_form_element_get_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_IS_KEY:
+			g_value_set_boolean (value, zak_form_element_get_is_key (zak_form_element));
+			break;
+
 		case PROP_VALUE:
 			g_value_set_string (value, zak_form_element_get_value (zak_form_element));
 			break;
