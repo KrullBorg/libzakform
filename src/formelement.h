@@ -70,6 +70,9 @@ gboolean zak_form_element_get_visible (ZakFormElement *element);
 void zak_form_element_set_editable (ZakFormElement *element, gboolean editable);
 gboolean zak_form_element_get_editable (ZakFormElement *element);
 
+void zak_form_element_set_to_load (ZakFormElement *element, gboolean to_load);
+gboolean zak_form_element_get_to_load (ZakFormElement *element);
+
 void zak_form_element_clear (ZakFormElement *element);
 
 void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filter);

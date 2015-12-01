@@ -29,7 +29,8 @@ enum
 	PROP_DEFAULT_VALUE,
 	PROP_ORIGINAL_VALUE,
 	PROP_VISIBLE,
-	PROP_EDITABLE
+	PROP_EDITABLE,
+	PROP_TO_LOAD
 };
 
 static void zak_form_element_class_init (ZakFormElementClass *class);
@@ -62,6 +63,8 @@ typedef struct
 		gchar *original_value;
 		gboolean visible;
 		gboolean editable;
+		gboolean to_load;
+
 		GPtrArray *pa_filters;
 		GPtrArray *pa_validators;
 		GPtrArray *pa_messages;
@@ -116,6 +119,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                       "Editable",
 	                                                       TRUE,
 	                                                       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class, PROP_TO_LOAD,
+	                                 g_param_spec_boolean ("to-load",
+	                                                       "To load",
+	                                                       "To load",
+	                                                       TRUE,
+	                                                       G_PARAM_READWRITE));
 }
 
 static void
@@ -126,6 +136,8 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->value = g_strdup ("");
 	priv->visible = TRUE;
 	priv->editable = TRUE;
+	priv->to_load = TRUE;
+
 	priv->pa_filters = NULL;
 	priv->pa_validators = NULL;
 	priv->pa_messages = NULL;
@@ -443,6 +455,37 @@ zak_form_element_get_editable (ZakFormElement *element)
 }
 
 /**
+ * zak_form_element_set_to_load:
+ * @element:
+ * @to_load:
+ *
+ */
+void
+zak_form_element_set_to_load (ZakFormElement *element, gboolean to_load)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	priv->to_load = to_load;
+}
+
+/**
+ * zak_form_element_get_to_load:
+ * @element:
+ *
+ */
+gboolean
+zak_form_element_get_to_load (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return priv->to_load;
+}
+
+/**
  * zak_form_element_clear:
  * @element:
  *
@@ -560,6 +603,10 @@ zak_form_element_set_property (GObject *object,
 		    zak_form_element_set_editable (zak_form_element, g_value_get_boolean (value));
 			break;
 
+		case PROP_TO_LOAD:
+		    zak_form_element_set_to_load (zak_form_element, g_value_get_boolean (value));
+			break;
+
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 			break;
@@ -595,6 +642,10 @@ zak_form_element_get_property (GObject *object,
 
 		case PROP_EDITABLE:
 			g_value_set_boolean (value, zak_form_element_get_editable (zak_form_element));
+			break;
+
+		case PROP_TO_LOAD:
+			g_value_set_boolean (value, zak_form_element_get_to_load (zak_form_element));
 			break;
 
 		default:
