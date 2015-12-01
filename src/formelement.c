@@ -30,7 +30,8 @@ enum
 	PROP_ORIGINAL_VALUE,
 	PROP_VISIBLE,
 	PROP_EDITABLE,
-	PROP_TO_LOAD
+	PROP_TO_LOAD,
+	PROP_TO_SAVE
 };
 
 static void zak_form_element_class_init (ZakFormElementClass *class);
@@ -64,6 +65,7 @@ typedef struct
 		gboolean visible;
 		gboolean editable;
 		gboolean to_load;
+		gboolean to_save;
 
 		GPtrArray *pa_filters;
 		GPtrArray *pa_validators;
@@ -126,6 +128,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                       "To load",
 	                                                       TRUE,
 	                                                       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class, PROP_TO_SAVE,
+	                                 g_param_spec_boolean ("to-save",
+	                                                       "To save",
+	                                                       "To save",
+	                                                       TRUE,
+	                                                       G_PARAM_READWRITE));
 }
 
 static void
@@ -137,6 +146,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->visible = TRUE;
 	priv->editable = TRUE;
 	priv->to_load = TRUE;
+	priv->to_save = TRUE;
 
 	priv->pa_filters = NULL;
 	priv->pa_validators = NULL;
@@ -486,6 +496,37 @@ zak_form_element_get_to_load (ZakFormElement *element)
 }
 
 /**
+ * zak_form_element_set_to_save:
+ * @element:
+ * @to_save:
+ *
+ */
+void
+zak_form_element_set_to_save (ZakFormElement *element, gboolean to_save)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	priv->to_save = to_save;
+}
+
+/**
+ * zak_form_element_get_to_save:
+ * @element:
+ *
+ */
+gboolean
+zak_form_element_get_to_save (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return priv->to_save;
+}
+
+/**
  * zak_form_element_clear:
  * @element:
  *
@@ -607,6 +648,10 @@ zak_form_element_set_property (GObject *object,
 		    zak_form_element_set_to_load (zak_form_element, g_value_get_boolean (value));
 			break;
 
+		case PROP_TO_SAVE:
+		    zak_form_element_set_to_save (zak_form_element, g_value_get_boolean (value));
+			break;
+
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 			break;
@@ -646,6 +691,10 @@ zak_form_element_get_property (GObject *object,
 
 		case PROP_TO_LOAD:
 			g_value_set_boolean (value, zak_form_element_get_to_load (zak_form_element));
+			break;
+
+		case PROP_TO_SAVE:
+			g_value_set_boolean (value, zak_form_element_get_to_save (zak_form_element));
 			break;
 
 		default:
