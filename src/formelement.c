@@ -26,6 +26,7 @@ enum
 {
 	PROP_0,
 	PROP_IS_KEY,
+	PROP_TYPE,
 	PROP_VALUE,
 	PROP_DEFAULT_VALUE,
 	PROP_ORIGINAL_VALUE,
@@ -61,6 +62,7 @@ static GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 typedef struct
 	{
 		gboolean is_key;
+		gchar *type;
 		gchar *value;
 		gchar *default_value;
 		gchar *original_value;
@@ -95,6 +97,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                       "Is key",
 	                                                       TRUE,
 	                                                       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class, PROP_TYPE,
+	                                 g_param_spec_string ("type",
+	                                                      "Type",
+	                                                      "Type",
+	                                                      "",
+	                                                      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_VALUE,
 	                                 g_param_spec_string ("value",
@@ -152,6 +161,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (zak_form_element);
 
 	priv->is_key = TRUE;
+	priv->type = g_strdup ("");
 	priv->value = g_strdup ("");
 	priv->visible = TRUE;
 	priv->editable = TRUE;
@@ -245,6 +255,46 @@ zak_form_element_get_is_key (ZakFormElement *element)
 	priv = zak_form_element_get_instance_private (element);
 
 	return priv->is_key;
+}
+
+/**
+ * zak_form_element_set_provider_type:
+ * @element:
+ * @type:
+ *
+ */
+void
+zak_form_element_set_provider_type (ZakFormElement *element, const gchar *type)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (priv->type != NULL)
+		{
+			g_free (priv->type);
+		}
+
+	priv->type = g_strdup (type);
+}
+
+/**
+ * zak_form_element_get_type:
+ * @element:
+ *
+ */
+gchar
+*zak_form_element_get_provider_type (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	gchar *ret;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	ret = g_strdup (priv->type);
+
+	return ret;
 }
 
 /**
@@ -669,6 +719,10 @@ zak_form_element_set_property (GObject *object,
 		    zak_form_element_set_is_key (zak_form_element, g_value_get_boolean (value));
 			break;
 
+		case PROP_TYPE:
+		    zak_form_element_set_provider_type (zak_form_element, g_value_dup_string (value));
+			break;
+
 		case PROP_VALUE:
 		    zak_form_element_set_value (zak_form_element, g_value_dup_string (value));
 			break;
@@ -716,6 +770,10 @@ zak_form_element_get_property (GObject *object,
 		{
 		case PROP_IS_KEY:
 			g_value_set_boolean (value, zak_form_element_get_is_key (zak_form_element));
+			break;
+
+		case PROP_TYPE:
+			g_value_set_string (value, zak_form_element_get_provider_type (zak_form_element));
 			break;
 
 		case PROP_VALUE:
