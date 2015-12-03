@@ -25,6 +25,7 @@
 enum
 {
 	PROP_0,
+	PROP_NAME,
 	PROP_IS_KEY,
 	PROP_TYPE,
 	PROP_VALUE,
@@ -61,6 +62,7 @@ static GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 
 typedef struct
 	{
+		gchar *name;
 		gboolean is_key;
 		gchar *type;
 		gchar *value;
@@ -90,6 +92,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 
 	class->xml_parsing = zak_form_element_xml_parsing;
 	class->get_messages = zak_form_element_get_messages;
+
+	g_object_class_install_property (object_class, PROP_NAME,
+	                                 g_param_spec_string ("name",
+	                                                      "Name",
+	                                                      "Name",
+	                                                      "",
+	                                                      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_IS_KEY,
 	                                 g_param_spec_boolean ("is-key",
@@ -160,6 +169,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 {
 	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (zak_form_element);
 
+	priv->name = g_strdup ("");
 	priv->is_key = TRUE;
 	priv->type = g_strdup ("");
 	priv->value = g_strdup ("");
@@ -224,6 +234,46 @@ zak_form_element_filter (ZakFormElement *element)
 												  value);
 			zak_form_element_set_value (element, val);
 		}
+}
+
+/**
+ * zak_form_element_set_name:
+ * @element:
+ * @name:
+ *
+ */
+void
+zak_form_element_set_name (ZakFormElement *element, const gchar *name)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (priv->name != NULL)
+		{
+			g_free (priv->name);
+		}
+
+	priv->name = g_strdup (name);
+}
+
+/**
+ * zak_form_element_get_name:
+ * @element:
+ *
+ */
+gchar
+*zak_form_element_get_name (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	gchar *ret;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	ret = g_strdup (priv->name);
+
+	return ret;
 }
 
 /**
@@ -715,6 +765,10 @@ zak_form_element_set_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_NAME:
+		    zak_form_element_set_name (zak_form_element, g_value_dup_string (value));
+			break;
+
 		case PROP_IS_KEY:
 		    zak_form_element_set_is_key (zak_form_element, g_value_get_boolean (value));
 			break;
@@ -768,6 +822,10 @@ zak_form_element_get_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_NAME:
+			g_value_set_string (value, zak_form_element_get_name (zak_form_element));
+			break;
+
 		case PROP_IS_KEY:
 			g_value_set_boolean (value, zak_form_element_get_is_key (zak_form_element));
 			break;
@@ -842,7 +900,15 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 	cur = xmlnode->children;
 	while (cur)
 		{
-		    if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
+		    if (xmlStrcmp (cur->name, (const xmlChar *)"name") == 0)
+				{
+					zak_form_element_set_name (element, (const gchar *)xmlNodeGetContent (cur));
+				}
+		    else if (xmlStrcmp (cur->name, (const xmlChar *)"type") == 0)
+				{
+					zak_form_element_set_provider_type (element, (const gchar *)xmlNodeGetContent (cur));
+				}
+		    else if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
 				{
 					zak_form_element_set_default_value (element, (const gchar *)xmlNodeGetContent (cur));
 				}
