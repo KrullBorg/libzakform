@@ -58,8 +58,6 @@ static void zak_form_element_finalize (GObject *gobject);
 
 static void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode);
 
-static GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
-
 typedef struct
 	{
 		gchar *name;
@@ -91,7 +89,6 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	object_class->finalize = zak_form_element_finalize;
 
 	class->xml_parsing = zak_form_element_xml_parsing;
-	class->get_messages = zak_form_element_get_messages;
 
 	g_object_class_install_property (object_class, PROP_NAME,
 	                                 g_param_spec_string ("name",
@@ -753,6 +750,19 @@ zak_form_element_is_valid (ZakFormElement *element)
 	return ret;
 }
 
+/**
+ * zak_form_element_get_messages:
+ * @element:
+ *
+ */
+GPtrArray
+*zak_form_element_get_messages (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	return priv->pa_messages;
+}
+
 /* PRIVATE */
 static void
 zak_form_element_set_property (GObject *object,
@@ -935,12 +945,4 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 
 			cur = cur->next;
 		}
-}
-
-static GPtrArray
-*zak_form_element_get_messages (ZakFormElement *element)
-{
-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
-
-	return priv->pa_messages;
 }

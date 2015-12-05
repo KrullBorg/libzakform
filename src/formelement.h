@@ -48,10 +48,7 @@ struct _ZakFormElementClass
 
 		void (*set_editable) (ZakFormElement *element, gboolean editable);
 		gboolean (*get_editable) (ZakFormElement *element);
-
-		GPtrArray *(*get_messages) (ZakFormElement *element);
 	};
-
 
 void zak_form_element_set_name (ZakFormElement *element, const gchar *name);
 gchar *zak_form_element_get_name (ZakFormElement *element);
@@ -92,6 +89,7 @@ void zak_form_element_filter (ZakFormElement *element);
 
 void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator *validator);
 gboolean zak_form_element_is_valid (ZakFormElement *element);
+GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 
 
 G_END_DECLS
