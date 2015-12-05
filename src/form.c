@@ -410,6 +410,30 @@ zak_form_form_clear (ZakFormForm *zakform)
 }
 
 /**
+ * zak_form_form_set_as_original:
+ * @zakform: a #ZakFormForm object.
+ *
+ */
+void
+zak_form_form_set_as_original (ZakFormForm *zakform)
+{
+	guint i;
+
+	ZakFormFormPrivate *priv;
+
+	g_return_if_fail (ZAK_FORM_IS_FORM (zakform));
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			zak_form_element_set_as_original_value (element);
+		}
+}
+
+/**
  * zak_form_form_is_valid:
  * @zakform:
  *
@@ -434,6 +458,38 @@ zak_form_form_is_valid (ZakFormForm *zakform)
 			if (!zak_form_element_is_valid (element))
 				{
 					ret = FALSE;
+				}
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_form_is_changed:
+ * @zakform:
+ *
+ * Returns:
+ */
+gboolean
+zak_form_form_is_changed (ZakFormForm *zakform)
+{
+	guint i;
+
+	gboolean ret;
+
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	ret = FALSE;
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+			if (zak_form_element_is_changed (element))
+				{
+					ret = TRUE;
+					break;
 				}
 		}
 

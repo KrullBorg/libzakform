@@ -51,7 +51,10 @@ gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *elemen
 
 void zak_form_form_clear (ZakFormForm *zakform);
 
+void zak_form_form_set_as_original (ZakFormForm *zakform);
+
 gboolean zak_form_form_is_valid (ZakFormForm *zakform);
+gboolean zak_form_form_is_changed (ZakFormForm *zakform);
 
 gboolean zak_form_form_load (ZakFormForm *zakform, ZakFormIProvider *provider);
 gboolean zak_form_form_insert (ZakFormForm *zakform, ZakFormIProvider *provider);

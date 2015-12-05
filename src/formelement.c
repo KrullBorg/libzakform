@@ -505,7 +505,7 @@ zak_form_element_set_as_original_value (ZakFormElement *element)
 gboolean
 zak_form_element_is_changed (ZakFormElement *element)
 {
-	return (g_strcmp0 (zak_form_element_get_original_value (element), zak_form_element_get_value (element)) == 0);
+	return (g_strcmp0 (zak_form_element_get_original_value (element), zak_form_element_get_value (element)) != 0);
 }
 
 /**
