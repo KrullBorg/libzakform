@@ -70,6 +70,9 @@ gchar *zak_form_element_get_original_value (ZakFormElement *element);
 void zak_form_element_set_as_original_value (ZakFormElement *element);
 gboolean zak_form_element_is_changed (ZakFormElement *element);
 
+gboolean zak_form_element_set_format (ZakFormElement *element, const gchar *format);
+gchar *zak_form_element_get_format (ZakFormElement *element);
+
 void zak_form_element_set_visible (ZakFormElement *element, gboolean visible);
 gboolean zak_form_element_get_visible (ZakFormElement *element);
 

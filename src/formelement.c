@@ -31,6 +31,7 @@ enum
 	PROP_VALUE,
 	PROP_DEFAULT_VALUE,
 	PROP_ORIGINAL_VALUE,
+	PROP_FORMAT,
 	PROP_VISIBLE,
 	PROP_EDITABLE,
 	PROP_TO_LOAD,
@@ -66,6 +67,7 @@ typedef struct
 		gchar *value;
 		gchar *default_value;
 		gchar *original_value;
+		gchar *format;
 		gboolean visible;
 		gboolean editable;
 		gboolean to_load;
@@ -129,6 +131,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                 g_param_spec_string ("original-value",
 	                                                      "Original value",
 	                                                      "Original value",
+	                                                      "",
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+	g_object_class_install_property (object_class, PROP_FORMAT,
+	                                 g_param_spec_string ("format",
+	                                                      "Format",
+	                                                      "Format",
 	                                                      "",
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
@@ -509,6 +518,48 @@ zak_form_element_is_changed (ZakFormElement *element)
 }
 
 /**
+ * zak_form_element_set_format:
+ * @element:
+ * @format:
+ *
+ */
+gboolean
+zak_form_element_set_format (ZakFormElement *element, const gchar *format)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (priv->format != NULL)
+		{
+			g_free (priv->format);
+		}
+
+	priv->format = g_strdup (format);
+
+	return TRUE;
+}
+
+/**
+ * zak_form_element_get_format:
+ * @element:
+ *
+ */
+gchar
+*zak_form_element_get_format (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	gchar *ret;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	ret = g_strdup (priv->format);
+
+	return ret;
+}
+
+/**
  * zak_form_element_set_visible:
  * @element:
  * @visible:
@@ -799,6 +850,10 @@ zak_form_element_set_property (GObject *object,
 		    zak_form_element_set_original_value (zak_form_element, g_value_get_string (value));
 			break;
 
+		case PROP_FORMAT:
+		    zak_form_element_set_format (zak_form_element, g_value_get_string (value));
+			break;
+
 		case PROP_VISIBLE:
 		    zak_form_element_set_visible (zak_form_element, g_value_get_boolean (value));
 			break;
@@ -854,6 +909,10 @@ zak_form_element_get_property (GObject *object,
 
 		case PROP_ORIGINAL_VALUE:
 			g_value_set_string (value, zak_form_element_get_original_value (zak_form_element));
+			break;
+
+		case PROP_FORMAT:
+			g_value_set_string (value, zak_form_element_get_format (zak_form_element));
 			break;
 
 		case PROP_VISIBLE:
@@ -925,6 +984,10 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
 				{
 					zak_form_element_set_default_value (element, (const gchar *)xmlNodeGetContent (cur));
+				}
+		    else if (xmlStrcmp (cur->name, (const xmlChar *)"format") == 0)
+				{
+					zak_form_element_set_format (element, (const gchar *)xmlNodeGetContent (cur));
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"visible") == 0)
 				{
