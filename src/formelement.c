@@ -67,7 +67,7 @@ typedef struct
 		gchar *value;
 		gchar *default_value;
 		gchar *original_value;
-		gchar *format;
+		GHashTable *format;
 		gboolean visible;
 		gboolean editable;
 		gboolean to_load;
@@ -135,11 +135,11 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property (object_class, PROP_FORMAT,
-	                                 g_param_spec_string ("format",
-	                                                      "Format",
-	                                                      "Format",
-	                                                      "",
-	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                 g_param_spec_boxed ("format",
+														 "Format",
+														 "Format",
+														 G_TYPE_HASH_TABLE,
+														 G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_VISIBLE,
 	                                 g_param_spec_boolean ("visible",
@@ -179,6 +179,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->is_key = FALSE;
 	priv->type = g_strdup ("");
 	priv->value = g_strdup ("");
+	priv->format = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->visible = TRUE;
 	priv->editable = TRUE;
 	priv->to_load = TRUE;
@@ -524,7 +525,7 @@ zak_form_element_is_changed (ZakFormElement *element)
  *
  */
 gboolean
-zak_form_element_set_format (ZakFormElement *element, const gchar *format)
+zak_form_element_set_format (ZakFormElement *element, GHashTable *format)
 {
 	ZakFormElementPrivate *priv;
 
@@ -532,10 +533,10 @@ zak_form_element_set_format (ZakFormElement *element, const gchar *format)
 
 	if (priv->format != NULL)
 		{
-			g_free (priv->format);
+			g_hash_table_destroy (priv->format);
 		}
 
-	priv->format = g_strdup (format);
+	priv->format = g_hash_table_ref (format);
 
 	return TRUE;
 }
@@ -545,16 +546,16 @@ zak_form_element_set_format (ZakFormElement *element, const gchar *format)
  * @element:
  *
  */
-gchar
+GHashTable
 *zak_form_element_get_format (ZakFormElement *element)
 {
 	ZakFormElementPrivate *priv;
 
-	gchar *ret;
+	GHashTable *ret;
 
 	priv = zak_form_element_get_instance_private (element);
 
-	ret = g_strdup (priv->format);
+	ret = g_hash_table_ref (priv->format);
 
 	return ret;
 }
@@ -851,7 +852,7 @@ zak_form_element_set_property (GObject *object,
 			break;
 
 		case PROP_FORMAT:
-		    zak_form_element_set_format (zak_form_element, g_value_get_string (value));
+		    zak_form_element_set_format (zak_form_element, (GHashTable *)g_value_get_boxed (value));
 			break;
 
 		case PROP_VISIBLE:
@@ -912,7 +913,7 @@ zak_form_element_get_property (GObject *object,
 			break;
 
 		case PROP_FORMAT:
-			g_value_set_string (value, zak_form_element_get_format (zak_form_element));
+			g_value_set_boxed (value, zak_form_element_get_format (zak_form_element));
 			break;
 
 		case PROP_VISIBLE:
@@ -987,7 +988,23 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"format") == 0)
 				{
-					zak_form_element_set_format (element, (const gchar *)xmlNodeGetContent (cur));
+					GHashTable *ht;
+
+					ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+
+					xmlAttr *attr;
+					attr = cur->properties;
+					while (attr)
+						{
+							g_hash_table_insert (ht, g_strdup (attr->name), g_strdup ((const gchar *)xmlNodeGetContent (attr->children)));
+
+							attr = attr->next;
+						}
+
+					g_hash_table_insert (ht, "content", g_strdup ((const gchar *)xmlNodeGetContent (cur)));
+
+					zak_form_element_set_format (element, ht);
+					g_hash_table_unref (ht);
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"visible") == 0)
 				{
