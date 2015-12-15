@@ -40,7 +40,7 @@ zak_form_iprovider_load (ZakFormIProvider *self, GPtrArray *elements)
 	ret = FALSE;
 	if (ZAK_FORM_IPROVIDER_GET_IFACE (self)->load != NULL)
 		{
-			ZAK_FORM_IPROVIDER_GET_IFACE (self)->load (self, elements);
+			ret = ZAK_FORM_IPROVIDER_GET_IFACE (self)->load (self, elements);
 		}
 
 	return ret;
@@ -56,7 +56,7 @@ zak_form_iprovider_insert (ZakFormIProvider *self, GPtrArray *elements)
 	ret = FALSE;
 	if (ZAK_FORM_IPROVIDER_GET_IFACE (self)->insert != NULL)
 		{
-			ZAK_FORM_IPROVIDER_GET_IFACE (self)->insert (self, elements);
+			ret = ZAK_FORM_IPROVIDER_GET_IFACE (self)->insert (self, elements);
 		}
 
 	return ret;
@@ -72,7 +72,7 @@ zak_form_iprovider_update (ZakFormIProvider *self, GPtrArray *elements)
 	ret = FALSE;
 	if (ZAK_FORM_IPROVIDER_GET_IFACE (self)->update != NULL)
 		{
-			ZAK_FORM_IPROVIDER_GET_IFACE (self)->update (self, elements);
+			ret = ZAK_FORM_IPROVIDER_GET_IFACE (self)->update (self, elements);
 		}
 
 	return ret;
@@ -88,7 +88,7 @@ zak_form_iprovider_delete (ZakFormIProvider *self, GPtrArray *elements)
 	ret = FALSE;
 	if (ZAK_FORM_IPROVIDER_GET_IFACE (self)->delete != NULL)
 		{
-			ZAK_FORM_IPROVIDER_GET_IFACE (self)->delete (self, elements);
+			ret = ZAK_FORM_IPROVIDER_GET_IFACE (self)->delete (self, elements);
 		}
 
 	return ret;
