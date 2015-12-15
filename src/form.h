@@ -56,6 +56,8 @@ void zak_form_form_set_as_original (ZakFormForm *zakform);
 gboolean zak_form_form_is_valid (ZakFormForm *zakform);
 gboolean zak_form_form_is_changed (ZakFormForm *zakform);
 
+void zak_form_form_set_editable (ZakFormForm *zakform, gboolean editable);
+
 gboolean zak_form_form_load (ZakFormForm *zakform, ZakFormIProvider *provider);
 gboolean zak_form_form_insert (ZakFormForm *zakform, ZakFormIProvider *provider);
 gboolean zak_form_form_update (ZakFormForm *zakform, ZakFormIProvider *provider);
