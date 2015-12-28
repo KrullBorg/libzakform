@@ -199,6 +199,10 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 										}
 								}
 						}
+					if (i >= priv->ar_modules->len)
+						{
+							g_warning ("Filter «%s» not found.", type);
+						}
 				}
 		    else if (xmlStrcmp (xnode->name, (const xmlChar *)"validator") == 0)
 				{
@@ -229,6 +233,10 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 											break;
 										}
 								}
+						}
+					if (i >= priv->ar_modules->len)
+						{
+							g_warning ("Validator «%s» not found.", type);
 						}
 				}
 

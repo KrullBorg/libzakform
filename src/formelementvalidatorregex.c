@@ -120,7 +120,6 @@ zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator
 			g_free (priv->regex);
 		}
 	priv->regex = g_strdup ((gchar *)xmlNodeGetContent (xnode));
-	g_message ("regex: %s", priv->regex);
 
 	return TRUE;
 }
