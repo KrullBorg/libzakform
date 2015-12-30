@@ -408,7 +408,15 @@ static gchar
 			gchar *datetime_format;
 
 			datetime_format = (gchar *)g_hash_table_lookup (format, "content");
-			gdt = zak_utils_get_gdatetime_from_string (value, NULL);
+
+			if (g_strcmp0 (value, "@now") == 0)
+				{
+					gdt = g_date_time_new_now_local ();
+				}
+			else
+				{
+					gdt = zak_utils_get_gdatetime_from_string (value, NULL);
+				}
 			ret = zak_utils_gdatetime_format (gdt, datetime_format);
 
 			if (gdt != NULL)
