@@ -16,24 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __LIBZAKFORM_H__
-#define __LIBZAKFORM_H__
+#ifndef __ZAK_FORM_ELEMENT_FILTER_LUC_H__
+#define __ZAK_FORM_ELEMENT_FILTER_LUC_H__
 
 
-#include <libzakform/form.h>
+#include <glib-object.h>
 
-#include <libzakform/formelement.h>
+#include <libxml/tree.h>
 
-#include <libzakform/formelementfilter.h>
-#include <libzakform/formelementfilterluc.h>
-#include <libzakform/formelementfiltertrim.h>
-
-#include <libzakform/formelementvalidator.h>
-#include <libzakform/formelementvalidatordate.h>
-#include <libzakform/formelementvalidatornotempty.h>
-#include <libzakform/formelementvalidatorregex.h>
-
-#include <libzakform/formiprovider.h>
+#include "formelementfilter.h"
 
 
-#endif /* __LIBZAKFORM_H__ */
+G_BEGIN_DECLS
+
+
+#define ZAK_FORM_TYPE_ELEMENT_FILTER_LUC zak_form_element_filter_luc_get_type ()
+G_DECLARE_FINAL_TYPE (ZakFormElementFilterLuc, zak_form_element_filter_luc, ZAK_FORM, ELEMENT_FILTER_LUC, ZakFormElementFilter)
+
+ZakFormElementFilterLuc *zak_form_element_filter_luc_new (void);
+gboolean zak_form_element_filter_luc_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
+
+
+G_END_DECLS
+
+
+#endif /* __ZAK_FORM_ELEMENT_FILTER_LUC_H__ */

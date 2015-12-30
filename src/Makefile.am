@@ -11,6 +11,7 @@ libzakform_la_SOURCES = \
                         form.c \
                         formelement.c \
                         formelementfilter.c \
+                        formelementfilterluc.c \
                         formelementfiltertrim.c \
                         formelementvalidator.c \
                         formelementvalidatordate.c \
@@ -25,6 +26,7 @@ libzakform_include_HEADERS = \
                              form.h \
                              formelement.h \
                              formelementfilter.h \
+                             formelementfilterluc.h \
                              formelementfiltertrim.h \
                              formelementvalidator.h \
                              formelementvalidatordate.h \
