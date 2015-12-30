@@ -16,26 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __LIBZAKFORM_H__
-#define __LIBZAKFORM_H__
+#ifndef _ZAK_FORM_VALIDATOR_H_
+#define _ZAK_FORM_VALIDATOR_H_
+
+#include <glib-object.h>
 
 
-#include <libzakform/form.h>
-
-#include <libzakform/formelement.h>
-
-#include <libzakform/formelementfilter.h>
-#include <libzakform/formelementfilterluc.h>
-#include <libzakform/formelementfiltertrim.h>
-
-#include <libzakform/formelementvalidator.h>
-#include <libzakform/formelementvalidatordate.h>
-#include <libzakform/formelementvalidatornotempty.h>
-#include <libzakform/formelementvalidatorregex.h>
-
-#include <libzakform/formiprovider.h>
-
-#include <libzakform/formvalidator.h>
+G_BEGIN_DECLS
 
 
-#endif /* __LIBZAKFORM_H__ */
+#define ZAK_FORM_TYPE_VALIDATOR zak_form_validator_get_type ()
+G_DECLARE_DERIVABLE_TYPE (ZakFormValidator, zak_form_validator, ZAK_FORM, VALIDATOR, GObject)
+
+struct _ZakFormValidatorClass
+{
+	GObjectClass parent_class;
+
+	gboolean (*validate) (ZakFormValidator *self, GPtrArray *ar_elements);
+};
+
+gboolean zak_form_validator_validate (ZakFormValidator *self, GPtrArray *ar_elements);
+
+void zak_form_validator_set_message (ZakFormValidator *validator,
+									 const gchar *message);
+gchar *zak_form_validator_get_message (ZakFormValidator *validator);
+
+
+G_END_DECLS
+
+
+#endif /* _ZAK_FORM_VALIDATOR_H_ */

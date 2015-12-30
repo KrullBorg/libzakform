@@ -26,7 +26,6 @@
 #include <libxml/xpath.h>
 
 #include "form.h"
-#include "formelement.h"
 #include "formelementfilter.h"
 #include "formelementvalidator.h"
 
@@ -40,6 +39,8 @@ typedef ZakFormElementFilter *(* FormElementFilterConstructorFunc) (void);
 typedef gboolean (* FormElementFilterXmlParsingFunc) (ZakFormElementFilter *, xmlNodePtr);
 typedef ZakFormElementValidator *(* FormElementValidatorConstructorFunc) (void);
 typedef gboolean (* FormElementValidatorXmlParsingFunc) (ZakFormElementValidator *, xmlNodePtr);
+typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
+typedef gboolean (* FormValidatorXmlParsingFunc) (ZakFormValidator *, xmlNodePtr);
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
 static void zak_form_form_init (ZakFormForm *zak_form_form);
@@ -63,6 +64,7 @@ typedef struct
 	{
 		GPtrArray *ar_modules;
 		GPtrArray *ar_elements;
+		GPtrArray *ar_validators;
 	} ZakFormFormPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormForm, zak_form_form, G_TYPE_OBJECT)
@@ -113,6 +115,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 
 	priv->ar_modules = NULL;
 	priv->ar_elements = g_ptr_array_new ();
+	priv->ar_validators = g_ptr_array_new ();
 
 #ifdef G_OS_WIN32
 
@@ -260,11 +263,16 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 	gboolean ret;
 
 	ZakFormElement *element;
+	ZakFormValidator *validator;
+
 	gchar *type;
 	guint i;
 
 	FormElementConstructorFunc element_constructor;
 	FormElementXmlParsingFunc element_xml_parsing;
+
+	FormValidatorConstructorFunc validator_constructor;
+	FormValidatorXmlParsingFunc validator_xml_parsing;
 
 	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), FALSE);
 	g_return_val_if_fail (xmldoc != NULL, FALSE);
@@ -324,6 +332,41 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 									if (element == NULL)
 										{
 											g_warning (_("Unknown element type «%s»."), type);
+										}
+								}
+							else if (xmlStrcmp (cur->name, (const xmlChar *)"validator") == 0)
+								{
+									type = xmlGetProp (cur, (const xmlChar *)"type");
+
+									/* for each module */
+									for (i = 0; i < priv->ar_modules->len; i++)
+										{
+											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+																 g_strconcat (type, "_new", NULL),
+																 (gpointer *)&validator_constructor))
+												{
+													if (validator_constructor != NULL)
+														{
+															validator = validator_constructor ();
+															zak_form_form_add_validator (zakform, validator);
+
+															if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+																				 g_strconcat (type, "_xml_parsing", NULL),
+																				 (gpointer *)&validator_xml_parsing))
+																{
+																	if (validator_xml_parsing != NULL)
+																		{
+																			validator_xml_parsing (validator, cur);
+																		}
+																}
+
+															break;
+														}
+												}
+										}
+									if (i >= priv->ar_modules->len)
+										{
+											g_warning ("Validator «%s» not found.", type);
 										}
 								}
 
@@ -389,6 +432,61 @@ zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
 		{
 			ZAK_FORM_FORM_GET_CLASS (zakform)->element_added (zakform, element);
 		}
+
+	return ret;
+}
+
+/**
+ * zak_form_form_get_element_by_id:
+ * @zakform:
+ * @id:
+ *
+ * Returns: the #ZakFormElement with @id.
+ */
+ZakFormElement
+*zak_form_form_get_element_by_id (ZakFormForm *zakform, const gchar *id)
+{
+	ZakFormElement *ret;
+
+	ZakFormFormPrivate *priv;
+
+	guint i;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	ret = NULL;
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			if (g_strcmp0 (zak_form_element_get_name (element), id) == 0)
+				{
+					ret = element;
+					break;
+				}
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_form_add_validator:
+ * @zakform:
+ * @validator:
+ *
+ * Returns: #TRUE if @validator is added; FALSE otherwise.
+ */
+gboolean
+zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator)
+{
+	gboolean ret;
+
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	g_ptr_array_add (priv->ar_validators, g_object_ref (validator));
+	ret = TRUE;
 
 	return ret;
 }

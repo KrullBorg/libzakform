@@ -26,6 +26,7 @@
 
 #include "formelement.h"
 #include "formiprovider.h"
+#include "formvalidator.h"
 
 
 G_BEGIN_DECLS
@@ -48,6 +49,9 @@ gboolean zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc);
 gboolean zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filename);
 
 gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element);
+ZakFormElement *zak_form_form_get_element_by_id (ZakFormForm *zakform, const gchar *id);
+
+gboolean zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator);
 
 void zak_form_form_clear (ZakFormForm *zakform);
 
