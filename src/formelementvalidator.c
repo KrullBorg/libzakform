@@ -20,6 +20,8 @@
 	#include <config.h>
 #endif
 
+#include <glib/gi18n-lib.h>
+
 #include "formelementvalidator.h"
 
 enum
@@ -64,7 +66,7 @@ zak_form_element_validator_class_init (ZakFormElementValidatorClass *class)
 	                                 g_param_spec_string ("message",
 	                                                      "Message",
 	                                                      "Message",
-	                                                      "Invalid value",
+	                                                      _("Invalid value"),
 	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 

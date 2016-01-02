@@ -1,0 +1,5 @@
+# List of source files which contain translatable strings.
+src/form.c
+src/formelement.c
+src/formelementvalidator.c
+src/formvalidatorcomparedate.c

@@ -20,6 +20,8 @@
 	#include <config.h>
 #endif
 
+#include <glib/gi18n-lib.h>
+
 #include <libzakutils/libzakutils.h>
 
 #include "commons.h"
@@ -62,12 +64,7 @@ enum
 		GREATER_EQUAL
 	};
 
-static gchar *msgs[] = {"lesser than",
-					   "lesser or equal to",
-                       "equal to",
-                       "different from",
-                       "greater than",
-                       "greater or equal to"};
+static gchar *msgs[6];
 
 typedef struct _ZakFormValidatorCompareDatePrivate ZakFormValidatorCompareDatePrivate;
 struct _ZakFormValidatorCompareDatePrivate
@@ -106,6 +103,13 @@ zak_form_validator_compare_date_init (ZakFormValidatorCompareDate *validator)
 
 	priv->v1 = NULL;
 	priv->v2 = NULL;
+
+	msgs[0] = _("lesser than");
+	msgs[1] = _("lesser or equal to");
+	msgs[2] = _("equal to");
+	msgs[3] = _("different from");
+	msgs[4] = _("greater than");
+	msgs[5] = _("greater or equal to");
 }
 
 /**
@@ -311,7 +315,7 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator,
 
 			if (!ret)
 				{
-					msg = g_strdup_printf ("«%s» must be %s «%s»",
+					msg = g_strdup_printf (_("«%s» must be %s «%s»"),
 										   zak_form_element_get_long_name (priv->v1),
 										   msgs[priv->type],
 										   zak_form_element_get_long_name (priv->v2));
