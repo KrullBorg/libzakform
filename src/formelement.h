@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,9 @@ struct _ZakFormElementClass
 
 void zak_form_element_set_name (ZakFormElement *element, const gchar *name);
 gchar *zak_form_element_get_name (ZakFormElement *element);
+
+void zak_form_element_set_long_name (ZakFormElement *element, const gchar *long_name);
+gchar *zak_form_element_get_long_name (ZakFormElement *element);
 
 void zak_form_element_set_to_is_key (ZakFormElement *element, gboolean is_key);
 gboolean zak_form_element_get_is_key (ZakFormElement *element);

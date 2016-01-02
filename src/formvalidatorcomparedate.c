@@ -262,7 +262,7 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator,
 		{
 			gdt1 = zak_utils_get_gdatetime_from_string (zak_form_element_get_value (priv->v1), priv->format1);
 			gdt2 = zak_utils_get_gdatetime_from_string (zak_form_element_get_value (priv->v2), priv->format2);
-			g_warning ("gdt1 %s; gdt2 %s",g_date_time_format(gdt1,"%d/%m/%Y"),g_date_time_format(gdt2,"%d/%m/%Y"));
+
 			if (gdt1 == NULL
 				|| gdt2 == NULL)
 				{
@@ -312,9 +312,9 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator,
 			if (!ret)
 				{
 					msg = g_strdup_printf ("«%s» must be %s «%s»",
-										   zak_form_element_get_name (priv->v1),
+										   zak_form_element_get_long_name (priv->v1),
 										   msgs[priv->type],
-										   zak_form_element_get_name (priv->v2));
+										   zak_form_element_get_long_name (priv->v2));
 					zak_form_validator_set_message (validator, msg);
 					g_free (msg);
 				}

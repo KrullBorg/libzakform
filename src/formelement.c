@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ enum
 {
 	PROP_0,
 	PROP_NAME,
+	PROP_LONG_NAME,
 	PROP_IS_KEY,
 	PROP_TYPE,
 	PROP_VALUE,
@@ -64,6 +65,7 @@ static void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmln
 typedef struct
 	{
 		gchar *name;
+		gchar *long_name;
 		gboolean is_key;
 		gchar *type;
 		gchar *value;
@@ -99,6 +101,13 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                      "Name",
 	                                                      "Name",
 	                                                      "",
+	                                                      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class, PROP_LONG_NAME,
+	                                 g_param_spec_string ("long-name",
+	                                                      "Long name",
+	                                                      "Long name",
+	                                                      NULL,
 	                                                      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_IS_KEY,
@@ -178,6 +187,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (zak_form_element);
 
 	priv->name = g_strdup ("");
+	priv->long_name = NULL;
 	priv->is_key = FALSE;
 	priv->type = g_strdup ("");
 	priv->value = g_strdup ("");
@@ -281,6 +291,53 @@ gchar
 	priv = zak_form_element_get_instance_private (element);
 
 	ret = g_strdup (priv->name);
+
+	return ret;
+}
+
+/**
+ * zak_form_element_set_long_name:
+ * @element:
+ * @long_name:
+ *
+ */
+void
+zak_form_element_set_long_name (ZakFormElement *element, const gchar *long_name)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (priv->long_name != NULL)
+		{
+			g_free (priv->long_name);
+		}
+
+	priv->long_name = g_strdup (long_name);
+}
+
+/**
+ * zak_form_element_get_long_name:
+ * @element:
+ *
+ */
+gchar
+*zak_form_element_get_long_name (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	gchar *ret;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (priv->long_name == NULL)
+		{
+			ret = zak_form_element_get_name (element);
+		}
+	else
+		{
+			ret = g_strdup (priv->long_name);
+		}
 
 	return ret;
 }
@@ -905,6 +962,10 @@ zak_form_element_set_property (GObject *object,
 		    zak_form_element_set_name (zak_form_element, g_value_dup_string (value));
 			break;
 
+		case PROP_LONG_NAME:
+		    zak_form_element_set_long_name (zak_form_element, g_value_dup_string (value));
+			break;
+
 		case PROP_IS_KEY:
 		    zak_form_element_set_is_key (zak_form_element, g_value_get_boolean (value));
 			break;
@@ -964,6 +1025,10 @@ zak_form_element_get_property (GObject *object,
 		{
 		case PROP_NAME:
 			g_value_set_string (value, zak_form_element_get_name (zak_form_element));
+			break;
+
+		case PROP_LONG_NAME:
+			g_value_set_string (value, zak_form_element_get_long_name (zak_form_element));
 			break;
 
 		case PROP_IS_KEY:
