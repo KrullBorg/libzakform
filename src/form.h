@@ -58,6 +58,8 @@ void zak_form_form_clear (ZakFormForm *zakform);
 void zak_form_form_set_as_original (ZakFormForm *zakform);
 
 gboolean zak_form_form_is_valid (ZakFormForm *zakform);
+GPtrArray *zak_form_form_get_messages (ZakFormForm *zakform);
+
 gboolean zak_form_form_is_changed (ZakFormForm *zakform);
 
 void zak_form_form_set_editable (ZakFormForm *zakform, gboolean editable);

@@ -40,7 +40,7 @@ typedef gboolean (* FormElementFilterXmlParsingFunc) (ZakFormElementFilter *, xm
 typedef ZakFormElementValidator *(* FormElementValidatorConstructorFunc) (void);
 typedef gboolean (* FormElementValidatorXmlParsingFunc) (ZakFormElementValidator *, xmlNodePtr);
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
-typedef gboolean (* FormValidatorXmlParsingFunc) (ZakFormValidator *, xmlNodePtr);
+typedef gboolean (* FormValidatorXmlParsingFunc) (ZakFormValidator *, xmlNodePtr, GPtrArray *);
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
 static void zak_form_form_init (ZakFormForm *zak_form_form);
@@ -65,6 +65,7 @@ typedef struct
 		GPtrArray *ar_modules;
 		GPtrArray *ar_elements;
 		GPtrArray *ar_validators;
+		GPtrArray *ar_messages;
 	} ZakFormFormPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormForm, zak_form_form, G_TYPE_OBJECT)
@@ -116,6 +117,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 	priv->ar_modules = NULL;
 	priv->ar_elements = g_ptr_array_new ();
 	priv->ar_validators = g_ptr_array_new ();
+	priv->ar_messages = g_ptr_array_new ();
 
 #ifdef G_OS_WIN32
 
@@ -356,7 +358,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 																{
 																	if (validator_xml_parsing != NULL)
 																		{
-																			validator_xml_parsing (validator, cur);
+																			validator_xml_parsing (validator, cur, priv->ar_elements);
 																		}
 																}
 
@@ -579,6 +581,8 @@ zak_form_form_is_valid (ZakFormForm *zakform)
 
 	ZakFormFormPrivate *priv;
 
+	GPtrArray *ar_messages;
+
 	priv = zak_form_form_get_instance_private (zakform);
 
 	ret = TRUE;
@@ -592,7 +596,33 @@ zak_form_form_is_valid (ZakFormForm *zakform)
 				}
 		}
 
+	g_ptr_array_set_size (priv->ar_messages, 0);
+	for (i = 0; i < priv->ar_validators->len; i++)
+		{
+			ZakFormValidator *validator = (ZakFormValidator *)g_ptr_array_index (priv->ar_validators, i);
+			if (!zak_form_validator_validate (validator, priv->ar_elements))
+				{
+					g_ptr_array_add (priv->ar_messages, (gpointer)g_strdup (zak_form_validator_get_message (validator)));
+					ret = FALSE;
+				}
+		}
+
 	return ret;
+}
+
+/**
+ * zak_form_form_get_messages:
+ * @zakform:
+ *
+ */
+GPtrArray
+*zak_form_form_get_messages (ZakFormForm *zakform)
+{
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	return priv->ar_messages;
 }
 
 /**

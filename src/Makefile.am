@@ -8,6 +8,7 @@ AM_CPPFLAGS = $(ZAKFORM_CFLAGS) \
 lib_LTLIBRARIES = libzakform.la
 
 libzakform_la_SOURCES = \
+                        commons.c \
                         form.c \
                         formelement.c \
                         formelementfilter.c \
@@ -18,12 +19,14 @@ libzakform_la_SOURCES = \
                         formelementvalidatornotempty.c \
                         formelementvalidatorregex.c \
                         formiprovider.c \
-                        formvalidator.c
+                        formvalidator.c \
+                        formvalidatorcomparedate.c
 
 libzakform_la_LDFLAGS = -no-undefined
 
 libzakform_include_HEADERS = \
                              libzakform.h \
+                             commons.h \
                              form.h \
                              formelement.h \
                              formelementfilter.h \
@@ -34,7 +37,8 @@ libzakform_include_HEADERS = \
                              formelementvalidatornotempty.h \
                              formelementvalidatorregex.h \
                              formiprovider.h \
-                             formvalidator.h
+                             formvalidator.h \
+                             formvalidatorcomparedate.h
 
 libzakform_includedir = $(includedir)/libzakform
 
