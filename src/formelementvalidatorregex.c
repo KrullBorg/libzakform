@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -83,23 +83,17 @@ zak_form_element_validator_regex_init (ZakFormElementValidatorRegex *zak_form_el
 
 /**
  * zak_form_element_validator_regex_new:
- * @regex:
  *
  * Returns: the newly created #ZakFormElementValidatorRegex object.
  */
 ZakFormElementValidatorRegex
-*zak_form_element_validator_regex_new (const gchar *regex)
+*zak_form_element_validator_regex_new ()
 {
 	ZakFormElementValidatorRegex *zak_form_element_validator_regex;
 
 	zak_form_element_validator_regex = ZAK_FORM_ELEMENT_VALIDATOR_REGEX (g_object_new (zak_form_element_validator_regex_get_type (), NULL));
 
 	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (zak_form_element_validator_regex);
-
-	if (regex != NULL)
-		{
-			priv->regex = g_strdup (regex);
-		}
 
 	return zak_form_element_validator_regex;
 }

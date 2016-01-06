@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,7 +52,7 @@ struct _ZakFormElementValidatorNotempty
 typedef struct _ZakFormElementValidatorNotemptyPrivate ZakFormElementValidatorNotemptyPrivate;
 struct _ZakFormElementValidatorNotemptyPrivate
 	{
-		gpointer nothing;
+		gchar *as_empty_string;
 	};
 
 G_DEFINE_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM_TYPE_ELEMENT_VALIDATOR)
@@ -77,6 +77,8 @@ static void
 zak_form_element_validator_notempty_init (ZakFormElementValidatorNotempty *zak_form_element)
 {
 	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
+
+	priv->as_empty_string = g_strdup ("");
 }
 
 /**
@@ -101,9 +103,16 @@ ZakFormElementValidatorNotempty
  *
  */
 gboolean
-zak_form_elemen_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
+zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
 {
-	/* nothing to do */
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
+
+	if (priv->as_empty_string != NULL)
+		{
+			g_free (priv->as_empty_string);
+		}
+	priv->as_empty_string = g_strdup ((gchar *)xmlNodeGetContent (xnode));
+
 	return TRUE;
 }
 
@@ -114,8 +123,8 @@ zak_form_element_validator_notempty_set_property (GObject *object,
                    const GValue *value,
                    GParamSpec *pspec)
 {
-	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)object;
-	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
+	ZakFormElementValidatorNotempty *validator = (ZakFormElementValidatorNotempty *)object;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
 
 	switch (property_id)
 		{
@@ -131,8 +140,8 @@ zak_form_element_validator_notempty_get_property (GObject *object,
                    GValue *value,
                    GParamSpec *pspec)
 {
-	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)object;
-	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
+	ZakFormElementValidatorNotempty *validator = (ZakFormElementValidatorNotempty *)object;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
 
 	switch (property_id)
 		{
@@ -145,8 +154,8 @@ zak_form_element_validator_notempty_get_property (GObject *object,
 static void
 zak_form_element_validator_notempty_dispose (GObject *gobject)
 {
-	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)gobject;
-	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
+	ZakFormElementValidatorNotempty *validator = (ZakFormElementValidatorNotempty *)gobject;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
 
 
 
@@ -157,8 +166,8 @@ zak_form_element_validator_notempty_dispose (GObject *gobject)
 static void
 zak_form_element_validator_notempty_finalize (GObject *gobject)
 {
-	ZakFormElementValidatorNotempty *zak_form_element = (ZakFormElementValidatorNotempty *)gobject;
-	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
+	ZakFormElementValidatorNotempty *validator = (ZakFormElementValidatorNotempty *)gobject;
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
 
 
 
@@ -167,14 +176,16 @@ zak_form_element_validator_notempty_finalize (GObject *gobject)
 }
 
 static gboolean
-zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator_notempty,
+zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator,
 										  const gchar *value)
 {
 	gboolean ret;
 
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
+
 	g_return_val_if_fail (value != NULL, FALSE);
 
-	ret = (g_strcmp0 (value, "") != 0);
+	ret = (g_strcmp0 (value, priv->as_empty_string) != 0);
 
 	return ret;
 }
