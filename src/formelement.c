@@ -481,6 +481,10 @@ static gchar
 					g_date_time_unref (gdt);
 				}
 		}
+	else
+		{
+			ret = g_strdup (value);
+		}
 
 	return ret;
 }
