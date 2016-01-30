@@ -23,6 +23,12 @@
 #include "formelementvalidator.h"
 #include "formelementvalidatorregex.h"
 
+enum
+{
+	PROP_0,
+	PROP_REGEX
+};
+
 static void zak_form_element_validator_regex_class_init (ZakFormElementValidatorRegexClass *class);
 static void zak_form_element_validator_regex_init (ZakFormElementValidatorRegex *zak_form_element);
 
@@ -71,6 +77,13 @@ zak_form_element_validator_regex_class_init (ZakFormElementValidatorRegexClass *
 	parent_class->validate = zak_form_element_validator_regex_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorRegexPrivate));
+
+	g_object_class_install_property (object_class, PROP_REGEX,
+	                                 g_param_spec_string ("regex",
+	                                                      "Regex",
+	                                                      "Regex",
+	                                                      "",
+	                                                      G_PARAM_READWRITE));
 }
 
 static void
@@ -107,15 +120,40 @@ ZakFormElementValidatorRegex
 gboolean
 zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
 {
+	zak_form_element_validator_regex_set_regex (ZAK_FORM_ELEMENT_VALIDATOR_REGEX (validator), (gchar *)xmlNodeGetContent (xnode));
+
+	return TRUE;
+}
+
+/**
+ * zak_form_element_validator_regex_set_regex:
+ * @validaotr:
+ * @regex:
+ *
+ */
+void
+zak_form_element_validator_regex_set_regex (ZakFormElementValidatorRegex *validator, const gchar *regex)
+{
 	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (validator);
 
 	if (priv->regex != NULL)
 		{
 			g_free (priv->regex);
 		}
-	priv->regex = g_strdup ((gchar *)xmlNodeGetContent (xnode));
+	priv->regex = g_strdup (regex);
+}
 
-	return TRUE;
+/**
+ * zak_form_element_validator_regex_get_regex:
+ * @validator:
+ *
+ */
+gchar
+*zak_form_element_validator_regex_get_regex (ZakFormElementValidatorRegex *validator)
+{
+	ZakFormElementValidatorRegexPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE (validator);
+
+	return g_strdup (priv->regex);
 }
 
 /* PRIVATE */
@@ -130,6 +168,10 @@ zak_form_element_validator_regex_set_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_REGEX:
+		    zak_form_element_validator_regex_set_regex (zak_form_element, g_value_dup_string (value));
+			break;
+
 			default:
 				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 				break;
@@ -147,6 +189,10 @@ zak_form_element_validator_regex_get_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_REGEX:
+			g_value_set_string (value, zak_form_element_validator_regex_get_regex (zak_form_element));
+			break;
+
 			default:
 				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 				break;
