@@ -43,7 +43,7 @@ static void zak_form_validator_compare_date_get_property (GObject *object,
 static void zak_form_validator_compare_date_dispose (GObject *gobject);
 static void zak_form_validator_compare_date_finalize (GObject *gobject);
 
-static gboolean zak_form_validator_compare_date_validate (ZakFormValidator *validator_notempty, const gchar *value);
+static gboolean zak_form_validator_compare_date_validate (ZakFormValidator *validator_notempty);
 
 struct _ZakFormValidatorCompareDate
 {
@@ -242,8 +242,7 @@ zak_form_validator_compare_date_finalize (GObject *gobject)
 }
 
 static gboolean
-zak_form_validator_compare_date_validate (ZakFormValidator *validator,
-										  const gchar *value)
+zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 {
 	gboolean ret;
 
@@ -254,8 +253,6 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator,
 	gchar *msg;
 
 	ZakFormValidatorCompareDatePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE (validator);
-
-	g_return_val_if_fail (value != NULL, FALSE);
 
 	if (!ZAK_FORM_IS_ELEMENT (priv->v1)
 		|| !ZAK_FORM_IS_ELEMENT (priv->v2))

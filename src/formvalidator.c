@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,7 +75,7 @@ zak_form_validator_init (ZakFormValidator *zak_form_validator)
 }
 
 gboolean
-zak_form_validator_validate (ZakFormValidator *self, GPtrArray *ar_elements)
+zak_form_validator_validate (ZakFormValidator *self)
 {
 	gboolean ret;
 
@@ -84,7 +84,7 @@ zak_form_validator_validate (ZakFormValidator *self, GPtrArray *ar_elements)
 	ret = TRUE;
 	if (ZAK_FORM_VALIDATOR_GET_CLASS (self)->validate != NULL)
 		{
-			ret = ZAK_FORM_VALIDATOR_GET_CLASS (self)->validate (self, ar_elements);
+			ret = ZAK_FORM_VALIDATOR_GET_CLASS (self)->validate (self);
 		}
 	return ret;
 }

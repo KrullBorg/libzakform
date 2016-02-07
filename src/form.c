@@ -269,12 +269,17 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 
 	gchar *type;
 	guint i;
+	gint y;
 
 	FormElementConstructorFunc element_constructor;
 	FormElementXmlParsingFunc element_xml_parsing;
 
 	FormValidatorConstructorFunc validator_constructor;
 	FormValidatorXmlParsingFunc validator_xml_parsing;
+
+	xmlXPathContextPtr xpcontext;
+	xmlXPathObjectPtr xpresult;
+	xmlNodeSetPtr xnodeset;
 
 	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), FALSE);
 	g_return_val_if_fail (xmldoc != NULL, FALSE);
@@ -336,9 +341,20 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 											g_warning (_("Unknown element type «%s»."), type);
 										}
 								}
-							else if (xmlStrcmp (cur->name, (const xmlChar *)"validator") == 0)
+
+							cur = cur->next;
+						}
+
+					/* parsing of validators */
+					xpcontext = xmlXPathNewContext (xmldoc);
+					xpcontext->node = xmlDocGetRootElement (xmldoc);
+					xpresult = xmlXPathEvalExpression ((const xmlChar *)"child::validator", xpcontext);
+					if (!xmlXPathNodeSetIsEmpty (xpresult->nodesetval))
+						{
+							xnodeset = xpresult->nodesetval;
+							for (y = 0; y < xnodeset->nodeNr; y++)
 								{
-									type = xmlGetProp (cur, (const xmlChar *)"type");
+									type = xmlGetProp (xnodeset->nodeTab[y], (const xmlChar *)"type");
 
 									/* for each module */
 									for (i = 0; i < priv->ar_modules->len; i++)
@@ -358,7 +374,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 																{
 																	if (validator_xml_parsing != NULL)
 																		{
-																			validator_xml_parsing (validator, cur, priv->ar_elements);
+																			validator_xml_parsing (validator, xnodeset->nodeTab[y], priv->ar_elements);
 																		}
 																}
 
@@ -371,8 +387,6 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 											g_warning ("Validator «%s» not found.", type);
 										}
 								}
-
-							cur = cur->next;
 						}
 				}
 			else
@@ -600,7 +614,7 @@ zak_form_form_is_valid (ZakFormForm *zakform)
 	for (i = 0; i < priv->ar_validators->len; i++)
 		{
 			ZakFormValidator *validator = (ZakFormValidator *)g_ptr_array_index (priv->ar_validators, i);
-			if (!zak_form_validator_validate (validator, priv->ar_elements))
+			if (!zak_form_validator_validate (validator))
 				{
 					g_ptr_array_add (priv->ar_messages, (gpointer)g_strdup (zak_form_validator_get_message (validator)));
 					ret = FALSE;

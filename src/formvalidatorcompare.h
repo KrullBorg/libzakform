@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,33 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _ZAK_FORM_VALIDATOR_H_
-#define _ZAK_FORM_VALIDATOR_H_
+#ifndef __ZAK_FORM_VALIDATOR_COMPARE_H__
+#define __ZAK_FORM_VALIDATOR_COMPARE_H__
+
 
 #include <glib-object.h>
+
+#include <libxml/tree.h>
+
+#include "formvalidator.h"
 
 
 G_BEGIN_DECLS
 
 
-#define ZAK_FORM_TYPE_VALIDATOR zak_form_validator_get_type ()
-G_DECLARE_DERIVABLE_TYPE (ZakFormValidator, zak_form_validator, ZAK_FORM, VALIDATOR, GObject)
+#define ZAK_FORM_TYPE_VALIDATOR_COMPARE zak_form_validator_compare_get_type ()
+G_DECLARE_FINAL_TYPE (ZakFormValidatorCompare, zak_form_validator_compare, ZAK_FORM, VALIDATOR_COMPARE, ZakFormValidator)
 
-struct _ZakFormValidatorClass
-{
-	GObjectClass parent_class;
-
-	gboolean (*validate) (ZakFormValidator *self);
-};
-
-gboolean zak_form_validator_validate (ZakFormValidator *self);
-
-void zak_form_validator_set_message (ZakFormValidator *validator,
-									 const gchar *message);
-gchar *zak_form_validator_get_message (ZakFormValidator *validator);
+ZakFormValidatorCompare *zak_form_validator_compare_new (void);
+gboolean zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
 
 
 G_END_DECLS
 
 
-#endif /* _ZAK_FORM_VALIDATOR_H_ */
+#endif /* __ZAK_FORM_VALIDATOR_COMPARE_H__ */

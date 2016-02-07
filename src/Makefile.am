@@ -20,6 +20,7 @@ libzakform_la_SOURCES = \
                         formelementvalidatorregex.c \
                         formiprovider.c \
                         formvalidator.c \
+                        formvalidatorcompare.c \
                         formvalidatorcomparedate.c
 
 libzakform_la_LDFLAGS = -no-undefined
@@ -38,6 +39,7 @@ libzakform_include_HEADERS = \
                              formelementvalidatorregex.h \
                              formiprovider.h \
                              formvalidator.h \
+                             formvalidatorcompare.h \
                              formvalidatorcomparedate.h
 
 libzakform_includedir = $(includedir)/libzakform
