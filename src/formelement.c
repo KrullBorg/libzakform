@@ -1110,24 +1110,33 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 {
 	xmlNode *cur;
 
+	gboolean to_unlink;
+	xmlNode *xnode_tmp;
+
 	cur = xmlnode->children;
 	while (cur)
 		{
+			to_unlink = FALSE;
+
 		    if (xmlStrcmp (cur->name, (const xmlChar *)"name") == 0)
 				{
 					zak_form_element_set_name (element, (const gchar *)xmlNodeGetContent (cur));
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"is-key") == 0)
 				{
 					zak_form_element_set_is_key (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"type") == 0)
 				{
 					zak_form_element_set_provider_type (element, (const gchar *)xmlNodeGetContent (cur));
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
 				{
 					zak_form_element_set_default_value (element, (const gchar *)xmlNodeGetContent (cur));
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"format") == 0)
 				{
@@ -1148,24 +1157,40 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 
 					zak_form_element_set_format (element, ht);
 					g_hash_table_unref (ht);
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"visible") == 0)
 				{
 					zak_form_element_set_visible (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"editable") == 0)
 				{
 					zak_form_element_set_editable (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"to-load") == 0)
 				{
 					zak_form_element_set_to_load (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (cur->name, (const xmlChar *)"to-save") == 0)
 				{
 					zak_form_element_set_to_save (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					to_unlink = TRUE;
+				}
+
+			if (to_unlink)
+				{
+					xnode_tmp = cur;
 				}
 
 			cur = cur->next;
+
+			if (to_unlink)
+				{
+					xmlUnlinkNode (xnode_tmp);
+					xmlFreeNode (xnode_tmp);
+				}
 		}
 }

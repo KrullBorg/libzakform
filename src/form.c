@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -169,11 +169,16 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 	FormElementValidatorConstructorFunc validator_constructor;
 	FormElementValidatorXmlParsingFunc validator_xml_parsing;
 
+	gboolean to_unlink;
+	xmlNode *xnode_tmp;
+
 	priv = zak_form_form_get_instance_private (zakform);
 
 	xnode = xnode->children;
 	while (xnode)
 		{
+			to_unlink = FALSE;
+
 		    if (xmlStrcmp (xnode->name, (const xmlChar *)"filter") == 0)
 				{
 					type = xmlGetProp (xnode, (const xmlChar *)"type");
@@ -208,6 +213,8 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 						{
 							g_warning ("Filter «%s» not found.", type);
 						}
+
+					to_unlink = TRUE;
 				}
 		    else if (xmlStrcmp (xnode->name, (const xmlChar *)"validator") == 0)
 				{
@@ -243,9 +250,22 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 						{
 							g_warning ("Validator «%s» not found.", type);
 						}
+
+					to_unlink = TRUE;
+				}
+
+			if (to_unlink)
+				{
+					xnode_tmp = xnode;
 				}
 
 			xnode = xnode->next;
+
+			if (to_unlink)
+				{
+					xmlUnlinkNode (xnode_tmp);
+					xmlFreeNode (xnode_tmp);
+				}
 		}
 }
 
@@ -330,6 +350,9 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 																					element_xml_parsing (element, cur_clean);
 																				}
 																		}
+
+																	xmlUnlinkNode (cur_clean);
+																	xmlFreeNode (cur_clean);
 																}
 															break;
 														}
