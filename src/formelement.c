@@ -413,7 +413,7 @@ gchar
 	return ret;
 }
 
-static gchar
+gchar
 *zak_form_element_format (ZakFormElement *element, const gchar *value)
 {
 	gchar *ret;

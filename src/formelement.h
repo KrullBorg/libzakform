@@ -62,6 +62,8 @@ gboolean zak_form_element_get_is_key (ZakFormElement *element);
 void zak_form_element_set_provider_type (ZakFormElement *element, const gchar *type);
 gchar *zak_form_element_get_provider_type (ZakFormElement *element);
 
+gchar *zak_form_element_format (ZakFormElement *element, const gchar *value);
+
 gboolean zak_form_element_set_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_value (ZakFormElement *element);
 
