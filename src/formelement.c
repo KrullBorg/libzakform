@@ -20,6 +20,8 @@
 	#include <config.h>
 #endif
 
+#include <locale.h>
+
 #include <libzakutils/libzakutils.h>
 
 #include "formelement.h"
@@ -413,6 +415,12 @@ gchar
 	return ret;
 }
 
+/**
+ * zak_form_element_format:
+ * @element:
+ * @value:
+ *
+ */
 gchar
 *zak_form_element_format (ZakFormElement *element, const gchar *value)
 {
@@ -484,6 +492,109 @@ gchar
 	else
 		{
 			ret = g_strdup (value);
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_element_unformat:
+ * @element:
+ * @value:
+ *
+ */
+gchar
+*zak_form_element_unformat (ZakFormElement *element, const gchar *value)
+{
+	gchar *ret;
+
+	gchar *_value;
+	gchar *type;
+	GHashTable *format;
+
+	gchar *thousands_saparator;
+	gchar *currency_symbol;
+	gdouble unformatted;
+
+	GDateTime *gdt;
+	gchar *datetime_format;
+
+	if (value == NULL)
+		{
+			_value = zak_form_element_get_value (element);
+		}
+	else
+		{
+			_value = g_strdup (value);
+		}
+	type = zak_form_element_get_provider_type (element);
+	format = zak_form_element_get_format (element);
+
+	if (g_ascii_strcasecmp (type, "integer") == 0)
+		{
+			thousands_saparator = (gchar *)g_hash_table_lookup (format, "thousands_separator");
+			currency_symbol = (gchar *)g_hash_table_lookup (format, "currency_symbol");
+
+			unformatted = zak_utils_unformat_money_full (_value, thousands_saparator, currency_symbol);
+
+			ret = zak_utils_format_money_full (unformatted, 0, "", NULL);
+		}
+	else if (g_ascii_strcasecmp (type, "float") == 0)
+		{
+			thousands_saparator = (gchar *)g_hash_table_lookup (format, "thousands_separator");
+			currency_symbol = (gchar *)g_hash_table_lookup (format, "currency_symbol");
+
+			unformatted = zak_utils_unformat_money_full (_value, thousands_saparator, currency_symbol);
+
+			char *cur = g_strdup (setlocale (LC_NUMERIC, NULL));
+
+			setlocale (LC_NUMERIC, "C");
+
+			ret = g_strdup_printf ("%f", unformatted);
+
+			setlocale (LC_NUMERIC, cur);
+
+			g_free (cur);
+		}
+	else if (g_ascii_strcasecmp (type, "string") == 0)
+		{
+			ret = g_strdup (_value);
+		}
+	else if (g_ascii_strcasecmp (type, "boolean") == 0)
+		{
+			ret = g_strdup (zak_utils_string_to_boolean (_value) ? "1" : "0");
+		}
+	else if (g_ascii_strcasecmp (type, "date") == 0
+			 || g_ascii_strcasecmp (type, "time") == 0
+			 || g_ascii_strcasecmp (type, "datetime") == 0)
+		{
+			datetime_format = (gchar *)g_hash_table_lookup (format, "content");
+			gdt = zak_utils_get_gdatetime_from_string (_value, datetime_format);
+
+			if (gdt == NULL)
+				{
+					ret = g_strdup ("");
+				}
+			else
+				{
+					if (g_ascii_strcasecmp (type, "date") == 0)
+						{
+							ret = zak_utils_gdatetime_format (gdt, "%F");
+						}
+					else if (g_ascii_strcasecmp (type, "time") == 0)
+						{
+							ret = zak_utils_gdatetime_format (gdt, "%T");
+						}
+					else if (g_ascii_strcasecmp (type, "datetime") == 0)
+						{
+							ret = zak_utils_gdatetime_format (gdt, "%F %T");
+						}
+				}
+
+			if (gdt != NULL)
+				{
+					g_date_time_unref (gdt);
+				}
 		}
 
 	return ret;
