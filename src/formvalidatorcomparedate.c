@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -265,6 +265,11 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 			gdt2 = zak_utils_get_gdatetime_from_string (zak_form_element_get_value (priv->v2), priv->format2);
 
 			if (gdt1 == NULL
+				&& gdt2 == NULL)
+				{
+					return TRUE;
+				}
+			else if (gdt1 == NULL
 				|| gdt2 == NULL)
 				{
 					if (priv->type == LESSER
@@ -318,6 +323,15 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 										   zak_form_element_get_long_name (priv->v2));
 					zak_form_validator_set_message (validator, msg);
 					g_free (msg);
+				}
+
+			if (gdt1 != NULL)
+				{
+					g_date_time_unref (gdt1);
+				}
+			if (gdt2 != NULL)
+				{
+					g_date_time_unref (gdt2);
 				}
 		}
 
