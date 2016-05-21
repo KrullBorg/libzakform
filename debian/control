@@ -1,0 +1,24 @@
+Source: libzakform
+Priority: optional
+Maintainer: Andrea Zagli <Andrea Zagli <azagli@libero.it>>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.8
+Section: libs
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://anonscm.debian.org/collab-maint/libzakform.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/libzakform.git
+
+Package: libzakform-dev
+Section: libdevel
+Architecture: any
+Depends: libzakform (= ${binary:Version}), ${misc:Depends}
+Description: GObject library to manage forms - development files.
+ GObject library to manage forms, based on plugins.
+ .
+ Development files.
+
+Package: libzakform
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: GObject library to manage forms.
+ GObject library to manage forms, based on plugins.

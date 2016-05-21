@@ -1,0 +1,22 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Mon, 23 May 2016 18:13:48 +0200
+Subject: DESTDIR support.
+
+---
+ src/Makefile.am | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 1947bbc..b57b6ef 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -45,7 +45,7 @@ libzakform_include_HEADERS = \
+ libzakform_includedir = $(includedir)/libzakform
+ 
+ install-exec-hook:
+-	mkdir -p "$(libdir)/$(PACKAGE)/modules"
++	mkdir -p "$(DESTDIR)$(libdir)/$(PACKAGE)/modules"
+ 
+ uninstall-hook:
+-	rm -rf "$(libdir)/$(PACKAGE)"
++	rm -rf "$(DESTDIR)$(libdir)/$(PACKAGE)"
