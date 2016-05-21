@@ -19,10 +19,12 @@
 
 
 override_dh_auto_configure:
-	./autogen.sh --prefix=$$(pwd)/debian/tmp/usr
+	NOCONFIGURE="X" ./autogen.sh
+	dh_auto_configure
 
 override_dh_auto_install:
 	$(MAKE) DESTDIR=$$(pwd)/debian/tmp prefix=/usr install
+
 
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
