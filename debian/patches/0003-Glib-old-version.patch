@@ -1,0 +1,36 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Mon, 23 May 2016 17:52:05 +0200
+Subject: Glib old version.
+
+---
+ configure.ac     | 4 ++--
+ libzakform.pc.in | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index d86c09b..3e41632 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -42,8 +42,8 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
+ AM_GLIB_GNU_GETTEXT
+ 
+ # Checks for libraries.
+-PKG_CHECK_MODULES(ZAKFORM, [glib-2.0 >= 2.36
+-                            gobject-2.0 >= 2.36
++PKG_CHECK_MODULES(ZAKFORM, [glib-2.0 >= 2.32
++                            gobject-2.0 >= 2.32
+                             gmodule-2.0 >= 2.0.0
+                             libxml-2.0 >= 2.0.0
+                             libzakutils])
+diff --git a/libzakform.pc.in b/libzakform.pc.in
+index c3ac34d..1d57757 100644
+--- a/libzakform.pc.in
++++ b/libzakform.pc.in
+@@ -7,6 +7,6 @@ modulesdir=@libdir@/@PACKAGE@/modules
+ Name: @PACKAGE_NAME@
+ Description: Class for form.
+ Version: @PACKAGE_VERSION@
+-Requires: glib-2.0 >= 2.36 gobject-2.0 gmodule-2.0 libxml-2.0 libzakutils
++Requires: glib-2.0 >= 2.32 gobject-2.0 gmodule-2.0 libxml-2.0 libzakutils
+ Libs: -L${libdir} -lzakform
+ Cflags: -I${includedir}
