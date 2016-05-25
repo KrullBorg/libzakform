@@ -1,3 +1,5 @@
 0001-DESTDIR-support.patch
 0002-aclocal-old-version.patch
 0003-Glib-old-version.patch
+0004-Glib-old-version-gobject-macro.patch
+0005-Glib-old-version-private.patch

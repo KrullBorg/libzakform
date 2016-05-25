@@ -1,0 +1,404 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Fri, 27 May 2016 10:13:19 +0200
+Subject: Glib old version - gobject macro.
+
+---
+ src/form.h                         | 17 ++++++++++++++---
+ src/formelement.h                  | 16 ++++++++++++++--
+ src/formelementfilter.h            | 16 ++++++++++++++--
+ src/formelementfilterluc.h         | 21 +++++++++++++++++++--
+ src/formelementfiltertrim.h        | 22 ++++++++++++++++++++--
+ src/formelementvalidator.h         | 16 ++++++++++++++--
+ src/formelementvalidatordate.h     | 21 +++++++++++++++++++--
+ src/formelementvalidatornotempty.h | 21 +++++++++++++++++++--
+ src/formelementvalidatorregex.h    | 21 +++++++++++++++++++--
+ src/formiprovider.h                | 11 +++++++++--
+ src/formvalidator.h                | 16 ++++++++++++++--
+ src/formvalidatorcompare.h         | 22 ++++++++++++++++++++--
+ src/formvalidatorcomparedate.h     | 21 +++++++++++++++++++--
+ 13 files changed, 214 insertions(+), 27 deletions(-)
+
+diff --git a/src/form.h b/src/form.h
+index e97ca2a..5e02300 100644
+--- a/src/form.h
++++ b/src/form.h
+@@ -31,9 +31,20 @@
+ 
+ G_BEGIN_DECLS
+ 
+-
+-#define ZAK_FORM_TYPE_FORM zak_form_form_get_type ()
+-G_DECLARE_DERIVABLE_TYPE (ZakFormForm, zak_form_form, ZAK_FORM, FORM, GObject)
++#define ZAK_FORM_TYPE_FORM                 (zak_form_form_get_type ())
++#define ZAK_FORM_FORM(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_FORM, ZakFormForm))
++#define ZAK_FORM_FORM_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_FORM, ZakFormFormClass))
++#define ZAK_FORM_IS_FORM(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_FORM))
++#define ZAK_FORM_IS_FORM_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_FORM))
++#define ZAK_FORM_FORM_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_FORM, ZakFormFormClass))
++
++typedef struct _ZakFormForm ZakFormForm;
++typedef struct _ZakFormFormClass ZakFormFormClass;
++
++struct _ZakFormForm
++	{
++		GObject parent;
++	};
+ 
+ struct _ZakFormFormClass
+ {
+diff --git a/src/formelement.h b/src/formelement.h
+index a3489d4..87b6d2d 100644
+--- a/src/formelement.h
++++ b/src/formelement.h
+@@ -31,8 +31,20 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_ELEMENT zak_form_element_get_type ()
+-G_DECLARE_DERIVABLE_TYPE (ZakFormElement, zak_form_element, ZAK_FORM, ELEMENT, GObject)
++#define ZAK_FORM_TYPE_ELEMENT                 (zak_form_element_get_type ())
++#define ZAK_FORM_ELEMENT(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT, ZakFormElement))
++#define ZAK_FORM_ELEMENT_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT, ZakFormElementClass))
++#define ZAK_FORM_IS_ELEMENT(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT))
++#define ZAK_FORM_IS_ELEMENT_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT))
++#define ZAK_FORM_ELEMENT_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT, ZakFormElementClass))
++
++typedef struct _ZakFormElement ZakFormElement;
++typedef struct _ZakFormElementClass ZakFormElementClass;
++
++struct _ZakFormElement
++	{
++		GObject parent;
++	};
+ 
+ struct _ZakFormElementClass
+ 	{
+diff --git a/src/formelementfilter.h b/src/formelementfilter.h
+index cc92929..81ac6e1 100644
+--- a/src/formelementfilter.h
++++ b/src/formelementfilter.h
+@@ -25,8 +25,20 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_ELEMENT_FILTER zak_form_element_filter_get_type ()
+-G_DECLARE_DERIVABLE_TYPE (ZakFormElementFilter, zak_form_element_filter, ZAK_FORM, ELEMENT_FILTER, GObject)
++#define ZAK_FORM_TYPE_ELEMENT_FILTER                 (zak_form_element_filter_get_type ())
++#define ZAK_FORM_ELEMENT_FILTER(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER, ZakFormElementFilter))
++#define ZAK_FORM_ELEMENT_FILTER_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_FILTER, ZakFormElementFilterClass))
++#define ZAK_FORM_IS_ELEMENT_FILTER(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER))
++#define ZAK_FORM_IS_ELEMENT_FILTER_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_FILTER))
++#define ZAK_FORM_ELEMENT_FILTER_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER, ZakFormElementFilterClass))
++
++typedef struct _ZakFormElementFilter ZakFormElementFilter;
++typedef struct _ZakFormElementFilterClass ZakFormElementFilterClass;
++
++struct _ZakFormElementFilter
++	{
++		GObject parent;
++	};
+ 
+ struct _ZakFormElementFilterClass
+ {
+diff --git a/src/formelementfilterluc.h b/src/formelementfilterluc.h
+index eb00250..4c91a79 100644
+--- a/src/formelementfilterluc.h
++++ b/src/formelementfilterluc.h
+@@ -30,8 +30,25 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_ELEMENT_FILTER_LUC zak_form_element_filter_luc_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormElementFilterLuc, zak_form_element_filter_luc, ZAK_FORM, ELEMENT_FILTER_LUC, ZakFormElementFilter)
++#define ZAK_FORM_TYPE_ELEMENT_FILTER_LUC                 (zak_form_element_filter_luc_get_type ())
++#define ZAK_FORM_ELEMENT_FILTER_LUC(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER_LUC, ZakFormElementFilterLuc))
++#define ZAK_FORM_ELEMENT_FILTER_LUC_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_FILTER_LUC, ZakFormElementFilterLucClass))
++#define ZAK_FORM_IS_ELEMENT_FILTER_LUC(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER_LUC))
++#define ZAK_FORM_IS_ELEMENT_FILTER_LUC_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_FILTER_LUC))
++#define ZAK_FORM_ELEMENT_FILTER_LUC_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER_LUC, ZakFormElementFilterLucClass))
++
++typedef struct _ZakFormElementFilterLuc ZakFormElementFilterLuc;
++typedef struct _ZakFormElementFilterLucClass ZakFormElementFilterLucClass;
++
++struct _ZakFormElementFilterLuc
++	{
++		ZakFormElementFilter parent;
++	};
++
++struct _ZakFormElementFilterLucClass
++{
++	ZakFormElementFilterClass parent_cleass;
++};
+ 
+ ZakFormElementFilterLuc *zak_form_element_filter_luc_new (void);
+ gboolean zak_form_element_filter_luc_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
+diff --git a/src/formelementfiltertrim.h b/src/formelementfiltertrim.h
+index d74e0bf..0cb37e8 100644
+--- a/src/formelementfiltertrim.h
++++ b/src/formelementfiltertrim.h
+@@ -30,8 +30,26 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM zak_form_element_filter_trim_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormElementFilterTrim, zak_form_element_filter_trim, ZAK_FORM, ELEMENT_FILTER_TRIM, ZakFormElementFilter)
++#define ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM                 (zak_form_element_filter_trim_get_type ())
++#define ZAK_FORM_ELEMENT_FILTER_TRIM(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM, ZakFormElementFilterTrim))
++#define ZAK_FORM_ELEMENT_FILTER_TRIM_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM, ZakFormElementFilterTrimClass))
++#define ZAK_FORM_IS_ELEMENT_FILTER_TRIM(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM))
++#define ZAK_FORM_IS_ELEMENT_FILTER_TRIM_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM))
++#define ZAK_FORM_ELEMENT_FILTER_TRIM_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER_TRIM, ZakFormElementFilterTrimClass))
++
++typedef struct _ZakFormElementFilterTrim ZakFormElementFilterTrim;
++typedef struct _ZakFormElementFilterTrimClass ZakFormElementFilterTrimClass;
++
++struct _ZakFormElementFilterTrim
++	{
++		ZakFormElementFilter parent;
++	};
++
++struct _ZakFormElementFilterTrimClass
++{
++	ZakFormElementFilterClass parent_cleass;
++};
++
+ 
+ ZakFormElementFilterTrim *zak_form_element_filter_trim_new (void);
+ gboolean zak_form_element_filter_trim_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
+diff --git a/src/formelementvalidator.h b/src/formelementvalidator.h
+index 06ab451..b27662a 100644
+--- a/src/formelementvalidator.h
++++ b/src/formelementvalidator.h
+@@ -25,8 +25,20 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_ELEMENT_VALIDATOR zak_form_element_validator_get_type ()
+-G_DECLARE_DERIVABLE_TYPE (ZakFormElementValidator, zak_form_element_validator, ZAK_FORM, ELEMENT_VALIDATOR, GObject)
++#define ZAK_FORM_TYPE_ELEMENT_VALIDATOR                 (zak_form_element_validator_get_type ())
++#define ZAK_FORM_ELEMENT_VALIDATOR(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR, ZakFormElementValidator)
++#define ZAK_FORM_ELEMENT_VALIDATOR_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR, ZakFormElementValidatorClass))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR))
++#define ZAK_FORM_ELEMENT_VALIDATOR_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR, ZakFormElementValidatorClass))
++
++typedef struct _ZakFormElementValidator ZakFormElementValidator;
++typedef struct _ZakFormElementValidatorClass ZakFormElementValidatorClass;
++
++struct _ZakFormElementValidator
++	{
++		GObject parent;
++	};
+ 
+ struct _ZakFormElementValidatorClass
+ {
+diff --git a/src/formelementvalidatordate.h b/src/formelementvalidatordate.h
+index accea52..be0ae89 100644
+--- a/src/formelementvalidatordate.h
++++ b/src/formelementvalidatordate.h
+@@ -30,8 +30,25 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_DATE zak_form_element_validator_date_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormElementValidatorDate, zak_form_element_validator_date, ZAK_FORM, ELEMENT_VALIDATOR_DATE, ZakFormElementValidator)
++#define ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE                 (zak_form_element_validator_date_get_type ())
++#define ZAK_FORM_ELEMENT_VALIDATOR_DATE(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDate)
++#define ZAK_FORM_ELEMENT_VALIDATOR_DATE_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDateClass))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR_DATE(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR_DATE_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE))
++#define ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDateClass))
++
++typedef struct _ZakFormElementValidatorDate ZakFormElementValidatorDate;
++typedef struct _ZakFormElementValidatorDateClass ZakFormElementValidatorDateClass;
++
++struct _ZakFormElementValidatorDate
++	{
++		ZakFormElementValidator parent;
++	};
++
++struct _ZakFormElementValidatorDateClass
++{
++	ZakFormElementValidatorClass parent_class;
++};
+ 
+ ZakFormElementValidatorDate *zak_form_element_validator_date_new (void);
+ 
+diff --git a/src/formelementvalidatornotempty.h b/src/formelementvalidatornotempty.h
+index b4885bf..3adcccc 100644
+--- a/src/formelementvalidatornotempty.h
++++ b/src/formelementvalidatornotempty.h
+@@ -30,8 +30,25 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY zak_form_element_validator_notempty_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM, ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidator)
++#define ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY                 (zak_form_element_validator_notempty_get_type ())
++#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotempty)
++#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyClass))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR_NOTEMPTY(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR_NOTEMPTY_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY))
++#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyClass))
++
++typedef struct _ZakFormElementValidatorNotempty ZakFormElementValidatorNotempty;
++typedef struct _ZakFormElementValidatorNotemptyClass ZakFormElementValidatorNotemptyClass;
++
++struct _ZakFormElementValidatorNotempty
++	{
++		ZakFormElementValidator parent;
++	};
++
++struct _ZakFormElementValidatorNotemptyClass
++{
++	ZakFormElementValidatorClass parent_class;
++};
+ 
+ ZakFormElementValidatorNotempty *zak_form_element_validator_notempty_new (void);
+ gboolean zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
+diff --git a/src/formelementvalidatorregex.h b/src/formelementvalidatorregex.h
+index 3ed9948..eefb814 100644
+--- a/src/formelementvalidatorregex.h
++++ b/src/formelementvalidatorregex.h
+@@ -30,8 +30,25 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_REGEX zak_form_element_validator_regex_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, ZAK_FORM, ELEMENT_VALIDATOR_REGEX, ZakFormElementValidator)
++#define ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX                 (zak_form_element_validator_regex_get_type ())
++#define ZAK_FORM_ELEMENT_VALIDATOR_REGEX(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX, ZakFormElementValidatorRegex)
++#define ZAK_FORM_ELEMENT_VALIDATOR_REGEX_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX, ZakFormElementValidatorRegexClass))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR_REGEX(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX))
++#define ZAK_FORM_IS_ELEMENT_VALIDATOR_REGEX_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX))
++#define ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX, ZakFormElementValidatorRegexClass))
++
++typedef struct _ZakFormElementValidatorRegex ZakFormElementValidatorRegex;
++typedef struct _ZakFormElementValidatorRegexClass ZakFormElementValidatorRegexClass;
++
++struct _ZakFormElementValidatorRegex
++	{
++		ZakFormElementValidator parent;
++	};
++
++struct _ZakFormElementValidatorRegexClass
++{
++	ZakFormElementValidatorClass parent_class;
++};
+ 
+ ZakFormElementValidatorRegex *zak_form_element_validator_regex_new (void);
+ gboolean zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
+diff --git a/src/formiprovider.h b/src/formiprovider.h
+index cabb51e..be970ae 100644
+--- a/src/formiprovider.h
++++ b/src/formiprovider.h
+@@ -25,8 +25,15 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_IPROVIDER zak_form_iprovider_get_type ()
+-G_DECLARE_INTERFACE (ZakFormIProvider, zak_form_iprovider, ZAK_FORM, IPROVIDER, GObject)
++#define ZAK_FORM_TYPE_IPROVIDER             (zak_form_iprovider_get_type ())
++#define ZAK_FORM_IPROVIDER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), FORM_TYPE_IPROVIDER, ZakFormIprovider))
++#define ZAK_FORM_IPROVIDER_IFACE(obj)       (G_TYPE_CHECK_CLASS_CAST ((obj), ZAK_FORM_TYPE_IPROVIDER, ZakFormIproviderInterface))
++#define ZAK_FORM_IS_IPROVIDER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_IPROVIDER))
++#define ZAK_FORM_IPROVIDER_GET_IFACE(obj)   (G_TYPE_INSTANCE_GET_INTERFACE ((obj), ZAK_FORM_TYPE_IPROVIDER, ZakFormIproviderInterface))
++
++
++typedef struct _ZakFormIProvider ZakFormIProvider;
++typedef struct _ZakFormIProviderInterface  ZakFormIProviderInterface;
+ 
+ struct _ZakFormIProviderInterface
+ {
+diff --git a/src/formvalidator.h b/src/formvalidator.h
+index c80677b..5c5cd9b 100644
+--- a/src/formvalidator.h
++++ b/src/formvalidator.h
+@@ -25,8 +25,20 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_VALIDATOR zak_form_validator_get_type ()
+-G_DECLARE_DERIVABLE_TYPE (ZakFormValidator, zak_form_validator, ZAK_FORM, VALIDATOR, GObject)
++#define ZAK_FORM_TYPE_VALIDATOR                 (zak_form_validator_get_type ())
++#define ZAK_FORM_VALIDATOR(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_VALIDATOR, ZakFormValidator)
++#define ZAK_FORM_VALIDATOR_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_VALIDATOR, ZakFormValidatorClass))
++#define ZAK_FORM_IS_VALIDATOR(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_VALIDATOR))
++#define ZAK_FORM_IS_VALIDATOR_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_VALIDATOR))
++#define ZAK_FORM_VALIDATOR_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_VALIDATOR, ZakFormValidatorClass))
++
++typedef struct _ZakFormValidator ZakFormValidator;
++typedef struct _ZakFormValidatorClass ZakFormValidatorClass;
++
++struct _ZakFormValidator
++	{
++		GObject parent;
++	};
+ 
+ struct _ZakFormValidatorClass
+ {
+diff --git a/src/formvalidatorcompare.h b/src/formvalidatorcompare.h
+index 02139d0..d4ab5ac 100644
+--- a/src/formvalidatorcompare.h
++++ b/src/formvalidatorcompare.h
+@@ -30,8 +30,26 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_VALIDATOR_COMPARE zak_form_validator_compare_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormValidatorCompare, zak_form_validator_compare, ZAK_FORM, VALIDATOR_COMPARE, ZakFormValidator)
++#define ZAK_FORM_TYPE_VALIDATOR_COMPARE                 (zak_form_validator_compare_get_type ())
++#define ZAK_FORM_VALIDATOR_COMPARE(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE, ZakFormValidatorCompare)
++#define ZAK_FORM_VALIDATOR_COMPARE_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_VALIDATOR_COMPARE, ZakFormValidatorCompareClass))
++#define ZAK_FORM_IS_VALIDATOR_COMPARE(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE))
++#define ZAK_FORM_IS_VALIDATOR_COMPARE_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_VALIDATOR_COMPARE))
++#define ZAK_FORM_VALIDATOR_COMPARE_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE, ZakFormValidatorCompareClass))
++
++typedef struct _ZakFormValidatorCompare ZakFormValidatorCompare;
++typedef struct _ZakFormValidatorCompareClass ZakFormValidatorCompareClass;
++
++struct _ZakFormValidatorCompare
++	{
++		ZakFormValidator parent;
++	};
++
++struct _ZakFormValidatorCompareClass
++{
++	ZakFormValidatorClass parent_class;
++};
++
+ 
+ ZakFormValidatorCompare *zak_form_validator_compare_new (void);
+ gboolean zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
+diff --git a/src/formvalidatorcomparedate.h b/src/formvalidatorcomparedate.h
+index c8940ca..ec11584 100644
+--- a/src/formvalidatorcomparedate.h
++++ b/src/formvalidatorcomparedate.h
+@@ -30,8 +30,25 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE zak_form_validator_compare_date_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormValidatorCompareDate, zak_form_validator_compare_date, ZAK_FORM, VALIDATOR_COMPARE_DATE, ZakFormValidator)
++#define ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE                 (zak_form_validator_compare_date_get_type ())
++#define ZAK_FORM_VALIDATOR_COMPARE_DATE(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE, ZakFormValidatorCompareDate)
++#define ZAK_FORM_VALIDATOR_COMPARE_DATE_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE, ZakFormValidatorCompareDateClass))
++#define ZAK_FORM_IS_VALIDATOR_COMPARE_DATE(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE))
++#define ZAK_FORM_IS_VALIDATOR_COMPARE_DATE_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE))
++#define ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE, ZakFormValidatorCompareDateClass))
++
++typedef struct _ZakFormValidatorCompareDate ZakFormValidatorCompareDate;
++typedef struct _ZakFormValidatorCompareDateClass ZakFormValidatorCompareDateClass;
++
++struct _ZakFormValidatorCompareDate
++	{
++		ZakFormValidator parent;
++	};
++
++struct _ZakFormValidatorCompareDateClass
++{
++	ZakFormValidatorClass parent_class;
++};
+ 
+ ZakFormValidatorCompareDate *zak_form_validator_compare_date_new (void);
+ gboolean zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
