@@ -1,0 +1,108 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Sat, 28 May 2016 10:33:17 +0200
+Subject: Some new functions not replaced.
+
+---
+ src/form.c                 |  2 +-
+ src/formelement.c          |  2 +-
+ src/formelementfilter.c    | 12 +++++++-----
+ src/formelementvalidator.c |  2 +-
+ 4 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/src/form.c b/src/form.c
+index bdb23a3..06240bc 100644
+--- a/src/form.c
++++ b/src/form.c
+@@ -116,7 +116,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
+ {
+ 	gchar *localedir;
+ 
+-	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zak_form_form);
++	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zak_form_form);
+ 
+ 	priv->ar_modules = NULL;
+ 	priv->ar_elements = g_ptr_array_new ();
+diff --git a/src/formelement.c b/src/formelement.c
+index f2fa40b..838302b 100644
+--- a/src/formelement.c
++++ b/src/formelement.c
+@@ -190,7 +190,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
+ static void
+ zak_form_element_init (ZakFormElement *zak_form_element)
+ {
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (zak_form_element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (zak_form_element);
+ 
+ 	priv->name = g_strdup ("");
+ 	priv->long_name = NULL;
+diff --git a/src/formelementfilter.c b/src/formelementfilter.c
+index ba30a32..6ff1a57 100644
+--- a/src/formelementfilter.c
++++ b/src/formelementfilter.c
+@@ -37,6 +37,8 @@ static void zak_form_element_filter_get_property (GObject *object,
+ static void zak_form_element_filter_dispose (GObject *gobject);
+ static void zak_form_element_filter_finalize (GObject *gobject);
+ 
++#define ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_FILTER, ZakFormElementFilterPrivate))
++
+ typedef struct
+ 	{
+ 	    gpointer nothing;
+@@ -58,7 +60,7 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
+ static void
+ zak_form_element_filter_init (ZakFormElementFilter *zak_form_element_filter)
+ {
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (zak_form_element_filter);
+ }
+ 
+ gchar
+@@ -87,7 +89,7 @@ zak_form_element_filter_set_property (GObject *object,
+                    GParamSpec *pspec)
+ {
+ 	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)object;
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (zak_form_element_filter);
+ 
+ 	switch (property_id)
+ 		{
+@@ -104,7 +106,7 @@ zak_form_element_filter_get_property (GObject *object,
+                    GParamSpec *pspec)
+ {
+ 	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)object;
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (zak_form_element_filter);
+ 
+ 	switch (property_id)
+ 		{
+@@ -118,7 +120,7 @@ static void
+ zak_form_element_filter_dispose (GObject *gobject)
+ {
+ 	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)gobject;
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (zak_form_element_filter);
+ 
+ 
+ 
+@@ -130,7 +132,7 @@ static void
+ zak_form_element_filter_finalize (GObject *gobject)
+ {
+ 	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)gobject;
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (zak_form_element_filter);
+ 
+ 
+ 
+diff --git a/src/formelementvalidator.c b/src/formelementvalidator.c
+index 715f2a7..5291b98 100644
+--- a/src/formelementvalidator.c
++++ b/src/formelementvalidator.c
+@@ -77,7 +77,7 @@ zak_form_element_validator_class_init (ZakFormElementValidatorClass *class)
+ static void
+ zak_form_element_validator_init (ZakFormElementValidator *zak_form_element_validator)
+ {
+-	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (zak_form_element_validator);
++	ZakFormElementValidatorPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_GET_PRIVATE (zak_form_element_validator);
+ }
+ 
+ gboolean
