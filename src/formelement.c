@@ -480,7 +480,18 @@ gchar
 				}
 			else
 				{
-					gdt = zak_utils_get_gdatetime_from_string (value, NULL);
+					if (g_ascii_strcasecmp (type, "date") == 0)
+						{
+							gdt = zak_utils_get_gdatetime_from_string (value, "%Y-%m-%d");
+						}
+					else if (g_ascii_strcasecmp (type, "time") == 0)
+						{
+							gdt = zak_utils_get_gdatetime_from_string (value, "%H:%M:%S");
+						}
+					else /* if (g_ascii_strcasecmp (type, "datetime") == 0) */
+						{
+							gdt = zak_utils_get_gdatetime_from_string (value, NULL);
+						}
 				}
 			ret = zak_utils_gdatetime_format (gdt, datetime_format);
 
