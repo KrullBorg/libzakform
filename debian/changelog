@@ -1,9 +1,14 @@
-libzakform (0.0.1-3~1.gbp266425) UNRELEASED; urgency=medium
+libzakform (0.0.1-3~2.gbp1b8b64) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @266425ed5ece446e2c71032a0fe8dec5799a8643 **
+  ** SNAPSHOT build @1b8b64d80377c2532dc7fe4baa1a9ef4cacd04b8 **
 
   [ Andrea Zagli ]
   * Initial release
   * Missing libzakutils dependency in pkgconfig.
+  * Debian package snapshot 0.0.1-2~1.gbp266425.
+  * Correct modulesdir in debian package.
+  * Specified date/time format in ::format.
+
+  [ tux ]
 
  -- Andrea Zagli <azagli@libero.it>  Sat, 21 May 2016 15:55:12 +0200
