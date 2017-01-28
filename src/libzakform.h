@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,8 @@
 #include <libzakform/formiprovider.h>
 
 #include <libzakform/formvalidator.h>
+#include <libzakform/formvalidatorcompare.h>
+#include <libzakform/formvalidatorcomparedate.h>
 
 
 #endif /* __LIBZAKFORM_H__ */

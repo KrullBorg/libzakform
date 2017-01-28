@@ -54,6 +54,8 @@ GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
 GPtrArray *zak_form_form_get_elements_by_type (ZakFormForm *zakform, GType type);
 
 gboolean zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator);
+GPtrArray *zak_form_form_get_validators (ZakFormForm *zakform);
+GPtrArray *zak_form_form_get_validators_by_type (ZakFormForm *zakform, GType type);
 
 void zak_form_form_clear (ZakFormForm *zakform);
 

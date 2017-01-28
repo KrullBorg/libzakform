@@ -574,6 +574,50 @@ zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator)
 }
 
 /**
+ * zak_form_form_get_validators:
+ * @zakform:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormValidator's in the form.
+ */
+GPtrArray
+*zak_form_form_get_validators (ZakFormForm *zakform)
+{
+	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
+
+	return priv->ar_validators;
+}
+
+/**
+ * zak_form_form_get_validators_by_type:
+ * @zakform:
+ * @type:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormValidator's in the form filtered by @type.
+ */
+GPtrArray
+*zak_form_form_get_validators_by_type (ZakFormForm *zakform, GType type)
+{
+	GPtrArray *ar;
+	ZakFormValidator *validator;
+
+	guint i;
+
+	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
+
+	ar = g_ptr_array_new ();
+	for (i = 0; i < priv->ar_validators->len; i++)
+		{
+			validator = (ZakFormValidator *)g_ptr_array_index (priv->ar_validators, i);
+			if (G_OBJECT_TYPE (validator) == type)
+				{
+					g_ptr_array_add (ar, validator);
+				}
+		}
+
+	return ar;
+}
+
+/**
  * zak_form_form_clear:
  * @zakform: a #ZakFormForm object.
  *
