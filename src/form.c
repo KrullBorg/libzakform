@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,7 +58,6 @@ static void zak_form_form_dispose (GObject *gobject);
 static void zak_form_form_finalize (GObject *gobject);
 
 static void zak_form_form_load_modules (ZakFormForm *zakform);
-static GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
 
 typedef struct
 	{
@@ -509,6 +508,50 @@ ZakFormElement
 }
 
 /**
+ * zak_form_form_get_elements:
+ * @zakform:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormElement's in the form.
+ */
+GPtrArray
+*zak_form_form_get_elements (ZakFormForm *zakform)
+{
+	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
+
+	return priv->ar_elements;
+}
+
+/**
+ * zak_form_form_get_elements_by_type:
+ * @zakform:
+ * @type:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormElement's in the form filtered by @type.
+ */
+GPtrArray
+*zak_form_form_get_elements_by_type (ZakFormForm *zakform, GType type)
+{
+	GPtrArray *ar;
+	ZakFormElement *element;
+
+	guint i;
+
+	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
+
+	ar = g_ptr_array_new ();
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+			if (G_OBJECT_TYPE (element) == type)
+				{
+					g_ptr_array_add (ar, element);
+				}
+		}
+
+	return ar;
+}
+
+/**
  * zak_form_form_add_validator:
  * @zakform:
  * @validator:
@@ -912,12 +955,4 @@ zak_form_form_load_modules (ZakFormForm* zakform)
 		{
 			g_warning (_("Modules not supported by this operating system."));
 		}
-}
-
-static GPtrArray
-*zak_form_form_get_elements (ZakFormForm *zakform)
-{
-	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
-
-	return priv->ar_elements;
 }

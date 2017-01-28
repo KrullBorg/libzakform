@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,8 @@ gboolean zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filena
 
 gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element);
 ZakFormElement *zak_form_form_get_element_by_id (ZakFormForm *zakform, const gchar *id);
+GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
+GPtrArray *zak_form_form_get_elements_by_type (ZakFormForm *zakform, GType type);
 
 gboolean zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator);
 
