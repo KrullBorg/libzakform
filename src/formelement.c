@@ -261,7 +261,7 @@ zak_form_element_filter (ZakFormElement *element)
  * zak_form_element_get_filters:
  * @zakform:
  *
- * Returns: a #GPtrArray with the list of ZakFormElement's in the form.
+ * Returns: a #GPtrArray with the list of ZakFormElementFilter's in the form element.
  */
 GPtrArray
 *zak_form_element_get_filters (ZakFormElement *element)
@@ -1114,6 +1114,50 @@ GPtrArray
 	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
 
 	return priv->pa_messages;
+}
+
+/**
+ * zak_form_element_get_validators:
+ * @zakform:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormElementValidator's in the form element.
+ */
+GPtrArray
+*zak_form_element_get_validators(ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	return priv->pa_validators;
+}
+
+/**
+ * zak_form_element_get_validators_by_type:
+ * @element:
+ * @type:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormElementValidator's in the form element filtered by @type.
+ */
+GPtrArray
+*zak_form_element_get_validators_by_type (ZakFormElement *element, GType type)
+{
+	GPtrArray *ar;
+	ZakFormElementFilter *filter;
+
+	guint i;
+
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	ar = g_ptr_array_new ();
+	for (i = 0; i < priv->pa_validators->len; i++)
+		{
+			filter = (ZakFormElementFilter *)g_ptr_array_index (priv->pa_validators, i);
+			if (G_OBJECT_TYPE (filter) == type)
+				{
+					g_ptr_array_add (ar, filter);
+				}
+		}
+
+	return ar;
 }
 
 /* PRIVATE */

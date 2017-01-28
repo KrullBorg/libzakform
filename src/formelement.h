@@ -103,6 +103,10 @@ void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementVali
 gboolean zak_form_element_is_valid (ZakFormElement *element);
 GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 
+GPtrArray *zak_form_element_get_validators (ZakFormElement *element);
+GPtrArray *zak_form_element_get_validators_by_type (ZakFormElement *element, GType type);
+
+
 G_END_DECLS
 
 

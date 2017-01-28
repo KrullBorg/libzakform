@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,7 +49,7 @@ struct _ZakFormElementValidatorDate
 	/* Other members, including private data. */
 };
 
-#define ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDatePrivate))
+#define ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDatePrivate))
 
 typedef struct _ZakFormElementValidatorDatePrivate ZakFormElementValidatorDatePrivate;
 struct _ZakFormElementValidatorDatePrivate

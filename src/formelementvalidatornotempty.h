@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@
 G_BEGIN_DECLS
 
 
-#define ZAK_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY zak_form_element_validator_notempty_get_type ()
+#define ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY zak_form_element_validator_notempty_get_type ()
 G_DECLARE_FINAL_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM, ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidator)
 
 ZakFormElementValidatorNotempty *zak_form_element_validator_notempty_new (void);
