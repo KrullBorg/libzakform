@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -255,6 +255,50 @@ zak_form_element_filter (ZakFormElement *element)
 												  value);
 			zak_form_element_set_value (element, val);
 		}
+}
+
+/**
+ * zak_form_element_get_filters:
+ * @zakform:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormElement's in the form.
+ */
+GPtrArray
+*zak_form_element_get_filters (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	return priv->pa_filters;
+}
+
+/**
+ * zak_form_element_get_filters_by_type:
+ * @element:
+ * @type:
+ *
+ * Returns: a #GPtrArray with the list of ZakFormElementFilter's in the form element filtered by @type.
+ */
+GPtrArray
+*zak_form_element_get_filters_by_type (ZakFormElement *element, GType type)
+{
+	GPtrArray *ar;
+	ZakFormElementFilter *filter;
+
+	guint i;
+
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	ar = g_ptr_array_new ();
+	for (i = 0; i < priv->pa_filters->len; i++)
+		{
+			filter = (ZakFormElementFilter *)g_ptr_array_index (priv->pa_filters, i);
+			if (G_OBJECT_TYPE (filter) == type)
+				{
+					g_ptr_array_add (ar, filter);
+				}
+		}
+
+	return ar;
 }
 
 /**
