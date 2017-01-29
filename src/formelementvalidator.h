@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,6 +40,9 @@ gboolean zak_form_element_validator_validate (ZakFormElementValidator *self, con
 void zak_form_element_validator_set_message (ZakFormElementValidator *validator,
 											 const gchar *message);
 gchar *zak_form_element_validator_get_message (ZakFormElementValidator *validator);
+
+gboolean zak_form_element_validator_get_enabled (ZakFormElementValidator *validator);
+void zak_form_element_validator_set_enabled (ZakFormElementValidator *validator, gboolean enabled);
 
 
 G_END_DECLS

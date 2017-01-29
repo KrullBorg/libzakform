@@ -199,8 +199,8 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->to_load = TRUE;
 	priv->to_save = TRUE;
 
-	priv->pa_filters = NULL;
-	priv->pa_validators = NULL;
+	priv->pa_filters = g_ptr_array_new ();
+	priv->pa_validators = g_ptr_array_new ();
 	priv->pa_messages = NULL;
 }
 
@@ -216,11 +216,6 @@ zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filt
 	ZakFormElementPrivate *priv;
 
 	priv = zak_form_element_get_instance_private (element);
-
-	if (priv->pa_filters == NULL)
-		{
-			priv->pa_filters = g_ptr_array_new ();
-		}
 
 	g_ptr_array_add (priv->pa_filters, filter);
 }
@@ -238,11 +233,6 @@ zak_form_element_filter (ZakFormElement *element)
 	ZakFormElementPrivate *priv;
 
 	priv = zak_form_element_get_instance_private (element);
-
-	if (priv->pa_filters == NULL)
-		{
-			return;
-		}
 
 	for (i = 0; i < priv->pa_filters->len; i++)
 		{
@@ -1045,11 +1035,6 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
 
 	priv = zak_form_element_get_instance_private (element);
 
-	if (priv->pa_validators == NULL)
-		{
-			priv->pa_validators = g_ptr_array_new ();
-		}
-
 	g_ptr_array_add (priv->pa_validators, validator);
 }
 
@@ -1080,23 +1065,20 @@ zak_form_element_is_valid (ZakFormElement *element)
 			priv->pa_messages = NULL;
 		}
 
-	if (priv->pa_validators != NULL)
+	value = zak_form_element_get_value (element);
+
+	for (i = 0; i < priv->pa_validators->len; i++)
 		{
-			value = zak_form_element_get_value (element);
-
-			for (i = 0; i < priv->pa_validators->len; i++)
+			ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
+			if (!zak_form_element_validator_validate (validator, value))
 				{
-					ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
-					if (!zak_form_element_validator_validate (validator, value))
+					if (priv->pa_messages == NULL)
 						{
-							if (priv->pa_messages == NULL)
-								{
-									priv->pa_messages = g_ptr_array_new ();
-								}
-							g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
-
-							ret = FALSE;
+							priv->pa_messages = g_ptr_array_new ();
 						}
+					g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
+
+					ret = FALSE;
 				}
 		}
 
