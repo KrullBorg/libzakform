@@ -34,7 +34,11 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ZakFormElementValidatorNotempty, zak_form_element_validator_notempty, ZAK_FORM, ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidator)
 
 ZakFormElementValidatorNotempty *zak_form_element_validator_notempty_new (void);
+
 gboolean zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
+
+void zak_form_element_validator_notempty_set_as_empty_string (ZakFormElementValidatorNotempty *validator, const gchar *as_empty_string);
+gchar *zak_form_element_validator_notempty_get_as_empty_string (ZakFormElementValidatorNotempty *validator);
 
 
 G_END_DECLS
