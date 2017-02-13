@@ -93,6 +93,11 @@ gboolean zak_form_element_get_to_save (ZakFormElement *element);
 
 void zak_form_element_clear (ZakFormElement *element);
 
+void zak_form_element_add_extension (ZakFormElement *element, GObject *extension);
+
+GPtrArray *zak_form_element_get_extensions (ZakFormElement *element);
+GPtrArray *zak_form_element_get_extensions_by_type (ZakFormElement *element, GType type);
+
 void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filter);
 void zak_form_element_filter (ZakFormElement *element);
 

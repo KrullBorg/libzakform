@@ -79,6 +79,7 @@ typedef struct
 		gboolean to_load;
 		gboolean to_save;
 
+		GPtrArray *pa_extensions;
 		GPtrArray *pa_filters;
 		GPtrArray *pa_validators;
 		GPtrArray *pa_messages;
@@ -199,9 +200,70 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->to_load = TRUE;
 	priv->to_save = TRUE;
 
+	priv->pa_extensions = g_ptr_array_new ();
 	priv->pa_filters = g_ptr_array_new ();
 	priv->pa_validators = g_ptr_array_new ();
 	priv->pa_messages = NULL;
+}
+
+/**
+ * zak_form_element_add_extension:
+ * @element:
+ * @extension:
+ *
+ */
+void
+zak_form_element_add_extension (ZakFormElement *element, GObject *extension)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	g_ptr_array_add (priv->pa_extensions, extension);
+}
+
+/**
+ * zak_form_element_get_extensions:
+ * @zakform:
+ *
+ * Returns: a #GPtrArray with the list of extensions in the form element.
+ */
+GPtrArray
+*zak_form_element_get_extensions (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	return priv->pa_extensions;
+}
+
+/**
+ * zak_form_element_get_extensions_by_type:
+ * @element:
+ * @type:
+ *
+ * Returns: a #GPtrArray with the list of extensions in the form element filtered by @type.
+ */
+GPtrArray
+*zak_form_element_get_extensions_by_type (ZakFormElement *element, GType type)
+{
+	GPtrArray *ar;
+	GObject *extension;
+
+	guint i;
+
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	ar = g_ptr_array_new ();
+	for (i = 0; i < priv->pa_extensions->len; i++)
+		{
+			extension = (GObject *)g_ptr_array_index (priv->pa_extensions, i);
+			if (G_OBJECT_TYPE (extension) == type)
+				{
+					g_ptr_array_add (ar, extension);
+				}
+		}
+
+	return ar;
 }
 
 /**
