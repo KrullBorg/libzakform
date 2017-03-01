@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@
 enum
 	{
 		PROP_0,
+		PROP_ENABLED,
 		PROP_MESSAGE
 	};
 
@@ -47,7 +48,8 @@ static void zak_form_element_validator_finalize (GObject *gobject);
 
 typedef struct
 	{
-	    gchar *message;
+		gboolean enabled;
+		gchar *message;
 	} ZakFormElementValidatorPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormElementValidator, zak_form_element_validator, G_TYPE_OBJECT)
@@ -62,12 +64,19 @@ zak_form_element_validator_class_init (ZakFormElementValidatorClass *class)
 	object_class->dispose = zak_form_element_validator_dispose;
 	object_class->finalize = zak_form_element_validator_finalize;
 
+	g_object_class_install_property (object_class, PROP_ENABLED,
+									 g_param_spec_boolean ("enabled",
+														   "Enabled",
+														   "Enabled",
+														   TRUE,
+														   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
 	g_object_class_install_property (object_class, PROP_MESSAGE,
-	                                 g_param_spec_string ("message",
-	                                                      "Message",
-	                                                      "Message",
-	                                                      _("Invalid value"),
-	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+									 g_param_spec_string ("message",
+														  "Message",
+														  "Message",
+														  _("Invalid value"),
+														  G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -84,7 +93,8 @@ zak_form_element_validator_validate (ZakFormElementValidator *self, const gchar 
 	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_VALIDATOR (self), FALSE);
 
 	ret = TRUE;
-	if (ZAK_FORM_ELEMENT_VALIDATOR_GET_CLASS (self)->validate != NULL)
+	if (zak_form_element_validator_get_enabled (self)
+		&& ZAK_FORM_ELEMENT_VALIDATOR_GET_CLASS (self)->validate != NULL)
 		{
 			ret = ZAK_FORM_ELEMENT_VALIDATOR_GET_CLASS (self)->validate (self, value);
 		}
@@ -120,6 +130,34 @@ gchar
     return g_strdup (priv->message);
 }
 
+/**
+ * zak_form_element_validator_get_enabled:
+ * @validator:
+ *
+ * Returns: whether @validator is enabled.
+ */
+gboolean
+zak_form_element_validator_get_enabled (ZakFormElementValidator *validator)
+{
+	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
+
+	return priv->enabled;
+}
+
+/**
+ * zak_form_element_validator_set_enabled:
+ * @validator:
+ * @enabled:
+ *
+ */
+void
+zak_form_element_validator_set_enabled (ZakFormElementValidator *validator, gboolean enabled)
+{
+	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
+
+	priv->enabled = enabled;
+}
+
 /* PRIVATE */
 static void
 zak_form_element_validator_set_property (GObject *object,
@@ -132,8 +170,12 @@ zak_form_element_validator_set_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_ENABLED:
+			zak_form_element_validator_set_enabled (zak_form_element_validator, g_value_get_boolean (value));
+			break;
+
 		case PROP_MESSAGE:
-		    zak_form_element_validator_set_message (zak_form_element_validator, g_value_dup_string (value));
+			zak_form_element_validator_set_message (zak_form_element_validator, g_value_dup_string (value));
 			break;
 
 		default:
@@ -153,6 +195,10 @@ zak_form_element_validator_get_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_ENABLED:
+			g_value_set_boolean (value, zak_form_element_validator_get_enabled (zak_form_element_validator));
+			break;
+
 		case PROP_MESSAGE:
 			g_value_set_string (value, zak_form_element_validator_get_message (zak_form_element_validator));
 			break;

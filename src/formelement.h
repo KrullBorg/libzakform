@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -93,12 +93,23 @@ gboolean zak_form_element_get_to_save (ZakFormElement *element);
 
 void zak_form_element_clear (ZakFormElement *element);
 
+void zak_form_element_add_extension (ZakFormElement *element, GObject *extension);
+
+GPtrArray *zak_form_element_get_extensions (ZakFormElement *element);
+GPtrArray *zak_form_element_get_extensions_by_type (ZakFormElement *element, GType type);
+
 void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filter);
 void zak_form_element_filter (ZakFormElement *element);
+
+GPtrArray *zak_form_element_get_filters (ZakFormElement *element);
+GPtrArray *zak_form_element_get_filters_by_type (ZakFormElement *element, GType type);
 
 void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator *validator);
 gboolean zak_form_element_is_valid (ZakFormElement *element);
 GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
+
+GPtrArray *zak_form_element_get_validators (ZakFormElement *element);
+GPtrArray *zak_form_element_get_validators_by_type (ZakFormElement *element, GType type);
 
 
 G_END_DECLS

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,8 @@ void zak_form_validator_set_message (ZakFormValidator *validator,
 									 const gchar *message);
 gchar *zak_form_validator_get_message (ZakFormValidator *validator);
 
+gboolean zak_form_validator_get_enabled (ZakFormValidator *validator);
+void zak_form_validator_set_enabled (ZakFormValidator *validator, gboolean enabled);
 
 G_END_DECLS
 
