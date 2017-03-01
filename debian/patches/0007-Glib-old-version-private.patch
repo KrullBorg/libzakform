@@ -5,10 +5,10 @@ Subject: Glib old version private.
 ---
  src/form.c                 |  8 ++++----
  src/formelement.c          | 18 +++++++++---------
- src/formelementfilter.c    |  4 ++--
+ src/formelementfilter.c    |  8 +++++---
  src/formelementvalidator.c |  4 ++--
  src/formvalidator.c        |  4 ++--
- 5 files changed, 19 insertions(+), 19 deletions(-)
+ 5 files changed, 22 insertions(+), 20 deletions(-)
 
 diff --git a/src/form.c b/src/form.c
 index 8223d72..20c8403 100644
@@ -136,10 +136,28 @@ index d477a4f..9d307d9 100644
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->pa_validators->len; i++)
 diff --git a/src/formelementfilter.c b/src/formelementfilter.c
-index 6d53784..97db20d 100644
+index 6d53784..f17663e 100644
 --- a/src/formelementfilter.c
 +++ b/src/formelementfilter.c
-@@ -105,7 +105,7 @@ gchar
+@@ -50,7 +50,7 @@ typedef struct
+ 		gboolean enabled;
+ 	} ZakFormElementFilterPrivate;
+ 
+-G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormElementFilter, zak_form_element_filter, G_TYPE_OBJECT)
++G_DEFINE_ABSTRACT_TYPE (ZakFormElementFilter, zak_form_element_filter, G_TYPE_OBJECT)
+ 
+ static void
+ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
+@@ -68,6 +68,8 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
+ 														   "Enabled",
+ 														   TRUE,
+ 														   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
++
++	g_type_class_add_private (object_class, sizeof (ZakFormElementFilterPrivate));
+ }
+ 
+ static void
+@@ -105,7 +107,7 @@ gchar
  gboolean
  zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
  {
@@ -148,7 +166,7 @@ index 6d53784..97db20d 100644
  
  	return priv->enabled;
  }
-@@ -119,7 +119,7 @@ zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
+@@ -119,7 +121,7 @@ zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
  void
  zak_form_element_filter_set_enabled (ZakFormElementFilter *filter, gboolean enabled)
  {

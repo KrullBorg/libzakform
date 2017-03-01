@@ -1,6 +1,6 @@
-libzakform (0.0.1-4~2.gbp941788) UNRELEASED; urgency=medium
+libzakform (0.0.1-4~3.gbp641a82) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @941788365bbf0b3161eccb5aad8568a49a86d0f8 **
+  ** SNAPSHOT build @641a82e54dd459c25b226b6fc992b898b14b6637 **
 
   [ Andrea Zagli ]
   * Initial release
@@ -15,4 +15,9 @@ libzakform (0.0.1-4~2.gbp941788) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- Andrea Zagli <azagli@libero.it>  Sat, 21 May 2016 15:55:12 +0200
+  [ Andrea Zagli ]
+  * Debian pkg: fuzzy in patch 0005.
+
+  [ tux ]
+
+ -- tux <tux@develop64.comune.scandicci.fi.it>  Wed, 01 Mar 2017 20:36:35 +0100
