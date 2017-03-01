@@ -26,9 +26,9 @@ diff --git a/src/form.c b/src/form.c
 index a173097..bdb23a3 100644
 --- a/src/form.c
 +++ b/src/form.c
-@@ -60,6 +60,8 @@ static void zak_form_form_finalize (GObject *gobject);
+@@ -61,6 +61,8 @@ static void zak_form_form_finalize (GObject *gobject);
+
  static void zak_form_form_load_modules (ZakFormForm *zakform);
- static GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
 
 +#define ZAK_FORM_FORM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_FORM, ZakFormFormPrivate))
 +
@@ -233,15 +233,6 @@ index a173097..bdb23a3 100644
 
  			modulesdir = (gchar *)g_getenv ("LIBZAKFORM_MODULESDIR");
  			if (modulesdir == NULL)
-@@ -917,7 +921,7 @@ zak_form_form_load_modules (ZakFormForm* zakform)
- static GPtrArray
- *zak_form_form_get_elements (ZakFormForm *zakform)
- {
--	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
-+	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
-
- 	return priv->ar_elements;
- }
 diff --git a/src/formelement.c b/src/formelement.c
 index 431219a..f2fa40b 100644
 --- a/src/formelement.c
@@ -280,17 +271,8 @@ index 431219a..f2fa40b 100644
 -	priv = zak_form_element_get_instance_private (element);
 +	priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
 
- 	if (priv->pa_filters == NULL)
- 		{
-@@ -237,7 +241,7 @@ zak_form_element_filter (ZakFormElement *element)
-
- 	ZakFormElementPrivate *priv;
-
--	priv = zak_form_element_get_instance_private (element);
-+	priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
-
- 	if (priv->pa_filters == NULL)
- 		{
+ 	g_ptr_array_add (priv->pa_extensions, extension);
+ }
 @@ -268,7 +272,7 @@ zak_form_element_set_name (ZakFormElement *element, const gchar *name)
  {
  	ZakFormElementPrivate *priv;
@@ -516,15 +498,6 @@ index 431219a..f2fa40b 100644
 
  	zak_form_element_set_value (element, priv->default_value);
  }
-@@ -988,7 +992,7 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
- {
- 	ZakFormElementPrivate *priv;
-
--	priv = zak_form_element_get_instance_private (element);
-+	priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
-
- 	if (priv->pa_validators == NULL)
- 		{
 @@ -1013,7 +1017,7 @@ zak_form_element_is_valid (ZakFormElement *element)
 
  	ZakFormElementPrivate *priv;
@@ -619,7 +592,7 @@ diff --git a/src/formelementvalidator.c b/src/formelementvalidator.c
 index cf0b8e0..715f2a7 100644
 --- a/src/formelementvalidator.c
 +++ b/src/formelementvalidator.c
-@@ -45,12 +45,14 @@ static void zak_form_element_validator_get_property (GObject *object,
+@@ -45,13 +45,15 @@ static void zak_form_element_validator_get_property (GObject *object,
  static void zak_form_element_validator_dispose (GObject *gobject);
  static void zak_form_element_validator_finalize (GObject *gobject);
 
@@ -627,7 +600,8 @@ index cf0b8e0..715f2a7 100644
 +
  typedef struct
  	{
- 	    gchar *message;
+ 		gboolean enabled;
+ 		gchar *message;
  	} ZakFormElementValidatorPrivate;
 
 -G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormElementValidator, zak_form_element_validator, G_TYPE_OBJECT)
@@ -641,9 +615,9 @@ index cf0b8e0..715f2a7 100644
 
 +	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorPrivate));
 +
- 	g_object_class_install_property (object_class, PROP_MESSAGE,
- 	                                 g_param_spec_string ("message",
- 	                                                      "Message",
+ 	g_object_class_install_property (object_class, PROP_ENABLED,
+ 									 g_param_spec_boolean ("enabled",
+ 														   "Enabled",
 @@ -101,7 +105,7 @@ void
  zak_form_element_validator_set_message (ZakFormElementValidator *validator,
  										const gchar *message)
@@ -702,7 +676,7 @@ diff --git a/src/formelementvalidatordate.c b/src/formelementvalidatordate.c
 index 2546c61..a2c4cd0 100644
 --- a/src/formelementvalidatordate.c
 +++ b/src/formelementvalidatordate.c
-@@ -42,14 +42,7 @@ static void zak_form_element_validator_date_finalize (GObject *gobject);
+@@ -42,11 +42,4 @@ static void zak_form_element_validator_date_finalize (GObject *gobject);
 
  static gboolean zak_form_element_validator_date_validate (ZakFormElementValidator *validator_date, const gchar *value);
 
@@ -713,8 +687,7 @@ index 2546c61..a2c4cd0 100644
 -	/* Other members, including private data. */
 -};
 -
--#define ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDatePrivate))
-+#define ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDatePrivate))
+ #define ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_DATE, ZakFormElementValidatorDatePrivate))
 
  typedef struct _ZakFormElementValidatorDatePrivate ZakFormElementValidatorDatePrivate;
  struct _ZakFormElementValidatorDatePrivate
@@ -735,7 +708,7 @@ diff --git a/src/formelementvalidatornotempty.c b/src/formelementvalidatornotemp
 index 1de3f30..a944d07 100644
 --- a/src/formelementvalidatornotempty.c
 +++ b/src/formelementvalidatornotempty.c
-@@ -40,14 +40,7 @@ static void zak_form_element_validator_notempty_finalize (GObject *gobject);
+@@ -40,11 +40,4 @@ static void zak_form_element_validator_notempty_finalize (GObject *gobject);
 
  static gboolean zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator_notempty, const gchar *value);
 
@@ -746,8 +719,7 @@ index 1de3f30..a944d07 100644
 -	/* Other members, including private data. */
 -};
 -
--#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyPrivate))
-+#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyPrivate))
+ #define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyPrivate))
 
  typedef struct _ZakFormElementValidatorNotemptyPrivate ZakFormElementValidatorNotemptyPrivate;
  struct _ZakFormElementValidatorNotemptyPrivate
@@ -768,7 +740,7 @@ diff --git a/src/formelementvalidatorregex.c b/src/formelementvalidatorregex.c
 index cd92203..bd8a1c1 100644
 --- a/src/formelementvalidatorregex.c
 +++ b/src/formelementvalidatorregex.c
-@@ -46,14 +46,7 @@ static void zak_form_element_validator_regex_finalize (GObject *gobject);
+@@ -46,11 +46,4 @@ static void zak_form_element_validator_regex_finalize (GObject *gobject);
 
  static gboolean zak_form_element_validator_regex_validate (ZakFormElementValidator *validator_regex, const gchar *value);
 
@@ -779,8 +751,7 @@ index cd92203..bd8a1c1 100644
 -	/* Other members, including private data. */
 -};
 -
--#define ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_VALIDATOR_REGEX, ZakFormElementValidatorRegexPrivate))
-+#define ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX, ZakFormElementValidatorRegexPrivate))
+ #define ZAK_FORM_ELEMENT_VALIDATOR_REGEX_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_REGEX, ZakFormElementValidatorRegexPrivate))
 
  typedef struct _ZakFormElementValidatorRegexPrivate ZakFormElementValidatorRegexPrivate;
  struct _ZakFormElementValidatorRegexPrivate
@@ -819,7 +790,7 @@ diff --git a/src/formvalidator.c b/src/formvalidator.c
 index 56b1d7c..04c543d 100644
 --- a/src/formvalidator.c
 +++ b/src/formvalidator.c
-@@ -43,12 +43,14 @@ static void zak_form_validator_get_property (GObject *object,
+@@ -43,13 +43,15 @@ static void zak_form_validator_get_property (GObject *object,
  static void zak_form_validator_dispose (GObject *gobject);
  static void zak_form_validator_finalize (GObject *gobject);
 
@@ -827,7 +798,8 @@ index 56b1d7c..04c543d 100644
 +
  typedef struct
  	{
- 	    gchar *message;
+ 		gboolean enabled;
+ 		gchar *message;
  	} ZakFormValidatorPrivate;
 
 -G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormValidator, zak_form_validator, G_TYPE_OBJECT)
@@ -841,9 +813,9 @@ index 56b1d7c..04c543d 100644
 
 +	g_type_class_add_private (object_class, sizeof (ZakFormValidatorPrivate));
 +
- 	g_object_class_install_property (object_class, PROP_MESSAGE,
- 	                                 g_param_spec_string ("message",
- 	                                                      "Message",
+ 	g_object_class_install_property (object_class, PROP_ENABLED,
+ 									 g_param_spec_boolean ("enabled",
+ 														   "Enabled",
 @@ -71,7 +75,7 @@ zak_form_validator_class_init (ZakFormValidatorClass *class)
  static void
  zak_form_validator_init (ZakFormValidator *zak_form_validator)
