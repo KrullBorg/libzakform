@@ -228,7 +228,7 @@ diff --git a/src/formelementvalidatornotempty.h b/src/formelementvalidatornotemp
 index b4885bf..3adcccc 100644
 --- a/src/formelementvalidatornotempty.h
 +++ b/src/formelementvalidatornotempty.h
-@@ -30,7 +30,24 @@
+@@ -30,8 +30,25 @@
  G_BEGIN_DECLS
 
 
@@ -260,7 +260,7 @@ diff --git a/src/formelementvalidatorregex.h b/src/formelementvalidatorregex.h
 index 3ed9948..eefb814 100644
 --- a/src/formelementvalidatorregex.h
 +++ b/src/formelementvalidatorregex.h
-@@ -30,7 +30,24 @@
+@@ -30,8 +30,25 @@
  G_BEGIN_DECLS
 
 
@@ -287,7 +287,7 @@ index 3ed9948..eefb814 100644
 +	};
 
  ZakFormElementValidatorRegex *zak_form_element_validator_regex_new (void);
-
+ gboolean zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
 diff --git a/src/formiprovider.h b/src/formiprovider.h
 index cabb51e..be970ae 100644
 --- a/src/formiprovider.h
