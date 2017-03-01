@@ -1,0 +1,203 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Wed, 1 Mar 2017 20:01:43 +0100
+Subject: Glib old version private.
+
+---
+ src/form.c                 |  8 ++++----
+ src/formelement.c          | 18 +++++++++---------
+ src/formelementfilter.c    |  4 ++--
+ src/formelementvalidator.c |  4 ++--
+ src/formvalidator.c        |  4 ++--
+ 5 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/src/form.c b/src/form.c
+index 8223d72..20c8403 100644
+--- a/src/form.c
++++ b/src/form.c
+@@ -562,7 +562,7 @@ ZakFormElement
+ GPtrArray
+ *zak_form_form_get_elements (ZakFormForm *zakform)
+ {
+-	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
++	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
+ 
+ 	return priv->ar_elements;
+ }
+@@ -582,7 +582,7 @@ GPtrArray
+ 
+ 	guint i;
+ 
+-	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
++	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
+ 
+ 	ar = g_ptr_array_new ();
+ 	for (i = 0; i < priv->ar_elements->len; i++)
+@@ -628,7 +628,7 @@ zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator)
+ GPtrArray
+ *zak_form_form_get_validators (ZakFormForm *zakform)
+ {
+-	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
++	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
+ 
+ 	return priv->ar_validators;
+ }
+@@ -648,7 +648,7 @@ GPtrArray
+ 
+ 	guint i;
+ 
+-	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
++	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
+ 
+ 	ar = g_ptr_array_new ();
+ 	for (i = 0; i < priv->ar_validators->len; i++)
+diff --git a/src/formelement.c b/src/formelement.c
+index d477a4f..9d307d9 100644
+--- a/src/formelement.c
++++ b/src/formelement.c
+@@ -235,7 +235,7 @@ zak_form_element_add_extension (ZakFormElement *element, GObject *extension)
+ GPtrArray
+ *zak_form_element_get_extensions (ZakFormElement *element)
+ {
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	return priv->pa_extensions;
+ }
+@@ -255,7 +255,7 @@ GPtrArray
+ 
+ 	guint i;
+ 
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	ar = g_ptr_array_new ();
+ 	for (i = 0; i < priv->pa_extensions->len; i++)
+@@ -281,7 +281,7 @@ zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filt
+ {
+ 	ZakFormElementPrivate *priv;
+ 
+-	priv = zak_form_element_get_instance_private (element);
++	priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	g_ptr_array_add (priv->pa_filters, filter);
+ }
+@@ -298,7 +298,7 @@ zak_form_element_filter (ZakFormElement *element)
+ 
+ 	ZakFormElementPrivate *priv;
+ 
+-	priv = zak_form_element_get_instance_private (element);
++	priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	for (i = 0; i < priv->pa_filters->len; i++)
+ 		{
+@@ -322,7 +322,7 @@ zak_form_element_filter (ZakFormElement *element)
+ GPtrArray
+ *zak_form_element_get_filters (ZakFormElement *element)
+ {
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	return priv->pa_filters;
+ }
+@@ -342,7 +342,7 @@ GPtrArray
+ 
+ 	guint i;
+ 
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	ar = g_ptr_array_new ();
+ 	for (i = 0; i < priv->pa_filters->len; i++)
+@@ -1099,7 +1099,7 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
+ {
+ 	ZakFormElementPrivate *priv;
+ 
+-	priv = zak_form_element_get_instance_private (element);
++	priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	g_ptr_array_add (priv->pa_validators, validator);
+ }
+@@ -1173,7 +1173,7 @@ GPtrArray
+ GPtrArray
+ *zak_form_element_get_validators(ZakFormElement *element)
+ {
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	return priv->pa_validators;
+ }
+@@ -1193,7 +1193,7 @@ GPtrArray
+ 
+ 	guint i;
+ 
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	ar = g_ptr_array_new ();
+ 	for (i = 0; i < priv->pa_validators->len; i++)
+diff --git a/src/formelementfilter.c b/src/formelementfilter.c
+index 6d53784..97db20d 100644
+--- a/src/formelementfilter.c
++++ b/src/formelementfilter.c
+@@ -105,7 +105,7 @@ gchar
+ gboolean
+ zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
+ {
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (filter);
+ 
+ 	return priv->enabled;
+ }
+@@ -119,7 +119,7 @@ zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
+ void
+ zak_form_element_filter_set_enabled (ZakFormElementFilter *filter, gboolean enabled)
+ {
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (filter);
+ 
+ 	priv->enabled = enabled;
+ }
+diff --git a/src/formelementvalidator.c b/src/formelementvalidator.c
+index 29869c8..5b37879 100644
+--- a/src/formelementvalidator.c
++++ b/src/formelementvalidator.c
+@@ -143,7 +143,7 @@ gchar
+ gboolean
+ zak_form_element_validator_get_enabled (ZakFormElementValidator *validator)
+ {
+-	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
++	ZakFormElementValidatorPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	return priv->enabled;
+ }
+@@ -157,7 +157,7 @@ zak_form_element_validator_get_enabled (ZakFormElementValidator *validator)
+ void
+ zak_form_element_validator_set_enabled (ZakFormElementValidator *validator, gboolean enabled)
+ {
+-	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
++	ZakFormElementValidatorPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	priv->enabled = enabled;
+ }
+diff --git a/src/formvalidator.c b/src/formvalidator.c
+index 6cc3f4e..7497b27 100644
+--- a/src/formvalidator.c
++++ b/src/formvalidator.c
+@@ -143,7 +143,7 @@ gchar
+ gboolean
+ zak_form_validator_get_enabled (ZakFormValidator *validator)
+ {
+-	ZakFormValidatorPrivate *priv = zak_form_validator_get_instance_private (validator);
++	ZakFormValidatorPrivate *priv = ZAK_FORM_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	return priv->enabled;
+ }
+@@ -157,7 +157,7 @@ zak_form_validator_get_enabled (ZakFormValidator *validator)
+ void
+ zak_form_validator_set_enabled (ZakFormValidator *validator, gboolean enabled)
+ {
+-	ZakFormValidatorPrivate *priv = zak_form_validator_get_instance_private (validator);
++	ZakFormValidatorPrivate *priv = ZAK_FORM_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	priv->enabled = enabled;
+ }
