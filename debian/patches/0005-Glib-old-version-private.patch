@@ -676,7 +676,7 @@ diff --git a/src/formelementvalidatordate.c b/src/formelementvalidatordate.c
 index 2546c61..a2c4cd0 100644
 --- a/src/formelementvalidatordate.c
 +++ b/src/formelementvalidatordate.c
-@@ -42,11 +42,4 @@ static void zak_form_element_validator_date_finalize (GObject *gobject);
+@@ -42,14 +42,7 @@ static void zak_form_element_validator_date_finalize (GObject *gobject);
 
  static gboolean zak_form_element_validator_date_validate (ZakFormElementValidator *validator_date, const gchar *value);
 
@@ -708,7 +708,7 @@ diff --git a/src/formelementvalidatornotempty.c b/src/formelementvalidatornotemp
 index 1de3f30..a944d07 100644
 --- a/src/formelementvalidatornotempty.c
 +++ b/src/formelementvalidatornotempty.c
-@@ -40,11 +40,4 @@ static void zak_form_element_validator_notempty_finalize (GObject *gobject);
+@@ -40,14 +40,7 @@ static void zak_form_element_validator_notempty_finalize (GObject *gobject);
 
  static gboolean zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator_notempty, const gchar *value);
 
@@ -740,7 +740,7 @@ diff --git a/src/formelementvalidatorregex.c b/src/formelementvalidatorregex.c
 index cd92203..bd8a1c1 100644
 --- a/src/formelementvalidatorregex.c
 +++ b/src/formelementvalidatorregex.c
-@@ -46,11 +46,4 @@ static void zak_form_element_validator_regex_finalize (GObject *gobject);
+@@ -46,14 +46,7 @@ static void zak_form_element_validator_regex_finalize (GObject *gobject);
 
  static gboolean zak_form_element_validator_regex_validate (ZakFormElementValidator *validator_regex, const gchar *value);
 
