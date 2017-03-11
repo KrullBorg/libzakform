@@ -2,5 +2,6 @@
 src/form.c
 src/formelement.c
 src/formelementvalidator.c
+src/formvalidator.c
 src/formvalidatorcompare.c
 src/formvalidatorcomparedate.c

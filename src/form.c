@@ -35,6 +35,8 @@
 
 typedef ZakFormElement *(* FormElementConstructorFunc) (void);
 typedef gboolean (* FormElementXmlParsingFunc) (ZakFormElement *, xmlNodePtr);
+typedef GObject *(* FormElementExtensionConstructorFunc) (void);
+typedef gboolean (* FormElementExtensionXmlParsingFunc) (GObject *, xmlNodePtr);
 typedef ZakFormElementFilter *(* FormElementFilterConstructorFunc) (void);
 typedef gboolean (* FormElementFilterXmlParsingFunc) (ZakFormElementFilter *, xmlNodePtr);
 typedef ZakFormElementValidator *(* FormElementValidatorConstructorFunc) (void);
@@ -160,9 +162,12 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 	gchar *type;
 	guint i;
 
+	GObject *extension;
 	ZakFormElementFilter *filter;
 	ZakFormElementValidator *validator;
 
+	FormElementExtensionConstructorFunc extension_constructor;
+	FormElementExtensionXmlParsingFunc extension_xml_parsing;
 	FormElementFilterConstructorFunc filter_constructor;
 	FormElementFilterXmlParsingFunc filter_xml_parsing;
 	FormElementValidatorConstructorFunc validator_constructor;
@@ -178,7 +183,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 		{
 			to_unlink = FALSE;
 
-		    if (xmlStrcmp (xnode->name, (const xmlChar *)"filter") == 0)
+			if (xmlStrcmp (xnode->name, (const xmlChar *)"extension") == 0)
 				{
 					type = xmlGetProp (xnode, (const xmlChar *)"type");
 
@@ -186,8 +191,45 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 					for (i = 0; i < priv->ar_modules->len; i++)
 						{
 							if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-												 g_strconcat (type, "_new", NULL),
-												 (gpointer *)&filter_constructor))
+							                     g_strconcat (type, "_new", NULL),
+							                     (gpointer *)&extension_constructor))
+								{
+									if (extension_constructor != NULL)
+										{
+											extension = extension_constructor ();
+											zak_form_element_add_extension (element, extension);
+
+											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+											                     g_strconcat (type, "_xml_parsing", NULL),
+											                     (gpointer *)&extension_xml_parsing))
+												{
+													if (extension_xml_parsing != NULL)
+														{
+															extension_xml_parsing (extension, xnode);
+														}
+												}
+
+											break;
+										}
+								}
+						}
+					if (i >= priv->ar_modules->len)
+						{
+							g_warning ("Filter «%s» not found.", type);
+						}
+
+					to_unlink = TRUE;
+				}
+			else if (xmlStrcmp (xnode->name, (const xmlChar *)"filter") == 0)
+				{
+					type = xmlGetProp (xnode, (const xmlChar *)"type");
+
+					/* for each module */
+					for (i = 0; i < priv->ar_modules->len; i++)
+						{
+							if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+							                     g_strconcat (type, "_new", NULL),
+							                     (gpointer *)&filter_constructor))
 								{
 									if (filter_constructor != NULL)
 										{
@@ -195,8 +237,8 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 											zak_form_element_add_filter (element, filter);
 
 											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																 g_strconcat (type, "_xml_parsing", NULL),
-																 (gpointer *)&filter_xml_parsing))
+											                     g_strconcat (type, "_xml_parsing", NULL),
+											                     (gpointer *)&filter_xml_parsing))
 												{
 													if (filter_xml_parsing != NULL)
 														{
@@ -223,8 +265,8 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 					for (i = 0; i < priv->ar_modules->len; i++)
 						{
 							if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-												 g_strconcat (type, "_new", NULL),
-												 (gpointer *)&validator_constructor))
+							                     g_strconcat (type, "_new", NULL),
+							                     (gpointer *)&validator_constructor))
 								{
 									if (validator_constructor != NULL)
 										{
@@ -232,8 +274,8 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 											zak_form_element_add_validator (element, validator);
 
 											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																 g_strconcat (type, "_xml_parsing", NULL),
-																 (gpointer *)&validator_xml_parsing))
+											                     g_strconcat (type, "_xml_parsing", NULL),
+											                     (gpointer *)&validator_xml_parsing))
 												{
 													if (validator_xml_parsing != NULL)
 														{
