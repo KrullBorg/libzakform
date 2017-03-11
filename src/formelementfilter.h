@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,9 @@ struct _ZakFormElementFilterClass
 };
 
 gchar *zak_form_element_filter_filter (ZakFormElementFilter *self, const gchar *value);
+
+gboolean zak_form_element_filter_get_enabled (ZakFormElementFilter *filter);
+void zak_form_element_filter_set_enabled (ZakFormElementFilter *filter, gboolean enabled);
 
 
 G_END_DECLS

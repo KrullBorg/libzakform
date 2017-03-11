@@ -254,6 +254,8 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 
 	ZakFormValidatorCompareDatePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE (validator);
 
+	ret = FALSE;
+
 	if (!ZAK_FORM_IS_ELEMENT (priv->v1)
 		|| !ZAK_FORM_IS_ELEMENT (priv->v2))
 		{
@@ -265,30 +267,9 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 			gdt2 = zak_utils_get_gdatetime_from_string (zak_form_element_get_value (priv->v2), priv->format2);
 
 			if (gdt1 == NULL
-				&& gdt2 == NULL)
-				{
-					return TRUE;
-				}
-			else if (gdt1 == NULL
 				|| gdt2 == NULL)
 				{
-					if (priv->type == LESSER
-						|| priv->type == LESSER_EQUAL)
-						{
-							ret = (gdt1 == NULL
-								   && gdt2 != NULL);
-						}
-					else if (priv->type == EQUAL)
-						{
-							ret = (gdt1 == NULL
-								   && gdt2 == NULL);
-						}
-					else if (priv->type == GREATER
-							 || priv->type == GREATER_EQUAL)
-						{
-							ret = (gdt1 != NULL
-								   && gdt2 == NULL);
-						}
+					return TRUE;
 				}
 			else
 				{
@@ -297,20 +278,20 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 						{
 						case -1:
 							ret = (priv->type == LESSER
-								   || priv->type == LESSER_EQUAL
-								   || priv->type == NOT_EQUAL);
+							       || priv->type == LESSER_EQUAL
+							       || priv->type == NOT_EQUAL);
 							break;
 
 						case 0:
 							ret = (priv->type == LESSER_EQUAL
-								   || priv->type == EQUAL
-								   || priv->type == GREATER_EQUAL);
+							       || priv->type == EQUAL
+							       || priv->type == GREATER_EQUAL);
 							break;
 
 						case 1:
 							ret = (priv->type == GREATER
-								   || priv->type == GREATER_EQUAL
-								   || priv->type == NOT_EQUAL);
+							       || priv->type == GREATER_EQUAL
+							       || priv->type == NOT_EQUAL);
 							break;
 						};
 				}
@@ -318,9 +299,9 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 			if (!ret)
 				{
 					msg = g_strdup_printf (_("«%s» must be %s «%s»"),
-										   zak_form_element_get_long_name (priv->v1),
-										   msgs[priv->type],
-										   zak_form_element_get_long_name (priv->v2));
+					                       zak_form_element_get_long_name (priv->v1),
+					                       msgs[priv->type],
+					                       zak_form_element_get_long_name (priv->v2));
 					zak_form_validator_set_message (validator, msg);
 					g_free (msg);
 				}

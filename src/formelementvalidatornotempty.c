@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,12 @@
 
 #include "formelementvalidator.h"
 #include "formelementvalidatornotempty.h"
+
+enum
+	{
+		PROP_0,
+		PROP_AS_EMPTY_STRING
+	};
 
 static void zak_form_element_validator_notempty_class_init (ZakFormElementValidatorNotemptyClass *class);
 static void zak_form_element_validator_notempty_init (ZakFormElementValidatorNotempty *zak_form_element);
@@ -47,7 +53,7 @@ struct _ZakFormElementValidatorNotempty
 	/* Other members, including private data. */
 };
 
-#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_FORM_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyPrivate))
+#define ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_VALIDATOR_NOTEMPTY, ZakFormElementValidatorNotemptyPrivate))
 
 typedef struct _ZakFormElementValidatorNotemptyPrivate ZakFormElementValidatorNotemptyPrivate;
 struct _ZakFormElementValidatorNotemptyPrivate
@@ -71,14 +77,19 @@ zak_form_element_validator_notempty_class_init (ZakFormElementValidatorNotemptyC
 	parent_class->validate = zak_form_element_validator_notempty_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorNotemptyPrivate));
+
+	g_object_class_install_property (object_class, PROP_AS_EMPTY_STRING,
+									 g_param_spec_string ("as-empty-string",
+														  "As empty string",
+														  "As empty string",
+														  "",
+														  G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
 zak_form_element_validator_notempty_init (ZakFormElementValidatorNotempty *zak_form_element)
 {
 	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (zak_form_element);
-
-	priv->as_empty_string = g_strdup ("");
 }
 
 /**
@@ -116,6 +127,45 @@ zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *valida
 	return TRUE;
 }
 
+/**
+ * zak_form_element_validator_notempty_set_as_empty_string:
+ * @validator:
+ * @as_empty_string:
+ *
+ */
+void
+zak_form_element_validator_notempty_set_as_empty_string (ZakFormElementValidatorNotempty *validator, const gchar *as_empty_string)
+{
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
+
+	if (priv->as_empty_string != NULL)
+		{
+			g_free (priv->as_empty_string);
+		}
+	if (as_empty_string == NULL)
+		{
+			priv->as_empty_string = g_strdup ("");
+		}
+	else
+		{
+			priv->as_empty_string = g_strdup (as_empty_string);
+		}
+}
+
+/**
+ * zak_form_element_validator_notempty_get_as_empty_string:
+ * @validator:
+ *
+ * Returns:
+ */
+gchar
+*zak_form_element_validator_notempty_get_as_empty_string (ZakFormElementValidatorNotempty *validator)
+{
+	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
+
+	return g_strdup (priv->as_empty_string);
+}
+
 /* PRIVATE */
 static void
 zak_form_element_validator_notempty_set_property (GObject *object,
@@ -128,9 +178,13 @@ zak_form_element_validator_notempty_set_property (GObject *object,
 
 	switch (property_id)
 		{
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
+		case PROP_AS_EMPTY_STRING:
+			zak_form_element_validator_notempty_set_as_empty_string (validator, g_value_get_string (value));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
 		}
 }
 
@@ -145,9 +199,13 @@ zak_form_element_validator_notempty_get_property (GObject *object,
 
 	switch (property_id)
 		{
-			default:
-				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-				break;
+		case PROP_AS_EMPTY_STRING:
+			g_value_set_string (value, zak_form_element_validator_notempty_get_as_empty_string (validator));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
 		}
 }
 
