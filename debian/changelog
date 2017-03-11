@@ -1,6 +1,6 @@
-libzakform (0.0.1-3~2.gbp1b8b64) UNRELEASED; urgency=medium
+libzakform (0.0.1-3~3.gbpfb26fd) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @1b8b64d80377c2532dc7fe4baa1a9ef4cacd04b8 **
+  ** SNAPSHOT build @fb26fd705f097693c531d17d5f26ae8c53cd1e43 **
 
   [ Andrea Zagli ]
   * Initial release
@@ -11,4 +11,10 @@ libzakform (0.0.1-3~2.gbp1b8b64) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- Andrea Zagli <azagli@libero.it>  Sat, 21 May 2016 15:55:12 +0200
+  [ Andrea Zagli ]
+  * Added FormElement extensions.
+  * Missing file for translation.
+
+  [ tux ]
+
+ -- tux <tux@develop64.comune.scandicci.fi.it>  Sat, 11 Mar 2017 10:55:21 +0100
