@@ -1,6 +1,6 @@
-libzakform (0.0.1-4~3.gbp641a82) UNRELEASED; urgency=medium
+libzakform (0.0.1-4~4.gbp5ab586) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @641a82e54dd459c25b226b6fc992b898b14b6637 **
+  ** SNAPSHOT build @5ab586d1411e8bc359b53fd3711d9c4acae5f3a4 **
 
   [ Andrea Zagli ]
   * Initial release
@@ -20,4 +20,9 @@ libzakform (0.0.1-4~3.gbp641a82) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- tux <tux@develop64.comune.scandicci.fi.it>  Wed, 01 Mar 2017 20:36:35 +0100
+  [ Andrea Zagli ]
+  * Debian pkg: new snapshot from upstream.
+
+  [ tux ]
+
+ -- tux <tux@develop64.comune.scandicci.fi.it>  Sat, 25 Mar 2017 09:54:50 +0100
