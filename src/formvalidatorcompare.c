@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2016-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -138,7 +138,7 @@ zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xn
 
 	ZakFormValidatorComparePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_GET_PRIVATE (validator);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"type_comp");
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type_comp");
 	if (g_strcmp0 (prop, "lt") == 0)
 		{
 			priv->type = LESSER;
@@ -163,12 +163,27 @@ zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xn
 		{
 			priv->type = GREATER_EQUAL;
 		}
+	else
+		{
+			g_warning ("Validator compare: compare type «%s» not supported.", prop);
+		}
+	g_free (prop);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"element1");
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element1");
 	priv->v1 = zak_form_get_element_by_id (ar_elements, prop);
+	if (!ZAK_FORM_IS_ELEMENT (priv->v1))
+		{
+			g_warning ("Validator compare: element1 isn't a ZakFormElement.");
+		}
+	g_free (prop);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"element2");
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element2");
 	priv->v2 = zak_form_get_element_by_id (ar_elements, prop);
+	if (!ZAK_FORM_IS_ELEMENT (priv->v2))
+		{
+			g_warning ("Validator compare: element2 isn't a ZakFormElement.");
+		}
+	g_free (prop);
 
 	return TRUE;
 }
@@ -245,6 +260,8 @@ zak_form_validator_compare_validate (ZakFormValidator *validator)
 
 	ZakFormValidatorComparePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_GET_PRIVATE (validator);
 
+	ret = FALSE;
+
 	if (!ZAK_FORM_IS_ELEMENT (priv->v1)
 		|| !ZAK_FORM_IS_ELEMENT (priv->v2))
 		{
@@ -256,33 +273,31 @@ zak_form_validator_compare_validate (ZakFormValidator *validator)
 			gc2 = zak_form_element_get_value (priv->v2);
 
 			comp = g_strcmp0 (gc1, gc2);
-			switch (comp)
+			if (comp < 0)
 				{
-				case -1:
 					ret = (priv->type == LESSER
-						   || priv->type == LESSER_EQUAL
-						   || priv->type == NOT_EQUAL);
-					break;
-
-				case 0:
+					       || priv->type == LESSER_EQUAL
+					       || priv->type == NOT_EQUAL);
+				}
+			else if (comp == 0)
+				{
 					ret = (priv->type == LESSER_EQUAL
-						   || priv->type == EQUAL
-						   || priv->type == GREATER_EQUAL);
-					break;
-
-				case 1:
+					       || priv->type == EQUAL
+					       || priv->type == GREATER_EQUAL);
+				}
+			else if (comp > 0)
+				{
 					ret = (priv->type == GREATER
-						   || priv->type == GREATER_EQUAL
-						   || priv->type == NOT_EQUAL);
-					break;
+					       || priv->type == GREATER_EQUAL
+					       || priv->type == NOT_EQUAL);
 				};
 
 			if (!ret)
 				{
 					msg = g_strdup_printf (_("«%s» must be %s «%s»"),
-										   zak_form_element_get_long_name (priv->v1),
-										   msgs[priv->type],
-										   zak_form_element_get_long_name (priv->v2));
+					                       zak_form_element_get_long_name (priv->v1),
+					                       msgs[priv->type],
+					                       zak_form_element_get_long_name (priv->v2));
 					zak_form_validator_set_message (validator, msg);
 					g_free (msg);
 				}
