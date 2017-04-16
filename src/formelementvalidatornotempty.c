@@ -44,6 +44,7 @@ static void zak_form_element_validator_notempty_get_property (GObject *object,
 static void zak_form_element_validator_notempty_dispose (GObject *gobject);
 static void zak_form_element_validator_notempty_finalize (GObject *gobject);
 
+static gboolean zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
 static gboolean zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator_notempty, const gchar *value);
 
 struct _ZakFormElementValidatorNotempty
@@ -74,16 +75,17 @@ zak_form_element_validator_notempty_class_init (ZakFormElementValidatorNotemptyC
 	object_class->dispose = zak_form_element_validator_notempty_dispose;
 	object_class->finalize = zak_form_element_validator_notempty_finalize;
 
+	parent_class->xml_parsing = zak_form_element_validator_notempty_xml_parsing;
 	parent_class->validate = zak_form_element_validator_notempty_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorNotemptyPrivate));
 
 	g_object_class_install_property (object_class, PROP_AS_EMPTY_STRING,
-									 g_param_spec_string ("as-empty-string",
-														  "As empty string",
-														  "As empty string",
-														  "",
-														  G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                 g_param_spec_string ("as-empty-string",
+	                                                      "As empty string",
+	                                                      "As empty string",
+	                                                      "",
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -113,7 +115,7 @@ ZakFormElementValidatorNotempty
  * @xnode:
  *
  */
-gboolean
+static gboolean
 zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
 {
 	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);

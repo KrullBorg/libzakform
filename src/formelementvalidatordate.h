@@ -38,8 +38,6 @@ ZakFormElementValidatorDate *zak_form_element_validator_date_new (void);
 void zak_form_element_validator_date_set_format (ZakFormElementValidatorDate *validator, const gchar *format);
 gchar *zak_form_element_validator_date_get_format (ZakFormElementValidatorDate *validator);
 
-gboolean zak_form_element_validator_date_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
-
 
 G_END_DECLS
 

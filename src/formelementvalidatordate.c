@@ -40,6 +40,7 @@ static void zak_form_element_validator_date_get_property (GObject *object,
 static void zak_form_element_validator_date_dispose (GObject *gobject);
 static void zak_form_element_validator_date_finalize (GObject *gobject);
 
+static gboolean zak_form_element_validator_date_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
 static gboolean zak_form_element_validator_date_validate (ZakFormElementValidator *validator_date, const gchar *value);
 
 struct _ZakFormElementValidatorDate
@@ -70,6 +71,7 @@ zak_form_element_validator_date_class_init (ZakFormElementValidatorDateClass *cl
 	object_class->dispose = zak_form_element_validator_date_dispose;
 	object_class->finalize = zak_form_element_validator_date_finalize;
 
+	parent_class->xml_parsing = zak_form_element_validator_date_xml_parsing;
 	parent_class->validate = zak_form_element_validator_date_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorDatePrivate));
@@ -135,7 +137,7 @@ gchar
  * @xnode:
  *
  */
-gboolean
+static gboolean
 zak_form_element_validator_date_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
 {
 	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (ZAK_FORM_ELEMENT_VALIDATOR_DATE (validator));
