@@ -606,6 +606,36 @@ zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator)
 }
 
 /**
+ * zak_form_form_get_validator_by_id:
+ * @zakform:
+ * @id:
+ *
+ * Returns: a #ZakFormValidator.
+ */
+ZakFormValidator
+*zak_form_form_get_validator_by_id (ZakFormForm *zakform, const gchar *id)
+{
+	ZakFormValidator *validator;
+
+	guint i;
+
+	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
+
+	validator = NULL;
+
+	for (i = 0; i < priv->ar_validators->len; i++)
+		{
+			if (g_strcmp0 (zak_form_validator_get_id ((ZakFormValidator *)g_ptr_array_index (priv->ar_validators, i)), id) == 0)
+				{
+					validator = (ZakFormValidator *)g_ptr_array_index (priv->ar_validators, i);
+					break;
+				}
+		}
+
+	return validator;
+}
+
+/**
  * zak_form_form_get_validators:
  * @zakform:
  *
