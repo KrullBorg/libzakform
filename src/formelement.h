@@ -109,6 +109,7 @@ gboolean zak_form_element_is_valid (ZakFormElement *element);
 GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 
 GPtrArray *zak_form_element_get_validators (ZakFormElement *element);
+ZakFormElementValidator *zak_form_element_get_validator_by_id (ZakFormElement *element, const gchar *id);
 GPtrArray *zak_form_element_get_validators_by_type (ZakFormElement *element, GType type);
 
 

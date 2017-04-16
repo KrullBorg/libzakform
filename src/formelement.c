@@ -47,17 +47,17 @@ static void zak_form_element_class_init (ZakFormElementClass *class);
 static void zak_form_element_init (ZakFormElement *zak_form_element);
 
 static void zak_form_element_construct (ZakFormElement *element,
-											const gchar *id,
-											GHashTable *ht_attrs);
+                                        const gchar *id,
+                                        GHashTable *ht_attrs);
 
 static void zak_form_element_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                           guint property_id,
+                                           const GValue *value,
+                                           GParamSpec *pspec);
 static void zak_form_element_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                           guint property_id,
+                                           GValue *value,
+                                           GParamSpec *pspec);
 
 static void zak_form_element_dispose (GObject *gobject);
 static void zak_form_element_finalize (GObject *gobject);
@@ -1098,6 +1098,37 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
 	priv = zak_form_element_get_instance_private (element);
 
 	g_ptr_array_add (priv->pa_validators, validator);
+}
+
+/**
+ * zak_form_element_get_validator_by_id:
+ * @element:
+ * @id:
+ *
+ */
+ZakFormElementValidator
+*zak_form_element_get_validator_by_id (ZakFormElement *element, const gchar *id)
+{
+	ZakFormElementValidator *validator;
+
+	guint i;
+
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	validator = NULL;
+
+	for (i = 0; i < priv->pa_validators->len; i++)
+		{
+			if (g_strcmp0 (zak_form_element_validator_get_id ((ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i)), id) == 0)
+				{
+					validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
+					break;
+				}
+		}
+
+	return validator;
+
+
 }
 
 /**
