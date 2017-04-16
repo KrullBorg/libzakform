@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,7 @@ static void zak_form_validator_compare_date_get_property (GObject *object,
 static void zak_form_validator_compare_date_dispose (GObject *gobject);
 static void zak_form_validator_compare_date_finalize (GObject *gobject);
 
+static gboolean zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
 static gboolean zak_form_validator_compare_date_validate (ZakFormValidator *validator_notempty);
 
 struct _ZakFormValidatorCompareDate
@@ -91,6 +92,7 @@ zak_form_validator_compare_date_class_init (ZakFormValidatorCompareDateClass *cl
 	object_class->dispose = zak_form_validator_compare_date_dispose;
 	object_class->finalize = zak_form_validator_compare_date_finalize;
 
+	parent_class->xml_parsing = zak_form_validator_compare_date_xml_parsing;
 	parent_class->validate = zak_form_validator_compare_date_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormValidatorCompareDatePrivate));
@@ -134,7 +136,7 @@ ZakFormValidatorCompareDate
  * @ar_elements:
  *
  */
-gboolean
+static gboolean
 zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements)
 {
 	gchar *prop;
@@ -185,9 +187,9 @@ zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNod
 /* PRIVATE */
 static void
 zak_form_validator_compare_date_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                              guint property_id,
+                                              const GValue *value,
+                                              GParamSpec *pspec)
 {
 	ZakFormValidatorCompareDate *validator = (ZakFormValidatorCompareDate *)object;
 	ZakFormValidatorCompareDatePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE (validator);
@@ -202,9 +204,9 @@ zak_form_validator_compare_date_set_property (GObject *object,
 
 static void
 zak_form_validator_compare_date_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                              guint property_id,
+                                              GValue *value,
+                                              GParamSpec *pspec)
 {
 	ZakFormValidatorCompareDate *validator = (ZakFormValidatorCompareDate *)object;
 	ZakFormValidatorCompareDatePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE (validator);

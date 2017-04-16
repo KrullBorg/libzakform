@@ -42,7 +42,6 @@ typedef gboolean (* FormElementFilterXmlParsingFunc) (ZakFormElementFilter *, xm
 typedef ZakFormElementValidator *(* FormElementValidatorConstructorFunc) (void);
 typedef gboolean (* FormElementValidatorXmlParsingFunc) (ZakFormElementValidator *, xmlNodePtr);
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
-typedef gboolean (* FormValidatorXmlParsingFunc) (ZakFormValidator *, xmlNodePtr, GPtrArray *);
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
 static void zak_form_form_init (ZakFormForm *zak_form_form);
@@ -336,7 +335,6 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 	FormElementXmlParsingFunc element_xml_parsing;
 
 	FormValidatorConstructorFunc validator_constructor;
-	FormValidatorXmlParsingFunc validator_xml_parsing;
 
 	xmlXPathContextPtr xpcontext;
 	xmlXPathObjectPtr xpresult;
@@ -432,15 +430,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 															validator = validator_constructor ();
 															zak_form_form_add_validator (zakform, validator);
 
-															if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																				 g_strconcat (type, "_xml_parsing", NULL),
-																				 (gpointer *)&validator_xml_parsing))
-																{
-																	if (validator_xml_parsing != NULL)
-																		{
-																			validator_xml_parsing (validator, xnodeset->nodeTab[y], priv->ar_elements);
-																		}
-																}
+															zak_form_validator_xml_parsing (validator, xnodeset->nodeTab[y], priv->ar_elements);
 
 															break;
 														}

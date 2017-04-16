@@ -43,6 +43,7 @@ static void zak_form_validator_compare_get_property (GObject *object,
 static void zak_form_validator_compare_dispose (GObject *gobject);
 static void zak_form_validator_compare_finalize (GObject *gobject);
 
+static gboolean zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
 static gboolean zak_form_validator_compare_validate (ZakFormValidator *validator_notempty);
 
 struct _ZakFormValidatorCompare
@@ -88,6 +89,7 @@ zak_form_validator_compare_class_init (ZakFormValidatorCompareClass *class)
 	object_class->dispose = zak_form_validator_compare_dispose;
 	object_class->finalize = zak_form_validator_compare_finalize;
 
+	parent_class->xml_parsing = zak_form_validator_compare_xml_parsing;
 	parent_class->validate = zak_form_validator_compare_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormValidatorComparePrivate));
@@ -131,7 +133,7 @@ ZakFormValidatorCompare
  * @ar_elements:
  *
  */
-gboolean
+static gboolean
 zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements)
 {
 	gchar *prop;
