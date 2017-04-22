@@ -38,7 +38,6 @@ typedef gboolean (* FormElementXmlParsingFunc) (ZakFormElement *, xmlNodePtr);
 typedef GObject *(* FormElementExtensionConstructorFunc) (void);
 typedef gboolean (* FormElementExtensionXmlParsingFunc) (GObject *, xmlNodePtr);
 typedef ZakFormElementFilter *(* FormElementFilterConstructorFunc) (void);
-typedef gboolean (* FormElementFilterXmlParsingFunc) (ZakFormElementFilter *, xmlNodePtr);
 typedef ZakFormElementValidator *(* FormElementValidatorConstructorFunc) (void);
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
 
@@ -167,7 +166,6 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 	FormElementExtensionConstructorFunc extension_constructor;
 	FormElementExtensionXmlParsingFunc extension_xml_parsing;
 	FormElementFilterConstructorFunc filter_constructor;
-	FormElementFilterXmlParsingFunc filter_xml_parsing;
 	FormElementValidatorConstructorFunc validator_constructor;
 
 	gboolean to_unlink;
@@ -233,15 +231,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 											filter = filter_constructor ();
 											zak_form_element_add_filter (element, filter);
 
-											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-											                     g_strconcat (type, "_xml_parsing", NULL),
-											                     (gpointer *)&filter_xml_parsing))
-												{
-													if (filter_xml_parsing != NULL)
-														{
-															filter_xml_parsing (filter, xnode);
-														}
-												}
+											zak_form_element_filter_xml_parsing (filter, xnode);
 
 											break;
 										}
@@ -254,7 +244,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (xnode->name, (const xmlChar *)"validator") == 0)
+			else if (xmlStrcmp (xnode->name, (const xmlChar *)"validator") == 0)
 				{
 					type = xmlGetProp (xnode, (const xmlChar *)"type");
 

@@ -304,7 +304,7 @@ zak_form_element_filter (ZakFormElement *element)
 			value = zak_form_element_get_value (element);
 
 			val = zak_form_element_filter_filter ((ZakFormElementFilter *)g_ptr_array_index (priv->pa_filters, i),
-												  value);
+			                                      value);
 			zak_form_element_set_value (element, val);
 		}
 }

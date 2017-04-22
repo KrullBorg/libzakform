@@ -32,13 +32,13 @@ static void zak_form_element_filter_class_init (ZakFormElementFilterClass *class
 static void zak_form_element_filter_init (ZakFormElementFilter *zak_form_element_filter);
 
 static void zak_form_element_filter_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                                  guint property_id,
+                                                  const GValue *value,
+                                                  GParamSpec *pspec);
 static void zak_form_element_filter_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                                  guint property_id,
+                                                  GValue *value,
+                                                  GParamSpec *pspec);
 
 static void zak_form_element_filter_dispose (GObject *gobject);
 static void zak_form_element_filter_finalize (GObject *gobject);
@@ -61,17 +61,36 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
 	object_class->finalize = zak_form_element_filter_finalize;
 
 	g_object_class_install_property (object_class, PROP_ENABLED,
-									 g_param_spec_boolean ("enabled",
-														   "Enabled",
-														   "Enabled",
-														   TRUE,
-														   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                 g_param_spec_boolean ("enabled",
+	                                                       "Enabled",
+	                                                       "Enabled",
+	                                                       TRUE,
+	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
 zak_form_element_filter_init (ZakFormElementFilter *zak_form_element_filter)
 {
 	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);
+}
+
+gboolean
+zak_form_element_filter_xml_parsing (ZakFormElementFilter *self, xmlNode *xnode)
+{
+	gboolean ret;
+
+	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_FILTER (self), FALSE);
+
+	if (ZAK_FORM_ELEMENT_FILTER_GET_CLASS (self)->xml_parsing!= NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_FILTER_GET_CLASS (self)->xml_parsing (self, xnode);
+		}
+	else
+		{
+			ret = FALSE;
+		}
+
+	return ret;
 }
 
 gchar
@@ -125,9 +144,9 @@ zak_form_element_filter_set_enabled (ZakFormElementFilter *filter, gboolean enab
 /* PRIVATE */
 static void
 zak_form_element_filter_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                      guint property_id,
+                                      const GValue *value,
+                                      GParamSpec *pspec)
 {
 	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)object;
 	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);
@@ -146,9 +165,9 @@ zak_form_element_filter_set_property (GObject *object,
 
 static void
 zak_form_element_filter_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                      guint property_id,
+                                      GValue *value,
+                                      GParamSpec *pspec)
 {
 	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)object;
 	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (zak_form_element_filter);

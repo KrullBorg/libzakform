@@ -21,6 +21,8 @@
 
 #include <glib-object.h>
 
+#include <libxml/xpath.h>
+
 
 G_BEGIN_DECLS
 
@@ -32,9 +34,11 @@ struct _ZakFormElementFilterClass
 {
 	GObjectClass parent_cleass;
 
+	gboolean (*xml_parsing) (ZakFormElementFilter *filter, xmlNode *xnode);
 	gchar *(*filter) (ZakFormElementFilter *self, const gchar *value);
 };
 
+gboolean zak_form_element_filter_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
 gchar *zak_form_element_filter_filter (ZakFormElementFilter *self, const gchar *value);
 
 gboolean zak_form_element_filter_get_enabled (ZakFormElementFilter *filter);
