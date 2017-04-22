@@ -324,6 +324,35 @@ GPtrArray
 }
 
 /**
+ * zak_form_element_get_filter_by_id:
+ * @element:
+ * @id:
+ *
+ */
+ZakFormElementFilter
+*zak_form_element_get_filter_by_id (ZakFormElement *element, const gchar *id)
+{
+	ZakFormElementFilter *filter;
+
+	guint i;
+
+	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
+
+	filter = NULL;
+
+	for (i = 0; i < priv->pa_filters->len; i++)
+		{
+			if (g_strcmp0 (zak_form_element_filter_get_id ((ZakFormElementFilter *)g_ptr_array_index (priv->pa_filters, i)), id) == 0)
+				{
+					filter = (ZakFormElementFilter *)g_ptr_array_index (priv->pa_filters, i);
+					break;
+				}
+		}
+
+	return filter;
+}
+
+/**
  * zak_form_element_get_filters_by_type:
  * @element:
  * @type:
@@ -1127,8 +1156,6 @@ ZakFormElementValidator
 		}
 
 	return validator;
-
-
 }
 
 /**

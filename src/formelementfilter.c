@@ -25,6 +25,7 @@
 enum
 	{
 		PROP_0,
+		PROP_ID,
 		PROP_ENABLED
 	};
 
@@ -45,6 +46,7 @@ static void zak_form_element_filter_finalize (GObject *gobject);
 
 typedef struct
 	{
+		gchar *id;
 		gboolean enabled;
 	} ZakFormElementFilterPrivate;
 
@@ -59,6 +61,13 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
 	object_class->get_property = zak_form_element_filter_get_property;
 	object_class->dispose = zak_form_element_filter_dispose;
 	object_class->finalize = zak_form_element_filter_finalize;
+
+	g_object_class_install_property (object_class, PROP_ID,
+	                                 g_param_spec_string ("id",
+	                                                      "ID",
+	                                                      "ID",
+	                                                      "",
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property (object_class, PROP_ENABLED,
 	                                 g_param_spec_boolean ("enabled",
@@ -79,7 +88,16 @@ zak_form_element_filter_xml_parsing (ZakFormElementFilter *self, xmlNode *xnode)
 {
 	gboolean ret;
 
+	gchar *prop;
+
 	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_FILTER (self), FALSE);
+
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"id");
+	if (prop != NULL)
+		{
+			zak_form_element_filter_set_id (self, prop);
+			g_free (prop);
+		}
 
 	if (ZAK_FORM_ELEMENT_FILTER_GET_CLASS (self)->xml_parsing!= NULL)
 		{
@@ -91,6 +109,42 @@ zak_form_element_filter_xml_parsing (ZakFormElementFilter *self, xmlNode *xnode)
 		}
 
 	return ret;
+}
+
+/**
+ * zak_form_element_filter_set_id:
+ * @filter:
+ * @id:
+ *
+ */
+void
+zak_form_element_filter_set_id (ZakFormElementFilter *filter,
+                                const gchar *id)
+{
+	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (filter);
+
+	if (id == NULL)
+		{
+			priv->id = g_strdup ("");
+		}
+	else
+		{
+			priv->id = g_strdup (id);
+		}
+}
+
+/**
+ * zak_form_element_filter_get_id:
+ * @filter:
+ *
+ * Returns:
+ */
+gchar
+*zak_form_element_filter_get_id (ZakFormElementFilter *filter)
+{
+	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (filter);
+
+	return g_strdup (priv->id);
 }
 
 gchar
@@ -153,6 +207,10 @@ zak_form_element_filter_set_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_ID:
+			zak_form_element_filter_set_id (zak_form_element_filter, g_value_get_string (value));
+			break;
+
 		case PROP_ENABLED:
 			zak_form_element_filter_set_enabled (zak_form_element_filter, g_value_get_boolean (value));
 			break;
@@ -174,6 +232,10 @@ zak_form_element_filter_get_property (GObject *object,
 
 	switch (property_id)
 		{
+		case PROP_ID:
+			g_value_set_string (value, zak_form_element_filter_get_id (zak_form_element_filter));
+			break;
+
 		case PROP_ENABLED:
 			g_value_set_boolean (value, zak_form_element_filter_get_enabled (zak_form_element_filter));
 			break;

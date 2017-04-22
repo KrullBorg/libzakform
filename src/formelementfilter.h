@@ -41,6 +41,10 @@ struct _ZakFormElementFilterClass
 gboolean zak_form_element_filter_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
 gchar *zak_form_element_filter_filter (ZakFormElementFilter *self, const gchar *value);
 
+void zak_form_element_filter_set_id (ZakFormElementFilter *filter,
+                                     const gchar *id);
+gchar *zak_form_element_filter_get_id (ZakFormElementFilter *filter);
+
 gboolean zak_form_element_filter_get_enabled (ZakFormElementFilter *filter);
 void zak_form_element_filter_set_enabled (ZakFormElementFilter *filter, gboolean enabled);
 

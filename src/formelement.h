@@ -102,6 +102,7 @@ void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter 
 void zak_form_element_filter (ZakFormElement *element);
 
 GPtrArray *zak_form_element_get_filters (ZakFormElement *element);
+ZakFormElementFilter *zak_form_element_get_filter_by_id (ZakFormElement *element, const gchar *id);
 GPtrArray *zak_form_element_get_filters_by_type (ZakFormElement *element, GType type);
 
 void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator *validator);
