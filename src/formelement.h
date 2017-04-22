@@ -56,7 +56,7 @@ gchar *zak_form_element_get_name (ZakFormElement *element);
 void zak_form_element_set_long_name (ZakFormElement *element, const gchar *long_name);
 gchar *zak_form_element_get_long_name (ZakFormElement *element);
 
-void zak_form_element_set_to_is_key (ZakFormElement *element, gboolean is_key);
+void zak_form_element_set_is_key (ZakFormElement *element, gboolean is_key);
 gboolean zak_form_element_get_is_key (ZakFormElement *element);
 
 void zak_form_element_set_provider_type (ZakFormElement *element, const gchar *type);
