@@ -48,6 +48,9 @@ struct _ZakFormElementClass
 
 		void (*set_editable) (ZakFormElement *element, gboolean editable);
 		gboolean (*get_editable) (ZakFormElement *element);
+
+		guint before_validating_signal_id;
+		guint after_validating_signal_id;
 	};
 
 void zak_form_element_set_name (ZakFormElement *element, const gchar *name);

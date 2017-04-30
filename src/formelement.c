@@ -24,6 +24,7 @@
 
 #include <libzakutils/libzakutils.h>
 
+#include "zakformmarshal.h"
 #include "formelement.h"
 
 enum
@@ -150,10 +151,10 @@ zak_form_element_class_init (ZakFormElementClass *class)
 
 	g_object_class_install_property (object_class, PROP_FORMAT,
 	                                 g_param_spec_boxed ("format",
-														 "Format",
-														 "Format",
-														 G_TYPE_HASH_TABLE,
-														 G_PARAM_READWRITE));
+	                                                     "Format",
+	                                                     "Format",
+	                                                     G_TYPE_HASH_TABLE,
+	                                                     G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class, PROP_VISIBLE,
 	                                 g_param_spec_boolean ("visible",
@@ -182,6 +183,36 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	                                                       "To save",
 	                                                       TRUE,
 	                                                       G_PARAM_READWRITE));
+
+	/**
+	 * ZakFormElement::before_validating:
+	 * @element:
+	 *
+	 */
+	class->before_validating_signal_id = g_signal_new ("before-validating",
+	                                                   G_TYPE_FROM_CLASS (object_class),
+	                                                   G_SIGNAL_RUN_LAST,
+	                                                   0,
+	                                                   NULL,
+	                                                   NULL,
+	                                                   _zak_form_marshal_BOOLEAN__POINTER,
+	                                                   G_TYPE_BOOLEAN,
+	                                                   1, G_TYPE_POINTER);
+
+	/**
+	 * ZakFormElement::after_validating:
+	 * @element:
+	 *
+	 */
+	class->after_validating_signal_id = g_signal_new ("after-validating",
+	                                                  G_TYPE_FROM_CLASS (object_class),
+	                                                  G_SIGNAL_RUN_LAST,
+	                                                  0,
+	                                                  NULL,
+	                                                  NULL,
+	                                                  _zak_form_marshal_BOOLEAN__POINTER,
+	                                                  G_TYPE_BOOLEAN,
+	                                                  1, G_TYPE_POINTER);
 }
 
 static void
@@ -1167,15 +1198,19 @@ gboolean
 zak_form_element_is_valid (ZakFormElement *element)
 {
 	gboolean ret;
+	gboolean ret_callback;
 
 	gchar *value;
 	guint i;
 
 	ZakFormElementPrivate *priv;
 
+	ZakFormElementClass *klass = ZAK_FORM_ELEMENT_GET_CLASS (element);
+
 	priv = zak_form_element_get_instance_private (element);
 
 	ret = TRUE;
+	ret_callback = FALSE;
 
 	zak_form_element_filter (element);
 
@@ -1185,6 +1220,15 @@ zak_form_element_is_valid (ZakFormElement *element)
 			priv->pa_messages = NULL;
 		}
 
+	priv->pa_messages = g_ptr_array_new ();
+
+	/* signal before_validating */
+	g_signal_emit (element, klass->before_validating_signal_id, 0, (gpointer)priv->pa_messages, &ret_callback);
+	if (ret_callback)
+		{
+			ret = FALSE;
+		}
+
 	value = zak_form_element_get_value (element);
 
 	for (i = 0; i < priv->pa_validators->len; i++)
@@ -1192,14 +1236,17 @@ zak_form_element_is_valid (ZakFormElement *element)
 			ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
 			if (!zak_form_element_validator_validate (validator, value))
 				{
-					if (priv->pa_messages == NULL)
-						{
-							priv->pa_messages = g_ptr_array_new ();
-						}
 					g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
 
 					ret = FALSE;
 				}
+		}
+
+	/* signal after_validating */
+	g_signal_emit (element, klass->after_validating_signal_id, 0, (gpointer)priv->pa_messages, &ret_callback);
+	if (ret_callback)
+		{
+			ret = FALSE;
 		}
 
 	return ret;
@@ -1430,27 +1477,27 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 		{
 			to_unlink = FALSE;
 
-		    if (xmlStrcmp (cur->name, (const xmlChar *)"name") == 0)
+			if (xmlStrcmp (cur->name, (const xmlChar *)"name") == 0)
 				{
 					zak_form_element_set_name (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"is-key") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"is-key") == 0)
 				{
 					zak_form_element_set_is_key (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"type") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"type") == 0)
 				{
 					zak_form_element_set_provider_type (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
 				{
 					zak_form_element_set_default_value (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"format") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"format") == 0)
 				{
 					GHashTable *ht;
 
@@ -1471,22 +1518,22 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 					g_hash_table_unref (ht);
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"visible") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"visible") == 0)
 				{
 					zak_form_element_set_visible (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"editable") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"editable") == 0)
 				{
 					zak_form_element_set_editable (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"to-load") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"to-load") == 0)
 				{
 					zak_form_element_set_to_load (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (cur->name, (const xmlChar *)"to-save") == 0)
+			else if (xmlStrcmp (cur->name, (const xmlChar *)"to-save") == 0)
 				{
 					zak_form_element_set_to_save (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
 					to_unlink = TRUE;

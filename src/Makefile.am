@@ -7,8 +7,15 @@ AM_CPPFLAGS = $(ZAKFORM_CFLAGS) \
 
 lib_LTLIBRARIES = libzakform.la
 
+zakformmarshal.c: zakformmarshal.h zakform_marshal.list $(GLIB_GENMARSHAL)
+	$(GLIB_GENMARSHAL) $(srcdir)/zakform_marshal.list --body --prefix=_zak_form_marshal > $(srcdir)/$@
+
+zakformmarshal.h: zakform_marshal.list $(GLIB_GENMARSHAL)
+	$(GLIB_GENMARSHAL) $(srcdir)/zakform_marshal.list --header --prefix=_zak_form_marshal > $(srcdir)/$@
+
 libzakform_la_SOURCES = \
                         commons.c \
+                        zakformmarshal.c \
                         form.c \
                         formelement.c \
                         formelementfilter.c \
@@ -28,6 +35,7 @@ libzakform_la_LDFLAGS = -no-undefined
 libzakform_include_HEADERS = \
                              libzakform.h \
                              commons.h \
+                             zakformmarshal.h \
                              form.h \
                              formelement.h \
                              formelementfilter.h \
