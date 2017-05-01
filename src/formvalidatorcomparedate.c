@@ -243,7 +243,6 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 						{
 						case -1:
 							ret = (priv->type == ZAK_FORM_COMPARE_TYPE_LESSER
-							       || priv->type == ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL
 							       || priv->type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
 							break;
 
@@ -255,7 +254,6 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 
 						case 1:
 							ret = (priv->type == ZAK_FORM_COMPARE_TYPE_GREATER
-							       || priv->type == ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL
 							       || priv->type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
 							break;
 						};

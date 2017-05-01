@@ -232,7 +232,6 @@ zak_form_validator_compare_validate (ZakFormValidator *validator)
 			if (comp < 0)
 				{
 					ret = (priv->type == ZAK_FORM_COMPARE_TYPE_LESSER
-					       || priv->type == ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL
 					       || priv->type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
 				}
 			else if (comp == 0)
@@ -244,7 +243,6 @@ zak_form_validator_compare_validate (ZakFormValidator *validator)
 			else if (comp > 0)
 				{
 					ret = (priv->type == ZAK_FORM_COMPARE_TYPE_GREATER
-					       || priv->type == ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL
 					       || priv->type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
 				};
 

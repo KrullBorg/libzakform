@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libzakform 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-01 09:58+0200\n"
+"POT-Creation-Date: 2017-05-01 11:19+0200\n"
 "PO-Revision-Date: 2016-01-02 12:44+0200\n"
 "Last-Translator: Andrea Zagli <azagli@libero.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -17,31 +17,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/commons.c:89
+#: ../src/commons.c:90
 msgid "lesser than"
 msgstr "minore di"
 
-#: ../src/commons.c:93
+#: ../src/commons.c:94
 msgid "lesser or equal to"
 msgstr "minore o uguale a"
 
-#: ../src/commons.c:97
+#: ../src/commons.c:98
 msgid "equal to"
 msgstr "uguale a"
 
-#: ../src/commons.c:101
+#: ../src/commons.c:102
 msgid "different from"
 msgstr "diverso da"
 
-#: ../src/commons.c:105
+#: ../src/commons.c:106
 msgid "greater than"
 msgstr "maggiore di"
 
-#: ../src/commons.c:109
+#: ../src/commons.c:110
 msgid "greater or equal to"
 msgstr "maggiore o uguale a"
 
-#: ../src/commons.c:113
+#: ../src/commons.c:114
 msgid "NOT SUPPORTED"
 msgstr "NON SUPPORTATO"
 
@@ -79,6 +79,11 @@ msgstr "I moduli non sono supportati in questo sistema operativo"
 #: ../src/formelementvalidator.c:87 ../src/formvalidator.c:87
 msgid "Invalid value"
 msgstr "Valore non valido"
+
+#: ../src/formelementvalidatordate.c:364
+#, c-format
+msgid "Value must be %s %s"
+msgstr "Il valore deve essere %s %s"
 
 #: ../src/formvalidatorcompare.c:253 ../src/formvalidatorcomparedate.c:266
 #, c-format

@@ -20,6 +20,8 @@
 	#include <config.h>
 #endif
 
+#include <glib/gi18n-lib.h>
+
 #include <libzakutils/libzakutils.h>
 
 #include "formelementvalidator.h"
@@ -55,6 +57,8 @@ struct _ZakFormElementValidatorDate
 typedef struct _ZakFormElementValidatorDatePrivate ZakFormElementValidatorDatePrivate;
 struct _ZakFormElementValidatorDatePrivate
 	{
+		ZakFormCompareType compare_type;
+		gchar *compare_value;
 		gchar *format;
 	};
 
@@ -101,6 +105,80 @@ ZakFormElementValidatorDate
 }
 
 /**
+ * zak_form_element_validator_date_set_compare_type:
+ * @validator:
+ * @type:
+ *
+ */
+void
+zak_form_element_validator_date_set_compare_type (ZakFormElementValidatorDate *validator, ZakFormCompareType type)
+{
+	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (validator);
+
+	priv->compare_type = type;
+}
+
+/**
+ * zak_form_element_validator_date_get_compare_type:
+ * @validator:
+ *
+ */
+ZakFormCompareType
+zak_form_element_validator_date_get_compare_type (ZakFormElementValidatorDate *validator)
+{
+	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (validator);
+
+	return priv->compare_type;
+}
+
+/**
+ * zak_form_element_validator_date_set_compare_value:
+ * @validator:
+ * @value:
+ *
+ */
+void
+zak_form_element_validator_date_set_compare_value (ZakFormElementValidatorDate *validator, const gchar *value)
+{
+	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (validator);
+
+	if (priv->compare_value != NULL)
+		{
+			g_free (priv->compare_value);
+			priv->compare_value = NULL;
+		}
+
+	if (value != NULL)
+		{
+			priv->compare_value = g_strdup (value);
+		}
+}
+
+/**
+ * zak_form_element_validator_date_get_compare_value:
+ * @validator:
+ *
+ */
+gchar
+*zak_form_element_validator_date_get_compare_value (ZakFormElementValidatorDate *validator)
+{
+	gchar *ret;
+
+	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (validator);
+
+	if (priv->compare_value == NULL)
+		{
+			ret = NULL;
+		}
+	else
+		{
+			ret = g_strdup (priv->compare_value);
+		}
+
+	return ret;
+}
+
+/**
  * zak_form_element_validator_date_set_format:
  * @validator:
  * @format:
@@ -140,7 +218,17 @@ gchar
 static gboolean
 zak_form_element_validator_date_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
 {
+	gchar *prop;
+
 	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (ZAK_FORM_ELEMENT_VALIDATOR_DATE (validator));
+
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type_comp");
+	zak_form_element_validator_date_set_compare_type (ZAK_FORM_ELEMENT_VALIDATOR_DATE (validator), zak_form_get_compare_type_from_string (prop));
+	g_free (prop);
+
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"value_comp");
+	zak_form_element_validator_date_set_compare_value (ZAK_FORM_ELEMENT_VALIDATOR_DATE (validator), prop);
+	g_free (prop);
 
 	zak_form_element_validator_date_set_format (ZAK_FORM_ELEMENT_VALIDATOR_DATE (validator), (gchar *)xmlNodeGetContent (xnode));
 
@@ -213,10 +301,17 @@ zak_form_element_validator_date_validate (ZakFormElementValidator *validator_dat
 	gboolean ret;
 	gchar *_value;
 	GDateTime *gdt;
+	GDateTime *gdt_compare;
+
+	gint comp;
+	gchar *msg;
 
 	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (validator_date);
 
 	g_return_val_if_fail (value != NULL, FALSE);
+
+	gdt = NULL;
+	gdt_compare = NULL;
 
 	_value = g_strstrip (g_strdup (value));
 	if (g_strcmp0 (_value, "") == 0)
@@ -227,6 +322,62 @@ zak_form_element_validator_date_validate (ZakFormElementValidator *validator_dat
 		{
 			gdt = zak_utils_get_gdatetime_from_string (_value, priv->format);
 			ret = (gdt != NULL);
+
+			if (ret
+			    && priv->compare_type > ZAK_FORM_COMPARE_TYPE_NONE)
+				{
+					if (g_strcmp0 (priv->compare_value, "@now") == 0)
+						{
+							GDateTime *gdt_tmp;
+							gchar *gdt_str;
+
+							gdt_tmp = g_date_time_new_now_local ();
+							gdt_str = zak_utils_gdatetime_format (gdt_tmp, priv->format);
+							gdt_compare = zak_utils_get_gdatetime_from_string (gdt_str, priv->format);
+
+							g_free (gdt_str);
+							g_date_time_unref (gdt_tmp);
+						}
+					else
+						{
+							gdt_compare = zak_utils_get_gdatetime_from_string (priv->compare_value, priv->format);
+						}
+
+					if (gdt_compare != NULL)
+						{
+							comp = g_date_time_compare (gdt, gdt_compare);
+							switch (comp)
+								{
+								case -1:
+									ret = (priv->compare_type == ZAK_FORM_COMPARE_TYPE_LESSER
+									       || priv->compare_type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
+									break;
+
+								case 0:
+									ret = (priv->compare_type == ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL
+									       || priv->compare_type == ZAK_FORM_COMPARE_TYPE_EQUAL
+									       || priv->compare_type == ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL);
+									break;
+
+								case 1:
+									ret = (priv->compare_type == ZAK_FORM_COMPARE_TYPE_GREATER
+									       || priv->compare_type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
+									break;
+								};
+
+							if (!ret)
+								{
+									msg = g_strdup_printf (_("Value must be %s %s"),
+									                       zak_form_get_compare_type_stringify (priv->compare_type),
+									                       zak_utils_gdatetime_format (gdt_compare, priv->format));
+									zak_form_element_validator_set_message (validator_date, msg);
+									g_free (msg);
+								}
+
+							g_date_time_unref (gdt_compare);
+						}
+
+				}
 
 			if (gdt != NULL)
 				{

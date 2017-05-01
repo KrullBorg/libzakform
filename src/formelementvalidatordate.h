@@ -24,6 +24,7 @@
 
 #include <libxml/tree.h>
 
+#include "commons.h"
 #include "formelementvalidator.h"
 
 
@@ -34,6 +35,12 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ZakFormElementValidatorDate, zak_form_element_validator_date, ZAK_FORM, ELEMENT_VALIDATOR_DATE, ZakFormElementValidator)
 
 ZakFormElementValidatorDate *zak_form_element_validator_date_new (void);
+
+void zak_form_element_validator_date_set_compare_type (ZakFormElementValidatorDate *validator, ZakFormCompareType type);
+ZakFormCompareType zak_form_element_validator_date_get_compare_type (ZakFormElementValidatorDate *validator);
+
+void zak_form_element_validator_date_set_compare_value (ZakFormElementValidatorDate *validator, const gchar *value);
+gchar *zak_form_element_validator_date_get_compare_value (ZakFormElementValidatorDate *validator);
 
 void zak_form_element_validator_date_set_format (ZakFormElementValidatorDate *validator, const gchar *format);
 gchar *zak_form_element_validator_date_get_format (ZakFormElementValidatorDate *validator);
