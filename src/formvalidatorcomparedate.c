@@ -32,13 +32,13 @@ static void zak_form_validator_compare_date_class_init (ZakFormValidatorCompareD
 static void zak_form_validator_compare_date_init (ZakFormValidatorCompareDate *validator);
 
 static void zak_form_validator_compare_date_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                                          guint property_id,
+                                                          const GValue *value,
+                                                          GParamSpec *pspec);
 static void zak_form_validator_compare_date_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                                          guint property_id,
+                                                          GValue *value,
+                                                          GParamSpec *pspec);
 
 static void zak_form_validator_compare_date_dispose (GObject *gobject);
 static void zak_form_validator_compare_date_finalize (GObject *gobject);

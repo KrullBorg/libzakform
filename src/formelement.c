@@ -471,7 +471,14 @@ zak_form_element_set_long_name (ZakFormElement *element, const gchar *long_name)
 			g_free (priv->long_name);
 		}
 
-	priv->long_name = g_strdup (long_name);
+	if (long_name == NULL)
+		{
+			priv->long_name = NULL;
+		}
+	else
+		{
+			priv->long_name = g_strdup (long_name);
+		}
 }
 
 /**
@@ -1477,27 +1484,32 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 		{
 			to_unlink = FALSE;
 
-			if (xmlStrcmp (cur->name, (const xmlChar *)"name") == 0)
+			if (xmlStrEqual (cur->name, (const xmlChar *)"name"))
 				{
 					zak_form_element_set_name (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"is-key") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"long-name"))
 				{
-					zak_form_element_set_is_key (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					zak_form_element_set_long_name (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"type") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"is-key"))
+				{
+					zak_form_element_set_is_key (element, xmlStrEqual (xmlNodeGetContent (cur), (const xmlChar *)"TRUE"));
+					to_unlink = TRUE;
+				}
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"type"))
 				{
 					zak_form_element_set_provider_type (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"default-value") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"default-value"))
 				{
 					zak_form_element_set_default_value (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"format") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"format"))
 				{
 					GHashTable *ht;
 
@@ -1507,7 +1519,7 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 					attr = cur->properties;
 					while (attr)
 						{
-							g_hash_table_insert (ht, g_strdup (attr->name), g_strdup ((const gchar *)xmlNodeGetContent (attr->children)));
+							g_hash_table_insert (ht, g_strdup ((gchar *)attr->name), g_strdup ((const gchar *)xmlNodeGetContent (attr->children)));
 
 							attr = attr->next;
 						}
@@ -1518,24 +1530,24 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 					g_hash_table_unref (ht);
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"visible") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"visible"))
 				{
-					zak_form_element_set_visible (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					zak_form_element_set_visible (element, xmlStrEqual (xmlNodeGetContent (cur), (const xmlChar *)"TRUE"));
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"editable") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"editable"))
 				{
-					zak_form_element_set_editable (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					zak_form_element_set_editable (element, xmlStrEqual (xmlNodeGetContent (cur), (const xmlChar *)"TRUE"));
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"to-load") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"to-load"))
 				{
-					zak_form_element_set_to_load (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					zak_form_element_set_to_load (element, xmlStrEqual (xmlNodeGetContent (cur), (const xmlChar *)"TRUE"));
 					to_unlink = TRUE;
 				}
-			else if (xmlStrcmp (cur->name, (const xmlChar *)"to-save") == 0)
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"to-save"))
 				{
-					zak_form_element_set_to_save (element, xmlStrEqual ((const gchar *)xmlNodeGetContent (cur), "TRUE"));
+					zak_form_element_set_to_save (element, xmlStrEqual (xmlNodeGetContent (cur), (const xmlChar *)"TRUE"));
 					to_unlink = TRUE;
 				}
 
