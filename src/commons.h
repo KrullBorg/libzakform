@@ -27,6 +27,18 @@
 
 G_BEGIN_DECLS
 
+typedef enum
+	{
+		ZAK_FORM_COMPARE_TYPE_LESSER,
+		ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL,
+		ZAK_FORM_COMPARE_TYPE_EQUAL,
+		ZAK_FORM_COMPARE_TYPE_NOT_EQUAL,
+		ZAK_FORM_COMPARE_TYPE_GREATER,
+		ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL
+	} ZakFormCompareType;
+
+ZakFormCompareType zak_form_get_compare_type_from_string (const gchar *str);
+const gchar *zak_form_get_compare_type_stringify (ZakFormCompareType type);
 
 ZakFormElement *zak_form_get_element_by_id (GPtrArray *ar_elements, const gchar *id);
 

@@ -29,13 +29,13 @@ static void zak_form_element_validator_date_class_init (ZakFormElementValidatorD
 static void zak_form_element_validator_date_init (ZakFormElementValidatorDate *zak_form_element);
 
 static void zak_form_element_validator_date_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                                          guint property_id,
+                                                          const GValue *value,
+                                                          GParamSpec *pspec);
 static void zak_form_element_validator_date_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                                          guint property_id,
+                                                          GValue *value,
+                                                          GParamSpec *pspec);
 
 static void zak_form_element_validator_date_dispose (GObject *gobject);
 static void zak_form_element_validator_date_finalize (GObject *gobject);
@@ -150,9 +150,9 @@ zak_form_element_validator_date_xml_parsing (ZakFormElementValidator *validator,
 /* PRIVATE */
 static void
 zak_form_element_validator_date_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                              guint property_id,
+                                              const GValue *value,
+                                              GParamSpec *pspec)
 {
 	ZakFormElementValidatorDate *zak_form_element = (ZakFormElementValidatorDate *)object;
 	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (zak_form_element);
@@ -167,9 +167,9 @@ zak_form_element_validator_date_set_property (GObject *object,
 
 static void
 zak_form_element_validator_date_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                              guint property_id,
+                                              GValue *value,
+                                              GParamSpec *pspec)
 {
 	ZakFormElementValidatorDate *zak_form_element = (ZakFormElementValidatorDate *)object;
 	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (zak_form_element);
@@ -208,7 +208,7 @@ zak_form_element_validator_date_finalize (GObject *gobject)
 
 static gboolean
 zak_form_element_validator_date_validate (ZakFormElementValidator *validator_date,
-										  const gchar *value)
+                                          const gchar *value)
 {
 	gboolean ret;
 	gchar *_value;

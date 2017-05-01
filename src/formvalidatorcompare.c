@@ -55,18 +55,6 @@ struct _ZakFormValidatorCompare
 
 #define ZAK_FORM_VALIDATOR_COMPARE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE, ZakFormValidatorComparePrivate))
 
-enum
-	{
-		LESSER,
-		LESSER_EQUAL,
-		EQUAL,
-		NOT_EQUAL,
-		GREATER,
-		GREATER_EQUAL
-	};
-
-static gchar *msgs[6];
-
 typedef struct _ZakFormValidatorComparePrivate ZakFormValidatorComparePrivate;
 struct _ZakFormValidatorComparePrivate
 	{
@@ -102,13 +90,6 @@ zak_form_validator_compare_init (ZakFormValidatorCompare *validator)
 
 	priv->v1 = NULL;
 	priv->v2 = NULL;
-
-	msgs[0] = _("lesser than");
-	msgs[1] = _("lesser or equal to");
-	msgs[2] = _("equal to");
-	msgs[3] = _("different from");
-	msgs[4] = _("greater than");
-	msgs[5] = _("greater or equal to");
 }
 
 /**
@@ -141,34 +122,7 @@ zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xn
 	ZakFormValidatorComparePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_GET_PRIVATE (validator);
 
 	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type_comp");
-	if (g_strcmp0 (prop, "lt") == 0)
-		{
-			priv->type = LESSER;
-		}
-	else if (g_strcmp0 (prop, "let") == 0)
-		{
-			priv->type = LESSER_EQUAL;
-		}
-	else if (g_strcmp0 (prop, "e") == 0)
-		{
-			priv->type = EQUAL;
-		}
-	else if (g_strcmp0 (prop, "ne") == 0)
-		{
-			priv->type = NOT_EQUAL;
-		}
-	else if (g_strcmp0 (prop, "gt") == 0)
-		{
-			priv->type = GREATER;
-		}
-	else if (g_strcmp0 (prop, "get") == 0)
-		{
-			priv->type = GREATER_EQUAL;
-		}
-	else
-		{
-			g_warning ("Validator compare: compare type «%s» not supported.", prop);
-		}
+	priv->type = zak_form_get_compare_type_from_string (prop);
 	g_free (prop);
 
 	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element1");
@@ -193,9 +147,9 @@ zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xn
 /* PRIVATE */
 static void
 zak_form_validator_compare_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                         guint property_id,
+                                         const GValue *value,
+                                         GParamSpec *pspec)
 {
 	ZakFormValidatorCompare *validator = (ZakFormValidatorCompare *)object;
 	ZakFormValidatorComparePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_GET_PRIVATE (validator);
@@ -210,9 +164,9 @@ zak_form_validator_compare_set_property (GObject *object,
 
 static void
 zak_form_validator_compare_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                         guint property_id,
+                                         GValue *value,
+                                         GParamSpec *pspec)
 {
 	ZakFormValidatorCompare *validator = (ZakFormValidatorCompare *)object;
 	ZakFormValidatorComparePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_GET_PRIVATE (validator);
@@ -277,28 +231,28 @@ zak_form_validator_compare_validate (ZakFormValidator *validator)
 			comp = g_strcmp0 (gc1, gc2);
 			if (comp < 0)
 				{
-					ret = (priv->type == LESSER
-					       || priv->type == LESSER_EQUAL
-					       || priv->type == NOT_EQUAL);
+					ret = (priv->type == ZAK_FORM_COMPARE_TYPE_LESSER
+					       || priv->type == ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL
+					       || priv->type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
 				}
 			else if (comp == 0)
 				{
-					ret = (priv->type == LESSER_EQUAL
-					       || priv->type == EQUAL
-					       || priv->type == GREATER_EQUAL);
+					ret = (priv->type == ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL
+					       || priv->type == ZAK_FORM_COMPARE_TYPE_EQUAL
+					       || priv->type == ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL);
 				}
 			else if (comp > 0)
 				{
-					ret = (priv->type == GREATER
-					       || priv->type == GREATER_EQUAL
-					       || priv->type == NOT_EQUAL);
+					ret = (priv->type == ZAK_FORM_COMPARE_TYPE_GREATER
+					       || priv->type == ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL
+					       || priv->type == ZAK_FORM_COMPARE_TYPE_NOT_EQUAL);
 				};
 
 			if (!ret)
 				{
 					msg = g_strdup_printf (_("«%s» must be %s «%s»"),
 					                       zak_form_element_get_long_name (priv->v1),
-					                       msgs[priv->type],
+					                       zak_form_get_compare_type_stringify (priv->type),
 					                       zak_form_element_get_long_name (priv->v2));
 					zak_form_validator_set_message (validator, msg);
 					g_free (msg);
