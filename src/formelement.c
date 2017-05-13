@@ -71,9 +71,9 @@ typedef struct
 		gchar *long_name;
 		gboolean is_key;
 		gchar *type;
-		gchar *value;
-		gchar *default_value;
-		gchar *original_value;
+		GValue *value;
+		GValue *default_value;
+		GValue *original_value;
 		GHashTable *format;
 		gboolean visible;
 		gboolean editable;
@@ -224,7 +224,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->long_name = NULL;
 	priv->is_key = FALSE;
 	priv->type = g_strdup ("");
-	priv->value = g_strdup ("");
+	priv->value = zak_utils_gvalue_new_string ("");
 	priv->format = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->visible = TRUE;
 	priv->editable = TRUE;
@@ -579,15 +579,15 @@ gchar
 }
 
 /**
- * zak_form_element_format:
+ * zak_form_element_format_gvalue:
  * @element:
  * @value:
  *
  */
-gchar
-*zak_form_element_format (ZakFormElement *element, const gchar *value)
+GValue
+*zak_form_element_format_gvalue (ZakFormElement *element, GValue *value)
 {
-	gchar *ret;
+	GValue *ret;
 
 	gchar *type;
 	GHashTable *format;
@@ -601,9 +601,9 @@ gchar
 			gchar *formatted;
 
 			thousands_saparator = (gchar *)g_hash_table_lookup (format, "thousands_separator");
-			formatted = zak_utils_format_money_full (g_strtod (value, NULL), 0, thousands_saparator, NULL);
+			formatted = zak_utils_format_money_full (g_strtod (g_value_get_string (value), NULL), 0, thousands_saparator, NULL);
 
-			ret = g_strdup (formatted);
+			ret = zak_utils_gvalue_new_string (formatted);
 		}
 	else if (g_ascii_strcasecmp (type, "float") == 0)
 		{
@@ -615,17 +615,17 @@ gchar
 			thousands_saparator = (gchar *)g_hash_table_lookup (format, "thousands_separator");
 			decimals = (gchar *)g_hash_table_lookup (format, "decimals");
 			currency_symbol = (gchar *)g_hash_table_lookup (format, "currency_symbol");
-			formatted = zak_utils_format_money_full (g_strtod (value, NULL), strtol (decimals, NULL, 10), thousands_saparator, currency_symbol);
+			formatted = zak_utils_format_money_full (g_strtod (g_value_get_string (value), NULL), strtol (decimals, NULL, 10), thousands_saparator, currency_symbol);
 
-			ret = g_strdup (formatted);
+			ret = zak_utils_gvalue_new_string (formatted);
 		}
 	else if (g_ascii_strcasecmp (type, "string") == 0)
 		{
-			ret = g_strdup (value);
+			ret = zak_utils_gvalue_new_string (g_value_get_string (value));
 		}
 	else if (g_ascii_strcasecmp (type, "boolean") == 0)
 		{
-			ret = g_strdup (value);
+			ret = zak_utils_gvalue_new_string (g_value_get_string (value));
 		}
 	else if (g_ascii_strcasecmp (type, "date") == 0
 			 || g_ascii_strcasecmp (type, "time") == 0
@@ -635,9 +635,13 @@ gchar
 
 			gchar *datetime_format;
 
+			const gchar *_value;
+
+			_value = g_value_get_string (value);
+
 			datetime_format = (gchar *)g_hash_table_lookup (format, "content");
 
-			if (g_strcmp0 (value, "@now") == 0)
+			if (g_strcmp0 (_value, "@now") == 0)
 				{
 					gdt = g_date_time_new_now_local ();
 				}
@@ -645,18 +649,18 @@ gchar
 				{
 					if (g_ascii_strcasecmp (type, "date") == 0)
 						{
-							gdt = zak_utils_get_gdatetime_from_string (value, "%Y-%m-%d");
+							gdt = zak_utils_get_gdatetime_from_string (_value, "%Y-%m-%d");
 						}
 					else if (g_ascii_strcasecmp (type, "time") == 0)
 						{
-							gdt = zak_utils_get_gdatetime_from_string (value, "%H:%M:%S");
+							gdt = zak_utils_get_gdatetime_from_string (_value, "%H:%M:%S");
 						}
 					else /* if (g_ascii_strcasecmp (type, "datetime") == 0) */
 						{
-							gdt = zak_utils_get_gdatetime_from_string (value, NULL);
+							gdt = zak_utils_get_gdatetime_from_string (_value, NULL);
 						}
 				}
-			ret = zak_utils_gdatetime_format (gdt, datetime_format);
+			ret = zak_utils_gvalue_new_string (zak_utils_gdatetime_format (gdt, datetime_format));
 
 			if (gdt != NULL)
 				{
@@ -665,22 +669,22 @@ gchar
 		}
 	else
 		{
-			ret = g_strdup (value);
+			ret = zak_utils_gvalue_new_string (g_value_get_string (value));
 		}
 
 	return ret;
 }
 
 /**
- * zak_form_element_unformat:
+ * zak_form_element_unformat_gvalue:
  * @element:
  * @value:
  *
  */
-gchar
-*zak_form_element_unformat (ZakFormElement *element, const gchar *value)
+GValue
+*zak_form_element_unformat_gvalue (ZakFormElement *element, GValue *value)
 {
-	gchar *ret;
+	GValue *ret;
 
 	gchar *_value;
 	gchar *type;
@@ -699,7 +703,7 @@ gchar
 		}
 	else
 		{
-			_value = g_strdup (value);
+			_value = g_strdup (g_value_get_string (value));
 		}
 	type = zak_form_element_get_provider_type (element);
 	format = zak_form_element_get_format (element);
@@ -711,7 +715,7 @@ gchar
 
 			unformatted = zak_utils_unformat_money_full (_value, thousands_saparator, currency_symbol);
 
-			ret = zak_utils_format_money_full (unformatted, 0, "", NULL);
+			ret = zak_utils_gvalue_new_string (zak_utils_format_money_full (unformatted, 0, "", NULL));
 		}
 	else if (g_ascii_strcasecmp (type, "float") == 0)
 		{
@@ -724,7 +728,7 @@ gchar
 
 			setlocale (LC_NUMERIC, "C");
 
-			ret = g_strdup_printf ("%f", unformatted);
+			ret = zak_utils_gvalue_new_string (g_strdup_printf ("%f", unformatted));
 
 			setlocale (LC_NUMERIC, cur);
 
@@ -732,11 +736,11 @@ gchar
 		}
 	else if (g_ascii_strcasecmp (type, "string") == 0)
 		{
-			ret = g_strdup (_value);
+			ret = zak_utils_gvalue_new_string (_value);
 		}
 	else if (g_ascii_strcasecmp (type, "boolean") == 0)
 		{
-			ret = g_strdup (zak_utils_string_to_boolean (_value) ? "1" : "0");
+			ret = zak_utils_gvalue_new_string (zak_utils_string_to_boolean (_value) ? "1" : "0");
 		}
 	else if (g_ascii_strcasecmp (type, "date") == 0
 			 || g_ascii_strcasecmp (type, "time") == 0
@@ -747,21 +751,21 @@ gchar
 
 			if (gdt == NULL)
 				{
-					ret = g_strdup ("");
+					ret = zak_utils_gvalue_new_string ("");
 				}
 			else
 				{
 					if (g_ascii_strcasecmp (type, "date") == 0)
 						{
-							ret = zak_utils_gdatetime_format (gdt, "%F");
+							ret = zak_utils_gvalue_new_string (zak_utils_gdatetime_format (gdt, "%F"));
 						}
 					else if (g_ascii_strcasecmp (type, "time") == 0)
 						{
-							ret = zak_utils_gdatetime_format (gdt, "%T");
+							ret = zak_utils_gvalue_new_string (zak_utils_gdatetime_format (gdt, "%T"));
 						}
 					else if (g_ascii_strcasecmp (type, "datetime") == 0)
 						{
-							ret = zak_utils_gdatetime_format (gdt, "%F %T");
+							ret = zak_utils_gvalue_new_string (zak_utils_gdatetime_format (gdt, "%F %T"));
 						}
 				}
 
@@ -769,6 +773,88 @@ gchar
 				{
 					g_date_time_unref (gdt);
 				}
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_element_format:
+ * @element:
+ * @value:
+ *
+ */
+gchar
+*zak_form_element_format (ZakFormElement *element, const gchar *value)
+{
+	return g_strdup (g_value_get_string (zak_form_element_format_gvalue (element, zak_utils_gvalue_new_string (value))));
+}
+
+/**
+ * zak_form_element_unformat:
+ * @element:
+ * @value:
+ *
+ */
+gchar
+*zak_form_element_unformat (ZakFormElement *element, const gchar *value)
+{
+	return g_strdup (g_value_get_string (zak_form_element_unformat_gvalue (element, zak_utils_gvalue_new_string (value))));
+}
+
+/**
+ * zak_form_element_set_value_gvalue:
+ * @element:
+ * @value:
+ *
+ */
+gboolean
+zak_form_element_set_value_gvalue (ZakFormElement *element, GValue *value)
+{
+	ZakFormElementPrivate *priv;
+
+	gboolean ret;
+
+	ret = TRUE;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (priv->value != NULL)
+		{
+			g_value_unset (priv->value);
+		}
+
+	priv->value = zak_form_element_format_gvalue (element, value);
+
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->set_value != NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->set_value (element, priv->value);
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_element_get_value_gvalue:
+ * @element:
+ *
+ */
+GValue
+*zak_form_element_get_value_gvalue (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	GValue *ret;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->get_value != NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->get_value (element);
+		}
+	else
+		{
+			ret = priv->value;
 		}
 
 	return ret;
@@ -783,27 +869,7 @@ gchar
 gboolean
 zak_form_element_set_value (ZakFormElement *element, const gchar *value)
 {
-	ZakFormElementPrivate *priv;
-
-	gboolean ret;
-
-	ret = TRUE;
-
-	priv = zak_form_element_get_instance_private (element);
-
-	if (priv->value != NULL)
-		{
-			g_free (priv->value);
-		}
-
-	priv->value = zak_form_element_format (element, value);
-
-	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->set_value != NULL)
-		{
-			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->set_value (element, priv->value);
-		}
-
-	return ret;
+	return zak_form_element_set_value_gvalue (element, zak_utils_gvalue_new_string (value));
 }
 
 /**
@@ -814,32 +880,17 @@ zak_form_element_set_value (ZakFormElement *element, const gchar *value)
 gchar
 *zak_form_element_get_value (ZakFormElement *element)
 {
-	ZakFormElementPrivate *priv;
-
-	gchar *ret;
-
-	priv = zak_form_element_get_instance_private (element);
-
-	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->get_value != NULL)
-		{
-			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->get_value (element);
-		}
-	else
-		{
-			ret = g_strdup (priv->value);
-		}
-
-	return ret;
+	return g_strdup (g_value_get_string (zak_form_element_get_value_gvalue (element)));
 }
 
 /**
- * zak_form_element_set_default_value:
+ * zak_form_element_set_default_value_gvalue:
  * @element:
  * @value:
  *
  */
 gboolean
-zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
+zak_form_element_set_default_value_gvalue (ZakFormElement *element, GValue *value)
 {
 	ZakFormElementPrivate *priv;
 
@@ -851,27 +902,50 @@ zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
 
 	if (priv->default_value != NULL)
 		{
-			g_free (priv->default_value);
+			g_value_unset (priv->default_value);
 		}
 
-	priv->default_value = g_strdup (value);
+	priv->default_value = value;
 
 	return ret;
 }
 
 /**
- * zak_form_element_get_default_value:
+ * zak_form_element_get_default_value_gvalue:
+ * @element:
+ *
+ */
+GValue
+*zak_form_element_get_default_value_gvalue (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return priv->default_value;
+}
+
+/**
+ * zak_form_element_set_default_value:
+ * @element:
+ * @value:
+ *
+ */
+gboolean
+zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
+{
+	return zak_form_element_set_default_value_gvalue (element, zak_utils_gvalue_new_string (value));
+}
+
+/**
+ * zak_form_element_get_default_value_gvalue:
  * @element:
  *
  */
 gchar
 *zak_form_element_get_default_value (ZakFormElement *element)
 {
-	ZakFormElementPrivate *priv;
-
-	priv = zak_form_element_get_instance_private (element);
-
-	return g_strdup (priv->default_value);
+	return g_strdup (g_value_get_string (zak_form_element_get_default_value_gvalue (element)));
 }
 
 /**
@@ -896,7 +970,7 @@ zak_form_element_set_original_value (ZakFormElement *element, const gchar *value
 			g_free (priv->original_value);
 		}
 
-	priv->original_value = g_strdup (value);
+	priv->original_value = zak_utils_gvalue_new_string (value);
 
 	return ret;
 }
@@ -913,7 +987,7 @@ gchar
 
 	priv = zak_form_element_get_instance_private (element);
 
-	return g_strdup (priv->original_value);
+	return g_strdup (g_value_get_string (priv->original_value));
 }
 
 /**
@@ -1148,7 +1222,7 @@ zak_form_element_clear (ZakFormElement *element)
 
 	priv = zak_form_element_get_instance_private (element);
 
-	zak_form_element_set_value (element, priv->default_value);
+	zak_form_element_set_value_gvalue (element, priv->default_value);
 }
 
 /**
