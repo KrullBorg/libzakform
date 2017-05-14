@@ -40,8 +40,8 @@ struct _ZakFormElementClass
 
 		void (*xml_parsing) (ZakFormElement *element, xmlNode *xmlnode);
 
-		gboolean (*set_value) (ZakFormElement *element, const gchar *value);
-		gchar *(*get_value) (ZakFormElement *element);
+		gboolean (*set_value) (ZakFormElement *element, GValue *value);
+		GValue *(*get_value) (ZakFormElement *element);
 
 		void (*set_visible) (ZakFormElement *element, gboolean visible);
 		gboolean (*get_visible) (ZakFormElement *element);
@@ -65,11 +65,20 @@ gboolean zak_form_element_get_is_key (ZakFormElement *element);
 void zak_form_element_set_provider_type (ZakFormElement *element, const gchar *type);
 gchar *zak_form_element_get_provider_type (ZakFormElement *element);
 
+GValue *zak_form_element_format_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_unformat_gvalue (ZakFormElement *element, GValue *value);
+
 gchar *zak_form_element_format (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_unformat (ZakFormElement *element, const gchar *value);
 
+gboolean zak_form_element_set_value_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_get_value_gvalue (ZakFormElement *element);
+
 gboolean zak_form_element_set_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_value (ZakFormElement *element);
+
+gboolean zak_form_element_set_default_value_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_get_default_value_gvalue (ZakFormElement *element);
 
 gboolean zak_form_element_set_default_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_default_value (ZakFormElement *element);
