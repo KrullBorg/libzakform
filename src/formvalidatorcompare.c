@@ -25,6 +25,7 @@
 #include <libzakutils/libzakutils.h>
 
 #include "commons.h"
+#include "form.h"
 #include "formvalidator.h"
 #include "formvalidatorcompare.h"
 
@@ -43,7 +44,7 @@ static void zak_form_validator_compare_get_property (GObject *object,
 static void zak_form_validator_compare_dispose (GObject *gobject);
 static void zak_form_validator_compare_finalize (GObject *gobject);
 
-static gboolean zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
+static gboolean zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form);
 static gboolean zak_form_validator_compare_validate (ZakFormValidator *validator_notempty);
 
 struct _ZakFormValidatorCompare
@@ -111,11 +112,11 @@ ZakFormValidatorCompare
  * zak_form_validator_compare_xml_parsing:
  * @validator:
  * @xnode:
- * @ar_elements:
+ * @form:
  *
  */
 static gboolean
-zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements)
+zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form)
 {
 	gchar *prop;
 
@@ -126,7 +127,7 @@ zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xn
 	g_free (prop);
 
 	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element1");
-	priv->v1 = zak_form_get_element_by_id (ar_elements, prop);
+	priv->v1 = zak_form_form_get_element_by_id ((ZakFormForm *)form, prop);
 	if (!ZAK_FORM_IS_ELEMENT (priv->v1))
 		{
 			g_warning ("Validator compare: element1 isn't a ZakFormElement.");
@@ -134,7 +135,7 @@ zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xn
 	g_free (prop);
 
 	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element2");
-	priv->v2 = zak_form_get_element_by_id (ar_elements, prop);
+	priv->v2 = zak_form_form_get_element_by_id ((ZakFormForm *)form, prop);
 	if (!ZAK_FORM_IS_ELEMENT (priv->v2))
 		{
 			g_warning ("Validator compare: element2 isn't a ZakFormElement.");

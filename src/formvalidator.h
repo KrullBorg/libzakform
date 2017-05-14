@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #ifndef _ZAK_FORM_VALIDATOR_H_
 #define _ZAK_FORM_VALIDATOR_H_
 
@@ -34,11 +35,11 @@ struct _ZakFormValidatorClass
 {
 	GObjectClass parent_class;
 
-	gboolean (*xml_parsing) (ZakFormValidator *self, xmlNode *xnode, GPtrArray *ar_elements);
+	gboolean (*xml_parsing) (ZakFormValidator *self, xmlNode *xnode, gpointer zakform);
 	gboolean (*validate) (ZakFormValidator *self);
 };
 
-gboolean zak_form_validator_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
+gboolean zak_form_validator_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer zakform);
 
 gchar *zak_form_validator_get_id (ZakFormValidator *validator);
 void zak_form_validator_set_id (ZakFormValidator *validator, const gchar *id);
