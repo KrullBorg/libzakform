@@ -154,6 +154,7 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 						{
 							g_warning ("Logic type «%s» not supported.",
 							           xmlGetProp (cur, (xmlChar *)"type"));
+							cur = cur->next;
 							continue;
 						}
 
@@ -182,6 +183,7 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 						{
 							g_warning ("Element «%s» not present in form.",
 							           (gchar *)xmlGetProp (cur, (xmlChar *)"element"));
+							cur = cur->next;
 							continue;
 						}
 
@@ -192,6 +194,7 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 						{
 							g_warning ("Element «%s» not found.",
 							           (gchar *)xmlGetProp (cur, (xmlChar *)"type"));
+							cur = cur->next;
 							continue;
 						}
 
@@ -214,26 +217,6 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 		}
 }
 
-static gboolean
-traverse_func (GNode *node,
-               gpointer data)
-{
-	ZakFormValidatorCompositePrivate *priv = ZAK_FORM_VALIDATOR_COMPOSITE_GET_PRIVATE ((ZakFormValidator *)data);
-
-	Node *n = (Node *)node->data;
-
-	if (n->type > 0)
-		{
-			g_warning ("Node logic type %d message «%s»", n->type, n->message);
-		}
-	else
-		{
-			g_warning ("Node validator for element «%s»", zak_form_element_get_name (n->element));
-		}
-
-	return FALSE;
-}
-
 /**
  * zak_form_validator_composite_xml_parsing:
  * @validator:
@@ -248,11 +231,6 @@ zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode *
 	ZakFormValidatorCompositePrivate *priv = ZAK_FORM_VALIDATOR_COMPOSITE_GET_PRIVATE (validator);
 
 	_zak_form_validator_composite_xml_parsing (validator, xnode, (ZakFormForm *)form, NULL);
-
-	if (priv->tree != NULL)
-		{
-			g_node_traverse (priv->tree, G_PRE_ORDER, G_TRAVERSE_ALL, -1, traverse_func, (gpointer)validator);
-		}
 
 	return TRUE;
 }
@@ -317,11 +295,10 @@ zak_form_validator_composite_finalize (GObject *gobject)
 }
 
 static gboolean
-zak_form_validator_composite_validate (ZakFormValidator *validator)
+_zak_form_validator_composite_validate (ZakFormValidator *validator, GNode *parent)
 {
 	gboolean ret;
 
-	GNode *root;
 	GNode *child;
 	Node *n;
 	Node *n_child;
@@ -329,54 +306,76 @@ zak_form_validator_composite_validate (ZakFormValidator *validator)
 	guint i;
 	guint children;
 
-	ZakFormValidatorCompositePrivate *priv = ZAK_FORM_VALIDATOR_COMPOSITE_GET_PRIVATE (validator);
+	n = (Node *)parent->data;
 
-	if (priv->tree != NULL)
+	switch (n->type)
 		{
-			root = g_node_get_root (priv->tree);
+		case LOGIC_TYPE_IF:
+			break;
 
-			n = (Node *)root->data;
+		case LOGIC_TYPE_AND:
+			ret = TRUE;
+			break;
 
+		case LOGIC_TYPE_OR:
+			ret = FALSE;
+			break;
+		}
+
+	children = g_node_n_children (parent);
+	for (i = 0; i < children; i++)
+		{
+			child = g_node_nth_child (parent, i);
+			n_child = (Node *)child->data;
 			switch (n->type)
 				{
 				case LOGIC_TYPE_IF:
 					break;
 
 				case LOGIC_TYPE_AND:
-					ret = TRUE;
+					if (n_child->type > 0)
+						{
+							ret = (ret && _zak_form_validator_composite_validate (validator, child));
+						}
+					else
+						{
+							ret = (ret && zak_form_element_validator_validate (n_child->validator,
+							                                                   zak_form_element_get_value (n_child->element)));
+						}
 					break;
 
 				case LOGIC_TYPE_OR:
-					ret = FALSE;
-					break;
-				}
-
-			children = g_node_n_children (root);
-			for (i = 0; i < children; i++)
-				{
-					child = g_node_nth_child (root, i);
-					n_child = (Node *)child->data;
-					switch (n->type)
+					if (n_child->type > 0)
 						{
-						case LOGIC_TYPE_IF:
-							break;
-
-						case LOGIC_TYPE_AND:
-							ret = (ret && zak_form_element_validator_validate (n_child->validator,
-							                                                   zak_form_element_get_value (n_child->element)));
-							break;
-
-						case LOGIC_TYPE_OR:
+							ret = (ret || _zak_form_validator_composite_validate (validator, child));
+						}
+					else
+						{
 							ret = (ret || zak_form_element_validator_validate (n_child->validator,
 							                                                   zak_form_element_get_value (n_child->element)));
-							break;
 						}
+					break;
 				}
+		}
 
-			if (!ret)
-				{
-					zak_form_validator_set_message (ZAK_FORM_VALIDATOR (validator), n->message);
-				}
+	if (!ret)
+		{
+			zak_form_validator_set_message (ZAK_FORM_VALIDATOR (validator), n->message);
+		}
+
+	return ret;
+}
+
+static gboolean
+zak_form_validator_composite_validate (ZakFormValidator *validator)
+{
+	gboolean ret;
+
+	ZakFormValidatorCompositePrivate *priv = ZAK_FORM_VALIDATOR_COMPOSITE_GET_PRIVATE (validator);
+
+	if (priv->tree != NULL)
+		{
+			ret = _zak_form_validator_composite_validate (validator, g_node_get_root (priv->tree));
 		}
 	else
 		{
