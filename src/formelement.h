@@ -83,8 +83,12 @@ GValue *zak_form_element_get_default_value_gvalue (ZakFormElement *element);
 gboolean zak_form_element_set_default_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_default_value (ZakFormElement *element);
 
+gboolean zak_form_element_set_original_value_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_get_original_value_gvalue (ZakFormElement *element);
+
 gboolean zak_form_element_set_original_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_original_value (ZakFormElement *element);
+
 void zak_form_element_set_as_original_value (ZakFormElement *element);
 gboolean zak_form_element_is_changed (ZakFormElement *element);
 

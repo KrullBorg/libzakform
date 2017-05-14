@@ -225,6 +225,8 @@ zak_form_element_init (ZakFormElement *zak_form_element)
 	priv->is_key = FALSE;
 	priv->type = g_strdup ("");
 	priv->value = zak_utils_gvalue_new_string ("");
+	priv->default_value = zak_utils_gvalue_new_string ("");
+	priv->original_value = zak_utils_gvalue_new_string ("");
 	priv->format = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->visible = TRUE;
 	priv->editable = TRUE;
@@ -903,9 +905,10 @@ zak_form_element_set_default_value_gvalue (ZakFormElement *element, GValue *valu
 	if (priv->default_value != NULL)
 		{
 			g_value_unset (priv->default_value);
+			g_value_init (priv->default_value, G_VALUE_TYPE (value));
 		}
 
-	priv->default_value = value;
+	g_value_copy (value, priv->default_value);
 
 	return ret;
 }
@@ -949,13 +952,13 @@ gchar
 }
 
 /**
- * zak_form_element_set_original_value:
+ * zak_form_element_set_original_value_gvalue:
  * @element:
  * @value:
  *
  */
 gboolean
-zak_form_element_set_original_value (ZakFormElement *element, const gchar *value)
+zak_form_element_set_original_value_gvalue (ZakFormElement *element, GValue *value)
 {
 	ZakFormElementPrivate *priv;
 
@@ -967,12 +970,28 @@ zak_form_element_set_original_value (ZakFormElement *element, const gchar *value
 
 	if (priv->original_value != NULL)
 		{
-			g_free (priv->original_value);
+			g_value_unset (priv->original_value);
+			g_value_init (priv->original_value, G_VALUE_TYPE (value));
 		}
 
-	priv->original_value = zak_utils_gvalue_new_string (value);
+	g_value_copy (value, priv->original_value);
 
 	return ret;
+}
+
+/**
+ * zak_form_element_get_original_value_gvalue:
+ * @element:
+ *
+ */
+GValue
+*zak_form_element_get_original_value_gvalue (ZakFormElement *element)
+{
+	ZakFormElementPrivate *priv;
+
+	priv = zak_form_element_get_instance_private (element);
+
+	return priv->original_value;
 }
 
 /**
@@ -983,11 +1002,18 @@ zak_form_element_set_original_value (ZakFormElement *element, const gchar *value
 gchar
 *zak_form_element_get_original_value (ZakFormElement *element)
 {
-	ZakFormElementPrivate *priv;
+	return g_strdup (g_value_get_string (zak_form_element_get_original_value_gvalue (element)));
+}
 
-	priv = zak_form_element_get_instance_private (element);
-
-	return g_strdup (g_value_get_string (priv->original_value));
+/**
+ * zak_form_element_set_original_value:
+ * @element:
+ *
+ */
+gboolean
+zak_form_element_set_original_value (ZakFormElement *element, const gchar *value)
+{
+	return zak_form_element_set_original_value_gvalue (element, zak_utils_gvalue_new_string (value));
 }
 
 /**
@@ -998,7 +1024,7 @@ gchar
 void
 zak_form_element_set_as_original_value (ZakFormElement *element)
 {
-	zak_form_element_set_original_value (element, zak_form_element_get_value (element));
+	zak_form_element_set_original_value_gvalue (element, zak_form_element_get_value_gvalue (element));
 }
 
 /**
