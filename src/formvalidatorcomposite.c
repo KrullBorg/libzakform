@@ -68,14 +68,15 @@ G_DEFINE_TYPE (ZakFormValidatorComposite, zak_form_validator_composite, ZAK_FORM
 
 typedef enum
 	{
-		LOGIC_TYPE_IF = 1,
-		LOGIC_TYPE_AND,
+		LOGIC_TYPE_AND = 1,
 		LOGIC_TYPE_OR
 	} LogicType;
 
 typedef struct
 	{
-		LogicType type;
+		gboolean condition;
+		gboolean condition_type;
+		LogicType logic_type;
 		ZakFormElementValidator *validator;
 		ZakFormElement *element;
 		gchar *message;
@@ -131,24 +132,72 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 	cur = xnode->children;
 	while (cur)
 		{
-			if (xmlStrEqual (cur->name, (xmlChar *)"logic"))
+			if (xmlStrEqual (cur->name, (xmlChar *)"condition"))
+				{
+					ZakFormElement *element;
+					ZakFormElementValidatorConstructorFunc validator_constructor;
+					GNode *gnode;
+					Node *n;
+
+					n = (Node *)g_new0 (Node, 1);
+
+					n->condition = TRUE;
+
+					n->condition_type= zak_utils_string_to_boolean ((gchar *)xmlGetProp (cur, (xmlChar *)"condition_type"));
+
+					element = zak_form_form_get_element_by_id (form, (gchar *)xmlGetProp (cur, (xmlChar *)"element"));
+					if (!ZAK_FORM_IS_ELEMENT (element))
+						{
+							g_warning ("Element «%s» not present in form.",
+							           (gchar *)xmlGetProp (cur, (xmlChar *)"element"));
+							cur = cur->next;
+							continue;
+						}
+
+					validator_constructor = zak_form_get_form_element_validator (form, (gchar *)xmlGetProp (cur, (xmlChar *)"validator"));
+					if (validator_constructor == NULL)
+						{
+							g_warning ("Validator «%s» not found.",
+							           (gchar *)xmlGetProp (cur, (xmlChar *)"validator"));
+							cur = cur->next;
+							continue;
+						}
+
+					n->validator = validator_constructor ();
+					zak_form_element_validator_xml_parsing (n->validator, cur);
+
+					n->element = element;
+
+					n->message = NULL;
+
+					if (tree == NULL)
+						{
+							gnode = g_node_new (n);
+							priv->tree = gnode;
+						}
+					else
+						{
+							n->logic_type = ((Node *)tree->data)->logic_type;
+
+							gnode = g_node_append (tree, g_node_new (n));
+						}
+
+					_zak_form_validator_composite_xml_parsing (validator, cur, form, gnode);
+				}
+			else if (xmlStrEqual (cur->name, (xmlChar *)"logic"))
 				{
 					GNode *gnode;
 					Node *n;
 
 					n = (Node *)g_new0 (Node, 1);
 
-					if (xmlStrEqual (xmlGetProp (cur, (xmlChar *)"type"), (xmlChar *)"if"))
+					if (xmlStrEqual (xmlGetProp (cur, (xmlChar *)"type"), (xmlChar *)"and"))
 						{
-							n->type = LOGIC_TYPE_IF;
-						}
-					else if (xmlStrEqual (xmlGetProp (cur, (xmlChar *)"type"), (xmlChar *)"and"))
-						{
-							n->type = LOGIC_TYPE_AND;
+							n->logic_type = LOGIC_TYPE_AND;
 						}
 					else if (xmlStrEqual (xmlGetProp (cur, (xmlChar *)"type"), (xmlChar *)"or"))
 						{
-							n->type = LOGIC_TYPE_OR;
+							n->logic_type = LOGIC_TYPE_OR;
 						}
 					else
 						{
@@ -192,7 +241,7 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 					validator_constructor = zak_form_get_form_element_validator (form, (gchar *)xmlGetProp (cur, (xmlChar *)"type"));
 					if (validator_constructor == NULL)
 						{
-							g_warning ("Element «%s» not found.",
+							g_warning ("Validator «%s» not found.",
 							           (gchar *)xmlGetProp (cur, (xmlChar *)"type"));
 							cur = cur->next;
 							continue;
@@ -308,11 +357,8 @@ _zak_form_validator_composite_validate (ZakFormValidator *validator, GNode *pare
 
 	n = (Node *)parent->data;
 
-	switch (n->type)
+	switch (n->logic_type)
 		{
-		case LOGIC_TYPE_IF:
-			break;
-
 		case LOGIC_TYPE_AND:
 			ret = TRUE;
 			break;
@@ -327,40 +373,70 @@ _zak_form_validator_composite_validate (ZakFormValidator *validator, GNode *pare
 		{
 			child = g_node_nth_child (parent, i);
 			n_child = (Node *)child->data;
-			switch (n->type)
+
+			if (n_child->condition)
 				{
-				case LOGIC_TYPE_IF:
-					break;
+					if (zak_form_element_validator_validate (n_child->validator,
+					                                         zak_form_element_get_value (n_child->element)) == n_child->condition_type)
+						{
+							switch (n->logic_type)
+								{
+								case LOGIC_TYPE_AND:
+									ret = (ret && _zak_form_validator_composite_validate (validator, child));
+									break;
 
-				case LOGIC_TYPE_AND:
-					if (n_child->type > 0)
-						{
-							ret = (ret && _zak_form_validator_composite_validate (validator, child));
+								case LOGIC_TYPE_OR:
+									ret = (ret || _zak_form_validator_composite_validate (validator, child));
+									break;
+								}
 						}
-					else
+				}
+			else
+				{
+					switch (n->logic_type)
 						{
-							ret = (ret && zak_form_element_validator_validate (n_child->validator,
-							                                                   zak_form_element_get_value (n_child->element)));
-						}
-					break;
+						case LOGIC_TYPE_AND:
+							if (n_child->logic_type > 0)
+								{
+									ret = (ret && _zak_form_validator_composite_validate (validator, child));
+								}
+							else
+								{
+									ret = (ret && zak_form_element_validator_validate (n_child->validator,
+									                                                   zak_form_element_get_value (n_child->element)));
+								}
+							break;
 
-				case LOGIC_TYPE_OR:
-					if (n_child->type > 0)
-						{
-							ret = (ret || _zak_form_validator_composite_validate (validator, child));
+						case LOGIC_TYPE_OR:
+							if (n_child->logic_type > 0)
+								{
+									ret = (ret || _zak_form_validator_composite_validate (validator, child));
+								}
+							else
+								{
+									ret = (ret || zak_form_element_validator_validate (n_child->validator,
+									                                                   zak_form_element_get_value (n_child->element)));
+								}
+							break;
 						}
-					else
-						{
-							ret = (ret || zak_form_element_validator_validate (n_child->validator,
-							                                                   zak_form_element_get_value (n_child->element)));
-						}
-					break;
 				}
 		}
 
-	if (!ret)
+	if (!ret && n->message != NULL)
 		{
-			zak_form_validator_set_message (ZAK_FORM_VALIDATOR (validator), n->message);
+			gchar *msg;
+
+			msg = zak_form_validator_get_message (ZAK_FORM_VALIDATOR (validator));
+			if (msg != NULL && g_strcmp0 (msg, "") != 0 && g_strcmp0 (msg, _("Invalid value")) != 0)
+				{
+					zak_form_validator_set_message (ZAK_FORM_VALIDATOR (validator), g_strdup_printf ("%s (%s)", n->message, msg));
+				}
+			else
+				{
+					zak_form_validator_set_message (ZAK_FORM_VALIDATOR (validator), n->message);
+				}
+
+			g_free (msg);
 		}
 
 	return ret;

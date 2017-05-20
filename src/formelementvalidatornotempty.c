@@ -124,7 +124,14 @@ zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *valida
 		{
 			g_free (priv->as_empty_string);
 		}
-	priv->as_empty_string = g_strdup ((gchar *)xmlNodeGetContent (xnode));
+	if (xmlGetProp (xnode, (xmlChar *)"empty_string") != NULL)
+		{
+			priv->as_empty_string = g_strdup ((gchar *)xmlGetProp (xnode, (xmlChar *)"empty_string"));
+		}
+	else
+		{
+			priv->as_empty_string = g_strdup ((gchar *)xmlNodeGetContent (xnode));
+		}
 
 	return TRUE;
 }
