@@ -13,3 +13,4 @@ src/formiprovider.c
 src/formvalidator.c
 src/formvalidatorcompare.c
 src/formvalidatorcomparedate.c
+src/formvalidatorcomposite.c
