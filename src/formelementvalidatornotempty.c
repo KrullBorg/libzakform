@@ -33,13 +33,13 @@ static void zak_form_element_validator_notempty_class_init (ZakFormElementValida
 static void zak_form_element_validator_notempty_init (ZakFormElementValidatorNotempty *zak_form_element);
 
 static void zak_form_element_validator_notempty_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                                              guint property_id,
+                                                              const GValue *value,
+                                                              GParamSpec *pspec);
 static void zak_form_element_validator_notempty_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                                              guint property_id,
+                                                              GValue *value,
+                                                              GParamSpec *pspec);
 
 static void zak_form_element_validator_notempty_dispose (GObject *gobject);
 static void zak_form_element_validator_notempty_finalize (GObject *gobject);
@@ -124,7 +124,14 @@ zak_form_element_validator_notempty_xml_parsing (ZakFormElementValidator *valida
 		{
 			g_free (priv->as_empty_string);
 		}
-	priv->as_empty_string = g_strdup ((gchar *)xmlNodeGetContent (xnode));
+	if (xmlGetProp (xnode, (xmlChar *)"empty_string") != NULL)
+		{
+			priv->as_empty_string = g_strdup ((gchar *)xmlGetProp (xnode, (xmlChar *)"empty_string"));
+		}
+	else
+		{
+			priv->as_empty_string = g_strdup ((gchar *)xmlNodeGetContent (xnode));
+		}
 
 	return TRUE;
 }
@@ -171,9 +178,9 @@ gchar
 /* PRIVATE */
 static void
 zak_form_element_validator_notempty_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                                  guint property_id,
+                                                  const GValue *value,
+                                                  GParamSpec *pspec)
 {
 	ZakFormElementValidatorNotempty *validator = (ZakFormElementValidatorNotempty *)object;
 	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
@@ -192,9 +199,9 @@ zak_form_element_validator_notempty_set_property (GObject *object,
 
 static void
 zak_form_element_validator_notempty_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                                  guint property_id,
+                                                  GValue *value,
+                                                  GParamSpec *pspec)
 {
 	ZakFormElementValidatorNotempty *validator = (ZakFormElementValidatorNotempty *)object;
 	ZakFormElementValidatorNotemptyPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_NOTEMPTY_GET_PRIVATE (validator);
@@ -237,7 +244,7 @@ zak_form_element_validator_notempty_finalize (GObject *gobject)
 
 static gboolean
 zak_form_element_validator_notempty_validate (ZakFormElementValidator *validator,
-										  const gchar *value)
+                                              const gchar *value)
 {
 	gboolean ret;
 

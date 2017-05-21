@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,29 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __LIBZAKFORM_H__
-#define __LIBZAKFORM_H__
+#ifndef __ZAK_FORM_VALIDATOR_COMPOSITE_H__
+#define __ZAK_FORM_VALIDATOR_COMPOSITE_H__
 
 
-#include <libzakform/form.h>
+#include <glib-object.h>
 
-#include <libzakform/formelement.h>
+#include <libxml/tree.h>
 
-#include <libzakform/formelementfilter.h>
-#include <libzakform/formelementfilterluc.h>
-#include <libzakform/formelementfiltertrim.h>
-
-#include <libzakform/formelementvalidator.h>
-#include <libzakform/formelementvalidatordate.h>
-#include <libzakform/formelementvalidatornotempty.h>
-#include <libzakform/formelementvalidatorregex.h>
-
-#include <libzakform/formiprovider.h>
-
-#include <libzakform/formvalidator.h>
-#include <libzakform/formvalidatorcompare.h>
-#include <libzakform/formvalidatorcomparedate.h>
-#include <libzakform/formvalidatorcomposite.h>
+#include "form.h"
+#include "formvalidator.h"
 
 
-#endif /* __LIBZAKFORM_H__ */
+G_BEGIN_DECLS
+
+
+#define ZAK_FORM_TYPE_VALIDATOR_COMPOSITE zak_form_validator_composite_get_type ()
+G_DECLARE_FINAL_TYPE (ZakFormValidatorComposite, zak_form_validator_composite, ZAK_FORM, VALIDATOR_COMPOSITE, ZakFormValidator)
+
+ZakFormValidatorComposite *zak_form_validator_composite_new (void);
+
+
+G_END_DECLS
+
+
+#endif /* __ZAK_FORM_VALIDATOR_COMPOSITE_H__ */

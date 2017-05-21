@@ -22,6 +22,7 @@
 
 #include <glib/gi18n-lib.h>
 
+#include "form.h"
 #include "formvalidator.h"
 
 enum
@@ -98,12 +99,12 @@ zak_form_validator_init (ZakFormValidator *zak_form_validator)
  * zak_form_validator_xml_parsing:
  * @validator:
  * @xnode:
- * @ar_elements:
+ * @form:
  *
  * Retuns:
  */
 gboolean
-zak_form_validator_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements)
+zak_form_validator_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form)
 {
 	gboolean ret;
 
@@ -136,7 +137,7 @@ zak_form_validator_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPt
 
 	if (ZAK_FORM_VALIDATOR_GET_CLASS (validator)->xml_parsing != NULL)
 		{
-			ret = ZAK_FORM_VALIDATOR_GET_CLASS (validator)->xml_parsing (validator, xnode, ar_elements);
+			ret = ZAK_FORM_VALIDATOR_GET_CLASS (validator)->xml_parsing (validator, xnode, form);
 		}
 
 	return ret;
@@ -255,9 +256,9 @@ zak_form_validator_set_enabled (ZakFormValidator *validator, gboolean enabled)
 /* PRIVATE */
 static void
 zak_form_validator_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                 guint property_id,
+                                 const GValue *value,
+                                 GParamSpec *pspec)
 {
 	ZakFormValidator *zak_form_validator = (ZakFormValidator *)object;
 	ZakFormValidatorPrivate *priv = zak_form_validator_get_instance_private (zak_form_validator);
@@ -284,9 +285,9 @@ zak_form_validator_set_property (GObject *object,
 
 static void
 zak_form_validator_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                 guint property_id,
+                                 GValue *value,
+                                 GParamSpec *pspec)
 {
 	ZakFormValidator *zak_form_validator = (ZakFormValidator *)object;
 	ZakFormValidatorPrivate *priv = zak_form_validator_get_instance_private (zak_form_validator);

@@ -66,7 +66,11 @@ zak_form_get_compare_type_from_string (const gchar *str)
 		}
 	else
 		{
-			g_warning ("Compare type «%s» not supported.", str);
+			if (str != NULL
+			    && g_strcmp0 (str, "") != 0)
+				{
+					g_warning ("Compare type «%s» not supported.", str);
+				}
 			ret = ZAK_FORM_COMPARE_TYPE_NONE;
 		}
 

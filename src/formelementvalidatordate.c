@@ -86,6 +86,8 @@ zak_form_element_validator_date_init (ZakFormElementValidatorDate *zak_form_elem
 {
 	ZakFormElementValidatorDatePrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_DATE_GET_PRIVATE (zak_form_element);
 
+	priv->compare_type = ZAK_FORM_COMPARE_TYPE_NONE;
+	priv->compare_value = NULL;
 	priv->format = NULL;
 }
 

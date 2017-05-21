@@ -25,6 +25,7 @@
 #include <libzakutils/libzakutils.h>
 
 #include "commons.h"
+#include "form.h"
 #include "formvalidator.h"
 #include "formvalidatorcomparedate.h"
 
@@ -43,7 +44,7 @@ static void zak_form_validator_compare_date_get_property (GObject *object,
 static void zak_form_validator_compare_date_dispose (GObject *gobject);
 static void zak_form_validator_compare_date_finalize (GObject *gobject);
 
-static gboolean zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
+static gboolean zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form);
 static gboolean zak_form_validator_compare_date_validate (ZakFormValidator *validator_notempty);
 
 struct _ZakFormValidatorCompareDate
@@ -114,11 +115,11 @@ ZakFormValidatorCompareDate
  * zak_form_validator_compare_date_xml_parsing:
  * @validator:
  * @xnode:
- * @ar_elements:
+ * @form:
  *
  */
 static gboolean
-zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements)
+zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form)
 {
 	gchar *prop;
 
@@ -129,11 +130,11 @@ zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNod
 	g_free (prop);
 
 	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element1");
-	priv->v1 = zak_form_get_element_by_id (ar_elements, prop);
+	priv->v1 = zak_form_form_get_element_by_id ((ZakFormForm *)form, prop);
 	g_free (prop);
 
 	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element2");
-	priv->v2 = zak_form_get_element_by_id (ar_elements, prop);
+	priv->v2 = zak_form_form_get_element_by_id ((ZakFormForm *)form, prop);
 	g_free (prop);
 
 	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"format1");
