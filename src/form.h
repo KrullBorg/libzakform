@@ -44,6 +44,9 @@ struct _ZakFormFormClass
 	void (*element_added) (ZakFormForm *zakform, ZakFormElement *element);
 };
 
+typedef ZakFormElementValidator *(* ZakFormElementValidatorConstructorFunc) (void);
+
+ZakFormElementValidatorConstructorFunc zak_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespace);
 
 gboolean zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc);
 gboolean zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filename);
@@ -54,6 +57,7 @@ GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
 GPtrArray *zak_form_form_get_elements_by_type (ZakFormForm *zakform, GType type);
 
 gboolean zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator);
+ZakFormValidator *zak_form_form_get_validator_by_id (ZakFormForm *zakform, const gchar *id);
 GPtrArray *zak_form_form_get_validators (ZakFormForm *zakform);
 GPtrArray *zak_form_form_get_validators_by_type (ZakFormForm *zakform, GType type);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ZakFormValidatorCompareDate, zak_form_validator_compare_date, ZAK_FORM, VALIDATOR_COMPARE_DATE, ZakFormValidator)
 
 ZakFormValidatorCompareDate *zak_form_validator_compare_date_new (void);
-gboolean zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
 
 
 G_END_DECLS

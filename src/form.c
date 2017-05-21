@@ -38,23 +38,19 @@ typedef gboolean (* FormElementXmlParsingFunc) (ZakFormElement *, xmlNodePtr);
 typedef GObject *(* FormElementExtensionConstructorFunc) (void);
 typedef gboolean (* FormElementExtensionXmlParsingFunc) (GObject *, xmlNodePtr);
 typedef ZakFormElementFilter *(* FormElementFilterConstructorFunc) (void);
-typedef gboolean (* FormElementFilterXmlParsingFunc) (ZakFormElementFilter *, xmlNodePtr);
-typedef ZakFormElementValidator *(* FormElementValidatorConstructorFunc) (void);
-typedef gboolean (* FormElementValidatorXmlParsingFunc) (ZakFormElementValidator *, xmlNodePtr);
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
-typedef gboolean (* FormValidatorXmlParsingFunc) (ZakFormValidator *, xmlNodePtr, GPtrArray *);
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
 static void zak_form_form_init (ZakFormForm *zak_form_form);
 
 static void zak_form_form_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                        guint property_id,
+                                        const GValue *value,
+                                        GParamSpec *pspec);
 static void zak_form_form_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                        guint property_id,
+                                        GValue *value,
+                                        GParamSpec *pspec);
 
 static void zak_form_form_dispose (GObject *gobject);
 static void zak_form_form_finalize (GObject *gobject);
@@ -169,9 +165,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 	FormElementExtensionConstructorFunc extension_constructor;
 	FormElementExtensionXmlParsingFunc extension_xml_parsing;
 	FormElementFilterConstructorFunc filter_constructor;
-	FormElementFilterXmlParsingFunc filter_xml_parsing;
-	FormElementValidatorConstructorFunc validator_constructor;
-	FormElementValidatorXmlParsingFunc validator_xml_parsing;
+	ZakFormElementValidatorConstructorFunc validator_constructor;
 
 	gboolean to_unlink;
 	xmlNode *xnode_tmp;
@@ -185,7 +179,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 
 			if (xmlStrcmp (xnode->name, (const xmlChar *)"extension") == 0)
 				{
-					type = xmlGetProp (xnode, (const xmlChar *)"type");
+					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
 					/* for each module */
 					for (i = 0; i < priv->ar_modules->len; i++)
@@ -222,7 +216,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 				}
 			else if (xmlStrcmp (xnode->name, (const xmlChar *)"filter") == 0)
 				{
-					type = xmlGetProp (xnode, (const xmlChar *)"type");
+					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
 					/* for each module */
 					for (i = 0; i < priv->ar_modules->len; i++)
@@ -236,15 +230,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 											filter = filter_constructor ();
 											zak_form_element_add_filter (element, filter);
 
-											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-											                     g_strconcat (type, "_xml_parsing", NULL),
-											                     (gpointer *)&filter_xml_parsing))
-												{
-													if (filter_xml_parsing != NULL)
-														{
-															filter_xml_parsing (filter, xnode);
-														}
-												}
+											zak_form_element_filter_xml_parsing (filter, xnode);
 
 											break;
 										}
@@ -257,37 +243,19 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 
 					to_unlink = TRUE;
 				}
-		    else if (xmlStrcmp (xnode->name, (const xmlChar *)"validator") == 0)
+			else if (xmlStrcmp (xnode->name, (const xmlChar *)"validator") == 0)
 				{
-					type = xmlGetProp (xnode, (const xmlChar *)"type");
+					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
-					/* for each module */
-					for (i = 0; i < priv->ar_modules->len; i++)
+					validator_constructor = zak_form_get_form_element_validator (zakform, type);
+					if (validator_constructor != NULL)
 						{
-							if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-							                     g_strconcat (type, "_new", NULL),
-							                     (gpointer *)&validator_constructor))
-								{
-									if (validator_constructor != NULL)
-										{
-											validator = validator_constructor ();
-											zak_form_element_add_validator (element, validator);
+							validator = validator_constructor ();
+							zak_form_element_add_validator (element, validator);
 
-											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-											                     g_strconcat (type, "_xml_parsing", NULL),
-											                     (gpointer *)&validator_xml_parsing))
-												{
-													if (validator_xml_parsing != NULL)
-														{
-															validator_xml_parsing (validator, xnode);
-														}
-												}
-
-											break;
-										}
-								}
+							zak_form_element_validator_xml_parsing (validator, xnode);
 						}
-					if (i >= priv->ar_modules->len)
+					else
 						{
 							g_warning ("Validator «%s» not found.", type);
 						}
@@ -308,6 +276,41 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 					xmlFreeNode (xnode_tmp);
 				}
 		}
+}
+
+/**
+ * zak_form_get_form_validator:
+ * @zakform:
+ * @namespace:
+ *
+ * Returns:
+ */
+ZakFormElementValidatorConstructorFunc
+zak_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespace)
+{
+	ZakFormFormPrivate *priv;
+
+	ZakFormElementValidatorConstructorFunc validator_constructor;
+
+	guint i;
+
+	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	validator_constructor = NULL;
+
+	for (i = 0; i < priv->ar_modules->len; i++)
+		{
+			if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+			                     g_strconcat (namespace, "_new", NULL),
+			                     (gpointer *)&validator_constructor))
+				{
+					break;
+				}
+		}
+
+	return validator_constructor;
 }
 
 /**
@@ -336,7 +339,6 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 	FormElementXmlParsingFunc element_xml_parsing;
 
 	FormValidatorConstructorFunc validator_constructor;
-	FormValidatorXmlParsingFunc validator_xml_parsing;
 
 	xmlXPathContextPtr xpcontext;
 	xmlXPathObjectPtr xpresult;
@@ -361,16 +363,16 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 						{
 							if (xmlStrcmp (cur->name, (const xmlChar *)"element") == 0)
 								{
-								    element = NULL;
+									element = NULL;
 
-									type = xmlGetProp (cur, (const xmlChar *)"type");
+									type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
 
 									/* for each module */
 									for (i = 0; i < priv->ar_modules->len; i++)
 										{
 											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																 g_strconcat (type, "_new", NULL),
-																 (gpointer *)&element_constructor))
+											                     g_strconcat (type, "_new", NULL),
+											                     (gpointer *)&element_constructor))
 												{
 													if (element_constructor != NULL)
 														{
@@ -383,8 +385,8 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 																	zak_form_form_element_xml_parsing (zakform, element, cur_clean);
 
 																	if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																		                 g_strconcat (type, "_xml_parsing", NULL),
-																						 (gpointer *)&element_xml_parsing))
+																	                     g_strconcat (type, "_xml_parsing", NULL),
+																	                     (gpointer *)&element_xml_parsing))
 																		{
 																			if (element_xml_parsing != NULL)
 																				{
@@ -418,29 +420,21 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 							xnodeset = xpresult->nodesetval;
 							for (y = 0; y < xnodeset->nodeNr; y++)
 								{
-									type = xmlGetProp (xnodeset->nodeTab[y], (const xmlChar *)"type");
+									type = (gchar *)xmlGetProp (xnodeset->nodeTab[y], (const xmlChar *)"type");
 
 									/* for each module */
 									for (i = 0; i < priv->ar_modules->len; i++)
 										{
 											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																 g_strconcat (type, "_new", NULL),
-																 (gpointer *)&validator_constructor))
+											                     g_strconcat (type, "_new", NULL),
+											                     (gpointer *)&validator_constructor))
 												{
 													if (validator_constructor != NULL)
 														{
 															validator = validator_constructor ();
 															zak_form_form_add_validator (zakform, validator);
 
-															if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																				 g_strconcat (type, "_xml_parsing", NULL),
-																				 (gpointer *)&validator_xml_parsing))
-																{
-																	if (validator_xml_parsing != NULL)
-																		{
-																			validator_xml_parsing (validator, xnodeset->nodeTab[y], priv->ar_elements);
-																		}
-																}
+															zak_form_validator_xml_parsing (validator, xnodeset->nodeTab[y], zakform);
 
 															break;
 														}
@@ -613,6 +607,36 @@ zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator)
 	ret = TRUE;
 
 	return ret;
+}
+
+/**
+ * zak_form_form_get_validator_by_id:
+ * @zakform:
+ * @id:
+ *
+ * Returns: a #ZakFormValidator.
+ */
+ZakFormValidator
+*zak_form_form_get_validator_by_id (ZakFormForm *zakform, const gchar *id)
+{
+	ZakFormValidator *validator;
+
+	guint i;
+
+	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
+
+	validator = NULL;
+
+	for (i = 0; i < priv->ar_validators->len; i++)
+		{
+			if (g_strcmp0 (zak_form_validator_get_id ((ZakFormValidator *)g_ptr_array_index (priv->ar_validators, i)), id) == 0)
+				{
+					validator = (ZakFormValidator *)g_ptr_array_index (priv->ar_validators, i);
+					break;
+				}
+		}
+
+	return validator;
 }
 
 /**

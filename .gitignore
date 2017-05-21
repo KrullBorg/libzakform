@@ -50,4 +50,5 @@ intltool-*
 Rules-quot
 *.exe
 *.csv
+src/*marshal*.[ch]
 build/

@@ -38,6 +38,7 @@
 #include <libzakform/formvalidator.h>
 #include <libzakform/formvalidatorcompare.h>
 #include <libzakform/formvalidatorcomparedate.h>
+#include <libzakform/formvalidatorcomposite.h>
 
 
 #endif /* __LIBZAKFORM_H__ */
