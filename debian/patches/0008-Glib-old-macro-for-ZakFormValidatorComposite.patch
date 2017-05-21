@@ -1,0 +1,73 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Sun, 21 May 2017 14:47:50 +0200
+Subject: Glib old macro for ZakFormValidatorComposite.
+
+---
+ src/formvalidator.h          |  2 +-
+ src/formvalidatorcomposite.c |  7 -------
+ src/formvalidatorcomposite.h | 21 +++++++++++++++++++--
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/src/formvalidator.h b/src/formvalidator.h
+index 40ef5c5..21e5b0a 100644
+--- a/src/formvalidator.h
++++ b/src/formvalidator.h
+@@ -29,7 +29,7 @@ G_BEGIN_DECLS
+ 
+ 
+ #define ZAK_FORM_TYPE_VALIDATOR                 (zak_form_validator_get_type ())
+-#define ZAK_FORM_VALIDATOR(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_VALIDATOR, ZakFormValidator)
++#define ZAK_FORM_VALIDATOR(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_VALIDATOR, ZakFormValidator))
+ #define ZAK_FORM_VALIDATOR_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_VALIDATOR, ZakFormValidatorClass))
+ #define ZAK_FORM_IS_VALIDATOR(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_VALIDATOR))
+ #define ZAK_FORM_IS_VALIDATOR_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_VALIDATOR))
+diff --git a/src/formvalidatorcomposite.c b/src/formvalidatorcomposite.c
+index e5bdbe4..2c57fb4 100644
+--- a/src/formvalidatorcomposite.c
++++ b/src/formvalidatorcomposite.c
+@@ -49,13 +49,6 @@ static void zak_form_validator_composite_finalize (GObject *gobject);
+ static gboolean zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form);
+ static gboolean zak_form_validator_composite_validate (ZakFormValidator *validator_notempty);
+ 
+-struct _ZakFormValidatorComposite
+-{
+-	ZakFormValidator parent_instance;
+-
+-	/* Other members, including private data. */
+-};
+-
+ #define ZAK_FORM_VALIDATOR_COMPOSITE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPOSITE, ZakFormValidatorCompositePrivate))
+ 
+ typedef struct _ZakFormValidatorCompositePrivate ZakFormValidatorCompositePrivate;
+diff --git a/src/formvalidatorcomposite.h b/src/formvalidatorcomposite.h
+index e3bd870..47e24f9 100644
+--- a/src/formvalidatorcomposite.h
++++ b/src/formvalidatorcomposite.h
+@@ -31,8 +31,25 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_VALIDATOR_COMPOSITE zak_form_validator_composite_get_type ()
+-G_DECLARE_FINAL_TYPE (ZakFormValidatorComposite, zak_form_validator_composite, ZAK_FORM, VALIDATOR_COMPOSITE, ZakFormValidator)
++#define ZAK_FORM_TYPE_VALIDATOR_COMPOSITE                 (zak_form_validator_composite_get_type ())
++#define ZAK_FORM_VALIDATOR_COMPOSITE(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPOSITE, ZakFormValidatorComposite))
++#define ZAK_FORM_VALIDATOR_COMPOSITE_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_VALIDATOR_COMPOSITE, ZakFormValidatorCompositeClass))
++#define ZAK_FORM_IS_VALIDATOR_COMPOSITE(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPOSITE))
++#define ZAK_FORM_IS_VALIDATOR_COMPOSITE_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_VALIDATOR_COMPOSITE))
++#define ZAK_FORM_VALIDATOR_COMPOSITE_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPOSITE, ZakFormValidatorCompositeClass))
++
++typedef struct _ZakFormValidatorComposite ZakFormValidatorComposite;
++typedef struct _ZakFormValidatorCompositeClass ZakFormValidatorCompositeClass;
++
++struct _ZakFormValidatorComposite
++	{
++		ZakFormValidator parent;
++	};
++
++struct _ZakFormValidatorCompositeClass
++{
++	ZakFormValidatorClass parent_class;
++};
+ 
+ ZakFormValidatorComposite *zak_form_validator_composite_new (void);
+ 

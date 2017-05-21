@@ -10,10 +10,10 @@ Subject: Some new functions not replaced.
  4 files changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/src/form.c b/src/form.c
-index 7670029..8223d72 100644
+index 03c076f..4d6a76a 100644
 --- a/src/form.c
 +++ b/src/form.c
-@@ -117,7 +117,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
+@@ -113,7 +113,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
  {
  	gchar *localedir;
  
@@ -23,10 +23,10 @@ index 7670029..8223d72 100644
  	priv->ar_modules = NULL;
  	priv->ar_elements = g_ptr_array_new ();
 diff --git a/src/formelement.c b/src/formelement.c
-index c0eb87e..d477a4f 100644
+index ea3542c..93b29c4 100644
 --- a/src/formelement.c
 +++ b/src/formelement.c
-@@ -191,7 +191,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
+@@ -222,7 +222,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
  static void
  zak_form_element_init (ZakFormElement *zak_form_element)
  {
@@ -36,7 +36,7 @@ index c0eb87e..d477a4f 100644
  	priv->name = g_strdup ("");
  	priv->long_name = NULL;
 diff --git a/src/formelementfilter.c b/src/formelementfilter.c
-index fe3ce9a..6d53784 100644
+index 43e5823..07dc347 100644
 --- a/src/formelementfilter.c
 +++ b/src/formelementfilter.c
 @@ -44,6 +44,8 @@ static void zak_form_element_filter_get_property (GObject *object,
@@ -48,7 +48,7 @@ index fe3ce9a..6d53784 100644
  typedef struct
  	{
  		gchar *id;
-@@ -80,7 +80,7 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
+@@ -80,7 +82,7 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
  static void
  zak_form_element_filter_init (ZakFormElementFilter *zak_form_element_filter)
  {
@@ -57,7 +57,7 @@ index fe3ce9a..6d53784 100644
  }
  
  gboolean
-@@ -130,7 +132,7 @@ zak_form_element_filter_set_property (GObject *object,
+@@ -203,7 +205,7 @@ zak_form_element_filter_set_property (GObject *object,
                                        GParamSpec *pspec)
  {
  	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)object;
@@ -66,7 +66,7 @@ index fe3ce9a..6d53784 100644
  
  	switch (property_id)
  		{
-@@ -151,7 +153,7 @@ zak_form_element_filter_get_property (GObject *object,
+@@ -228,7 +230,7 @@ zak_form_element_filter_get_property (GObject *object,
                                        GParamSpec *pspec)
  {
  	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)object;
@@ -75,7 +75,7 @@ index fe3ce9a..6d53784 100644
  
  	switch (property_id)
  		{
-@@ -169,7 +171,7 @@ static void
+@@ -250,7 +252,7 @@ static void
  zak_form_element_filter_dispose (GObject *gobject)
  {
  	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)gobject;
@@ -84,7 +84,7 @@ index fe3ce9a..6d53784 100644
  
  
  
-@@ -181,7 +183,7 @@ static void
+@@ -262,7 +264,7 @@ static void
  zak_form_element_filter_finalize (GObject *gobject)
  {
  	ZakFormElementFilter *zak_form_element_filter = (ZakFormElementFilter *)gobject;
@@ -94,10 +94,10 @@ index fe3ce9a..6d53784 100644
  
  
 diff --git a/src/formelementvalidator.c b/src/formelementvalidator.c
-index 27c2fbd..29869c8 100644
+index 2ac0232..0db180c 100644
 --- a/src/formelementvalidator.c
 +++ b/src/formelementvalidator.c
-@@ -86,7 +86,7 @@ zak_form_element_validator_class_init (ZakFormElementValidatorClass *class)
+@@ -95,7 +95,7 @@ zak_form_element_validator_class_init (ZakFormElementValidatorClass *class)
  static void
  zak_form_element_validator_init (ZakFormElementValidator *zak_form_element_validator)
  {

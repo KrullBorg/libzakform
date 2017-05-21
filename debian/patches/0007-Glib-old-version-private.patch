@@ -11,10 +11,10 @@ Subject: Glib old version private.
  5 files changed, 22 insertions(+), 20 deletions(-)
 
 diff --git a/src/form.c b/src/form.c
-index 8223d72..20c8403 100644
+index 4d6a76a..db77782 100644
 --- a/src/form.c
 +++ b/src/form.c
-@@ -562,7 +562,7 @@ ZakFormElement
+@@ -556,7 +556,7 @@ ZakFormElement
  GPtrArray
  *zak_form_form_get_elements (ZakFormForm *zakform)
  {
@@ -23,7 +23,7 @@ index 8223d72..20c8403 100644
  
  	return priv->ar_elements;
  }
-@@ -582,7 +582,7 @@ GPtrArray
+@@ -576,7 +576,7 @@ GPtrArray
  
  	guint i;
  
@@ -32,7 +32,7 @@ index 8223d72..20c8403 100644
  
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->ar_elements->len; i++)
-@@ -628,7 +628,7 @@ zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator)
+@@ -652,7 +652,7 @@ ZakFormValidator
  GPtrArray
  *zak_form_form_get_validators (ZakFormForm *zakform)
  {
@@ -41,7 +41,7 @@ index 8223d72..20c8403 100644
  
  	return priv->ar_validators;
  }
-@@ -648,7 +648,7 @@ GPtrArray
+@@ -672,7 +672,7 @@ GPtrArray
  
  	guint i;
  
@@ -51,10 +51,10 @@ index 8223d72..20c8403 100644
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->ar_validators->len; i++)
 diff --git a/src/formelement.c b/src/formelement.c
-index d477a4f..9d307d9 100644
+index 93b29c4..e37ee52 100644
 --- a/src/formelement.c
 +++ b/src/formelement.c
-@@ -235,7 +235,7 @@ zak_form_element_add_extension (ZakFormElement *element, GObject *extension)
+@@ -268,7 +268,7 @@ zak_form_element_add_extension (ZakFormElement *element, GObject *extension)
  GPtrArray
  *zak_form_element_get_extensions (ZakFormElement *element)
  {
@@ -63,7 +63,7 @@ index d477a4f..9d307d9 100644
  
  	return priv->pa_extensions;
  }
-@@ -255,7 +255,7 @@ GPtrArray
+@@ -288,7 +288,7 @@ GPtrArray
  
  	guint i;
  
@@ -72,7 +72,7 @@ index d477a4f..9d307d9 100644
  
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->pa_extensions->len; i++)
-@@ -281,7 +281,7 @@ zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filt
+@@ -314,7 +314,7 @@ zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filt
  {
  	ZakFormElementPrivate *priv;
  
@@ -81,7 +81,7 @@ index d477a4f..9d307d9 100644
  
  	g_ptr_array_add (priv->pa_filters, filter);
  }
-@@ -298,7 +298,7 @@ zak_form_element_filter (ZakFormElement *element)
+@@ -331,7 +331,7 @@ zak_form_element_filter (ZakFormElement *element)
  
  	ZakFormElementPrivate *priv;
  
@@ -90,7 +90,7 @@ index d477a4f..9d307d9 100644
  
  	for (i = 0; i < priv->pa_filters->len; i++)
  		{
-@@ -322,7 +322,7 @@ zak_form_element_filter (ZakFormElement *element)
+@@ -355,7 +355,7 @@ zak_form_element_filter (ZakFormElement *element)
  GPtrArray
  *zak_form_element_get_filters (ZakFormElement *element)
  {
@@ -99,7 +99,7 @@ index d477a4f..9d307d9 100644
  
  	return priv->pa_filters;
  }
-@@ -342,7 +342,7 @@ GPtrArray
+@@ -404,7 +404,7 @@ GPtrArray
  
  	guint i;
  
@@ -108,7 +108,7 @@ index d477a4f..9d307d9 100644
  
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->pa_filters->len; i++)
-@@ -1099,7 +1099,7 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
+@@ -1266,7 +1266,7 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
  {
  	ZakFormElementPrivate *priv;
  
@@ -117,7 +117,7 @@ index d477a4f..9d307d9 100644
  
  	g_ptr_array_add (priv->pa_validators, validator);
  }
-@@ -1173,7 +1173,7 @@ GPtrArray
+@@ -1385,7 +1385,7 @@ GPtrArray
  GPtrArray
  *zak_form_element_get_validators(ZakFormElement *element)
  {
@@ -126,7 +126,7 @@ index d477a4f..9d307d9 100644
  
  	return priv->pa_validators;
  }
-@@ -1193,7 +1193,7 @@ GPtrArray
+@@ -1405,7 +1405,7 @@ GPtrArray
  
  	guint i;
  
@@ -136,10 +136,10 @@ index d477a4f..9d307d9 100644
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->pa_validators->len; i++)
 diff --git a/src/formelementfilter.c b/src/formelementfilter.c
-index 6d53784..f17663e 100644
+index 07dc347..1bb9652 100644
 --- a/src/formelementfilter.c
 +++ b/src/formelementfilter.c
-@@ -50,7 +50,7 @@ typedef struct
+@@ -52,7 +52,7 @@ typedef struct
  		gboolean enabled;
  	} ZakFormElementFilterPrivate;
  
@@ -148,7 +148,7 @@ index 6d53784..f17663e 100644
  
  static void
  zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
-@@ -75,6 +75,8 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
+@@ -77,6 +77,8 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
  	                                                       "Enabled",
  	                                                       TRUE,
  	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
@@ -157,7 +157,7 @@ index 6d53784..f17663e 100644
  }
  
  static void
-@@ -105,7 +107,7 @@ gchar
+@@ -178,7 +180,7 @@ gchar
  gboolean
  zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
  {
@@ -166,7 +166,7 @@ index 6d53784..f17663e 100644
  
  	return priv->enabled;
  }
-@@ -119,7 +121,7 @@ zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
+@@ -192,7 +194,7 @@ zak_form_element_filter_get_enabled (ZakFormElementFilter *filter)
  void
  zak_form_element_filter_set_enabled (ZakFormElementFilter *filter, gboolean enabled)
  {
@@ -176,10 +176,10 @@ index 6d53784..f17663e 100644
  	priv->enabled = enabled;
  }
 diff --git a/src/formelementvalidator.c b/src/formelementvalidator.c
-index 29869c8..5b37879 100644
+index 0db180c..d75db60 100644
 --- a/src/formelementvalidator.c
 +++ b/src/formelementvalidator.c
-@@ -143,7 +143,7 @@ gchar
+@@ -227,7 +227,7 @@ gchar
  gboolean
  zak_form_element_validator_get_enabled (ZakFormElementValidator *validator)
  {
@@ -188,7 +188,7 @@ index 29869c8..5b37879 100644
  
  	return priv->enabled;
  }
-@@ -157,7 +157,7 @@ zak_form_element_validator_get_enabled (ZakFormElementValidator *validator)
+@@ -241,7 +241,7 @@ zak_form_element_validator_get_enabled (ZakFormElementValidator *validator)
  void
  zak_form_element_validator_set_enabled (ZakFormElementValidator *validator, gboolean enabled)
  {
@@ -198,10 +198,10 @@ index 29869c8..5b37879 100644
  	priv->enabled = enabled;
  }
 diff --git a/src/formvalidator.c b/src/formvalidator.c
-index 6cc3f4e..7497b27 100644
+index df5cc82..6c95360 100644
 --- a/src/formvalidator.c
 +++ b/src/formvalidator.c
-@@ -143,7 +143,7 @@ gchar
+@@ -238,7 +238,7 @@ gchar
  gboolean
  zak_form_validator_get_enabled (ZakFormValidator *validator)
  {
@@ -210,7 +210,7 @@ index 6cc3f4e..7497b27 100644
  
  	return priv->enabled;
  }
-@@ -157,7 +157,7 @@ zak_form_validator_get_enabled (ZakFormValidator *validator)
+@@ -252,7 +252,7 @@ zak_form_validator_get_enabled (ZakFormValidator *validator)
  void
  zak_form_validator_set_enabled (ZakFormValidator *validator, gboolean enabled)
  {

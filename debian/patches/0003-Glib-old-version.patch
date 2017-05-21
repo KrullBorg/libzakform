@@ -8,10 +8,10 @@ Subject: Glib old version.
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index d86c09b..3e41632 100644
+index 1f2bffe..e4f599e 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -42,8 +42,8 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
+@@ -47,8 +47,8 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
  AM_GLIB_GNU_GETTEXT
  
  # Checks for libraries.

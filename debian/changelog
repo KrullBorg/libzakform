@@ -1,6 +1,6 @@
-libzakform (0.0.1-4~4.gbp5ab586) UNRELEASED; urgency=medium
+libzakform (0.0.1-4~5.gbp9fc7ab) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @5ab586d1411e8bc359b53fd3711d9c4acae5f3a4 **
+  ** SNAPSHOT build @9fc7ab00af41a88b2167eda9cfee72280979b0c7 **
 
   [ Andrea Zagli ]
   * Initial release
@@ -25,4 +25,28 @@ libzakform (0.0.1-4~4.gbp5ab586) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- tux <tux@develop64.comune.scandicci.fi.it>  Sat, 25 Mar 2017 09:54:50 +0100
+  [ Andrea Zagli ]
+  * Debian pkg: missing parenthesis in patch.
+  * g_strcmp0 may returns other values than -1, 0 and 1.
+  * Added property id to ZakFormValidator (refs #1102).
+  * Added ZakForm::get_validator_by_id.
+  * Added property id to FormElementValidator (refs #1102).
+  * Added function ZakFormElement::get_validator_by_id.
+  * Refactored ZakFormElementFilter::xml_parsing.
+  * Added property id to ZakFormElementFilter (closes #1102).
+  * Wrong prototype zak_form_element_set_to_is_key in formelement.h (closes #1111).
+  * Added signals ZakFormElement before and after validating.
+  * Added commons functions ZakForm::get_compare_type_from_string and ::get_compare_type_stringify.
+  * ZakFormElementValidatorDate can now compare the value.
+  * Xml parsing of long-name in ZakFormElement.
+  * Migration to GValue for element value.
+  * Added functions ZakFormElement::[get|set]_original_value_gvalue.
+  * Started implementation (only one level) of ZakFormValidatorComposite.
+  * Multilevel for ZakFormValidatorComposite.
+  * Added condition (only one) to ZakFormValidatorComposite.
+  * Missing file in translation.
+  * Debian pkg: updated patches for upstream changes.
+
+  [ tux ]
+
+ -- tux <tux@develop64.comune.scandicci.fi.it>  Sun, 21 May 2017 14:59:51 +0200
