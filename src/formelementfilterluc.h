@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ZakFormElementFilterLuc, zak_form_element_filter_luc, ZAK_FORM, ELEMENT_FILTER_LUC, ZakFormElementFilter)
 
 ZakFormElementFilterLuc *zak_form_element_filter_luc_new (void);
-gboolean zak_form_element_filter_luc_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
 
 
 G_END_DECLS

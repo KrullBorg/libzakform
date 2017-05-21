@@ -34,7 +34,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ZakFormElementValidatorRegex, zak_form_element_validator_regex, ZAK_FORM, ELEMENT_VALIDATOR_REGEX, ZakFormElementValidator)
 
 ZakFormElementValidatorRegex *zak_form_element_validator_regex_new (void);
-gboolean zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
 
 void zak_form_element_validator_regex_set_regex (ZakFormElementValidatorRegex *validator, const gchar *regex);
 gchar *zak_form_element_validator_regex_get_regex (ZakFormElementValidatorRegex *validator);

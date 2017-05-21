@@ -40,14 +40,17 @@ struct _ZakFormElementClass
 
 		void (*xml_parsing) (ZakFormElement *element, xmlNode *xmlnode);
 
-		gboolean (*set_value) (ZakFormElement *element, const gchar *value);
-		gchar *(*get_value) (ZakFormElement *element);
+		gboolean (*set_value) (ZakFormElement *element, GValue *value);
+		GValue *(*get_value) (ZakFormElement *element);
 
 		void (*set_visible) (ZakFormElement *element, gboolean visible);
 		gboolean (*get_visible) (ZakFormElement *element);
 
 		void (*set_editable) (ZakFormElement *element, gboolean editable);
 		gboolean (*get_editable) (ZakFormElement *element);
+
+		guint before_validating_signal_id;
+		guint after_validating_signal_id;
 	};
 
 void zak_form_element_set_name (ZakFormElement *element, const gchar *name);
@@ -56,23 +59,36 @@ gchar *zak_form_element_get_name (ZakFormElement *element);
 void zak_form_element_set_long_name (ZakFormElement *element, const gchar *long_name);
 gchar *zak_form_element_get_long_name (ZakFormElement *element);
 
-void zak_form_element_set_to_is_key (ZakFormElement *element, gboolean is_key);
+void zak_form_element_set_is_key (ZakFormElement *element, gboolean is_key);
 gboolean zak_form_element_get_is_key (ZakFormElement *element);
 
 void zak_form_element_set_provider_type (ZakFormElement *element, const gchar *type);
 gchar *zak_form_element_get_provider_type (ZakFormElement *element);
 
+GValue *zak_form_element_format_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_unformat_gvalue (ZakFormElement *element, GValue *value);
+
 gchar *zak_form_element_format (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_unformat (ZakFormElement *element, const gchar *value);
+
+gboolean zak_form_element_set_value_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_get_value_gvalue (ZakFormElement *element);
 
 gboolean zak_form_element_set_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_value (ZakFormElement *element);
 
+gboolean zak_form_element_set_default_value_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_get_default_value_gvalue (ZakFormElement *element);
+
 gboolean zak_form_element_set_default_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_default_value (ZakFormElement *element);
 
+gboolean zak_form_element_set_original_value_gvalue (ZakFormElement *element, GValue *value);
+GValue *zak_form_element_get_original_value_gvalue (ZakFormElement *element);
+
 gboolean zak_form_element_set_original_value (ZakFormElement *element, const gchar *value);
 gchar *zak_form_element_get_original_value (ZakFormElement *element);
+
 void zak_form_element_set_as_original_value (ZakFormElement *element);
 gboolean zak_form_element_is_changed (ZakFormElement *element);
 
@@ -102,6 +118,7 @@ void zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter 
 void zak_form_element_filter (ZakFormElement *element);
 
 GPtrArray *zak_form_element_get_filters (ZakFormElement *element);
+ZakFormElementFilter *zak_form_element_get_filter_by_id (ZakFormElement *element, const gchar *id);
 GPtrArray *zak_form_element_get_filters_by_type (ZakFormElement *element, GType type);
 
 void zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator *validator);
@@ -109,6 +126,7 @@ gboolean zak_form_element_is_valid (ZakFormElement *element);
 GPtrArray *zak_form_element_get_messages (ZakFormElement *element);
 
 GPtrArray *zak_form_element_get_validators (ZakFormElement *element);
+ZakFormElementValidator *zak_form_element_get_validator_by_id (ZakFormElement *element, const gchar *id);
 GPtrArray *zak_form_element_get_validators_by_type (ZakFormElement *element, GType type);
 
 

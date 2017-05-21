@@ -21,6 +21,8 @@
 
 #include <glib-object.h>
 
+#include <libxml/xpath.h>
+
 
 G_BEGIN_DECLS
 
@@ -32,13 +34,19 @@ struct _ZakFormElementValidatorClass
 {
 	GObjectClass parent_class;
 
+	gboolean (*xml_parsing) (ZakFormElementValidator *self, xmlNode *xnode);
 	gboolean (*validate) (ZakFormElementValidator *self, const gchar *value);
 };
 
+gboolean zak_form_element_validator_xml_parsing (ZakFormElementValidator *self, xmlNode *xnode);
 gboolean zak_form_element_validator_validate (ZakFormElementValidator *self, const gchar *value);
 
+void zak_form_element_validator_set_id (ZakFormElementValidator *validator,
+                                        const gchar *id);
+gchar *zak_form_element_validator_get_id (ZakFormElementValidator *validator);
+
 void zak_form_element_validator_set_message (ZakFormElementValidator *validator,
-											 const gchar *message);
+                                             const gchar *message);
 gchar *zak_form_element_validator_get_message (ZakFormElementValidator *validator);
 
 gboolean zak_form_element_validator_get_enabled (ZakFormElementValidator *validator);

@@ -28,6 +28,100 @@
 
 #include "commons.h"
 
+
+/**
+ * zak_form_get_compare_type_from_string:
+ * @str:
+ *
+ * Returns: the #ZakFormCompareType from @str.
+ */
+ZakFormCompareType
+zak_form_get_compare_type_from_string (const gchar *str)
+{
+	ZakFormCompareType ret;
+
+	if (g_strcmp0 (str, "lt") == 0)
+		{
+			ret = ZAK_FORM_COMPARE_TYPE_LESSER;
+		}
+	else if (g_strcmp0 (str, "let") == 0)
+		{
+			ret = ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL;
+		}
+	else if (g_strcmp0 (str, "e") == 0)
+		{
+			ret = ZAK_FORM_COMPARE_TYPE_EQUAL;
+		}
+	else if (g_strcmp0 (str, "ne") == 0)
+		{
+			ret = ZAK_FORM_COMPARE_TYPE_NOT_EQUAL;
+		}
+	else if (g_strcmp0 (str, "gt") == 0)
+		{
+			ret = ZAK_FORM_COMPARE_TYPE_GREATER;
+		}
+	else if (g_strcmp0 (str, "get") == 0)
+		{
+			ret = ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL;
+		}
+	else
+		{
+			if (str != NULL
+			    && g_strcmp0 (str, "") != 0)
+				{
+					g_warning ("Compare type «%s» not supported.", str);
+				}
+			ret = ZAK_FORM_COMPARE_TYPE_NONE;
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_get_compare_type_stringify:
+ * @type:
+ *
+ * Returns: the stringify version of #ZakFormCompareType.
+ */
+const gchar
+*zak_form_get_compare_type_stringify (ZakFormCompareType type)
+{
+	const gchar *ret;
+
+	switch (type)
+		{
+		case ZAK_FORM_COMPARE_TYPE_LESSER:
+			ret = _("lesser than");
+			break;
+
+		case ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL:
+			ret = _("lesser or equal to");
+			break;
+
+		case ZAK_FORM_COMPARE_TYPE_EQUAL:
+			ret = _("equal to");
+			break;
+
+		case ZAK_FORM_COMPARE_TYPE_NOT_EQUAL:
+			ret = _("different from");
+			break;
+
+		case ZAK_FORM_COMPARE_TYPE_GREATER:
+			ret = _("greater than");
+			break;
+
+		case ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL:
+			ret =  _("greater or equal to");
+			break;
+
+		default:
+			ret = _("NOT SUPPORTED");
+			break;
+		}
+
+	return ret;
+}
+
 /**
  * zak_form_get_element_by_id:
  * @ar_elements:

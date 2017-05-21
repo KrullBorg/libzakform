@@ -1,13 +1,13 @@
 # libzakform italian translation
-# Copyright (C) 2015-2016 Andrea Zagli
+# Copyright (C) 2015-2017 Andrea Zagli
 # This file is distributed under the same license as the libzakform package.
-# Andrea Zagli <azagli@libero.it>, 2015-2016.
+# Andrea Zagli <azagli@libero.it>, 2015-2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: libzakform 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-02 17:48+0100\n"
+"POT-Creation-Date: 2017-05-21 10:45+0200\n"
 "PO-Revision-Date: 2016-01-02 12:44+0200\n"
 "Last-Translator: Andrea Zagli <azagli@libero.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -17,66 +17,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/form.c:336
+#: ../src/commons.c:94
+msgid "lesser than"
+msgstr "minore di"
+
+#: ../src/commons.c:98
+msgid "lesser or equal to"
+msgstr "minore o uguale a"
+
+#: ../src/commons.c:102
+msgid "equal to"
+msgstr "uguale a"
+
+#: ../src/commons.c:106
+msgid "different from"
+msgstr "diverso da"
+
+#: ../src/commons.c:110
+msgid "greater than"
+msgstr "maggiore di"
+
+#: ../src/commons.c:114
+msgid "greater or equal to"
+msgstr "maggiore o uguale a"
+
+#: ../src/commons.c:118
+msgid "NOT SUPPORTED"
+msgstr "NON SUPPORTATO"
+
+#: ../src/form.c:407
 #, c-format
 msgid "Unknown element type «%s»."
 msgstr "Tipo elemento «%s» sconosciuto."
 
-#: ../src/form.c:380
+#: ../src/form.c:452
 msgid "The file is not a valid ZakForm definition file."
 msgstr "Il file non è un file di definizione valido di ZakForm."
 
-#: ../src/form.c:832
+#: ../src/form.c:1022
 msgid "Unable to load module of myself"
 msgstr "Impossibile caricare i moduli di me stesso"
 
-#: ../src/form.c:862
+#: ../src/form.c:1052
 #, c-format
 msgid "Unable to load %s: %s."
 msgstr "Impossibile caricare %s: %s."
 
-#: ../src/form.c:870
+#: ../src/form.c:1060
 #, c-format
 msgid "Unable to open modules dir: %s."
 msgstr "Impossibile aprire la directory dei moduli: %s."
 
-#: ../src/form.c:871
+#: ../src/form.c:1061
 msgid "no details"
 msgstr "nessun dettaglio"
 
-#: ../src/form.c:876
+#: ../src/form.c:1066
 msgid "Modules not supported by this operating system."
 msgstr "I moduli non sono supportati in questo sistema operativo"
 
-#: ../src/formelementvalidator.c:67
+#: ../src/formelementvalidator.c:87 ../src/formvalidator.c:88
+#: ../src/formvalidatorcomposite.c:430
 msgid "Invalid value"
 msgstr "Valore non valido"
 
-#: ../src/formvalidatorcomparedate.c:107
-msgid "lesser than"
-msgstr "minore di"
+#: ../src/formelementvalidatordate.c:372
+#, c-format
+msgid "Value must be %s %s"
+msgstr "Il valore deve essere %s %s"
 
-#: ../src/formvalidatorcomparedate.c:108
-msgid "lesser or equal to"
-msgstr "minore o uguale a"
-
-#: ../src/formvalidatorcomparedate.c:109
-msgid "equal to"
-msgstr "uguale a"
-
-#: ../src/formvalidatorcomparedate.c:110
-msgid "different from"
-msgstr "diverso da"
-
-#: ../src/formvalidatorcomparedate.c:111
-msgid "greater than"
-msgstr "maggiore di"
-
-#: ../src/formvalidatorcomparedate.c:112
-msgid "greater or equal to"
-msgstr "maggiore o uguale a"
-
-#: ../src/formvalidatorcomparedate.c:318
+#: ../src/formvalidatorcompare.c:252 ../src/formvalidatorcomparedate.c:265
 #, c-format
 msgid "«%s» must be %s «%s»"
 msgstr "«%s» deve essere %s «%s»"
