@@ -1,0 +1,122 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Sun, 21 May 2017 15:13:30 +0200
+Subject: Glib old version private.
+
+---
+ src/form.c                 | 4 ++--
+ src/formelement.c          | 4 ++--
+ src/formelementfilter.c    | 4 ++--
+ src/formelementvalidator.c | 4 ++--
+ src/formvalidator.c        | 4 ++--
+ 5 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/src/form.c b/src/form.c
+index db77782..3090dde 100644
+--- a/src/form.c
++++ b/src/form.c
+@@ -300,7 +300,7 @@ zak_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespac
+ 
+ 	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
+ 
+-	priv = zak_form_form_get_instance_private (zakform);
++	priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
+ 
+ 	validator_constructor = NULL;
+ 
+@@ -627,7 +627,7 @@ ZakFormValidator
+ 
+ 	guint i;
+ 
+-	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zakform);
++	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
+ 
+ 	validator = NULL;
+ 
+diff --git a/src/formelement.c b/src/formelement.c
+index e37ee52..5f7c9ca 100644
+--- a/src/formelement.c
++++ b/src/formelement.c
+@@ -373,7 +373,7 @@ ZakFormElementFilter
+ 
+ 	guint i;
+ 
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	filter = NULL;
+ 
+@@ -1284,7 +1284,7 @@ ZakFormElementValidator
+ 
+ 	guint i;
+ 
+-	ZakFormElementPrivate *priv = zak_form_element_get_instance_private (element);
++	ZakFormElementPrivate *priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
+ 
+ 	validator = NULL;
+ 
+diff --git a/src/formelementfilter.c b/src/formelementfilter.c
+index 1bb9652..c7b8843 100644
+--- a/src/formelementfilter.c
++++ b/src/formelementfilter.c
+@@ -125,7 +125,7 @@ void
+ zak_form_element_filter_set_id (ZakFormElementFilter *filter,
+                                 const gchar *id)
+ {
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (filter);
+ 
+ 	if (id == NULL)
+ 		{
+@@ -146,7 +146,7 @@ zak_form_element_filter_set_id (ZakFormElementFilter *filter,
+ gchar
+ *zak_form_element_filter_get_id (ZakFormElementFilter *filter)
+ {
+-	ZakFormElementFilterPrivate *priv = zak_form_element_filter_get_instance_private (filter);
++	ZakFormElementFilterPrivate *priv = ZAK_FORM_ELEMENT_FILTER_GET_PRIVATE (filter);
+ 
+ 	return g_strdup (priv->id);
+ }
+diff --git a/src/formelementvalidator.c b/src/formelementvalidator.c
+index d75db60..c33a0f9 100644
+--- a/src/formelementvalidator.c
++++ b/src/formelementvalidator.c
+@@ -163,7 +163,7 @@ void
+ zak_form_element_validator_set_id (ZakFormElementValidator *validator,
+                                    const gchar *id)
+ {
+-	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
++	ZakFormElementValidatorPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	if (id == NULL)
+ 		{
+@@ -184,7 +184,7 @@ zak_form_element_validator_set_id (ZakFormElementValidator *validator,
+ gchar
+ *zak_form_element_validator_get_id (ZakFormElementValidator *validator)
+ {
+-	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
++	ZakFormElementValidatorPrivate *priv = ZAK_FORM_ELEMENT_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	return g_strdup (priv->id);
+ }
+diff --git a/src/formvalidator.c b/src/formvalidator.c
+index 6c95360..b37405c 100644
+--- a/src/formvalidator.c
++++ b/src/formvalidator.c
+@@ -157,7 +157,7 @@ void
+ zak_form_validator_set_id (ZakFormValidator *validator,
+                            const gchar *id)
+ {
+-	ZakFormValidatorPrivate *priv = zak_form_validator_get_instance_private (validator);
++	ZakFormValidatorPrivate *priv = ZAK_FORM_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	if (id == NULL)
+ 		{
+@@ -178,7 +178,7 @@ zak_form_validator_set_id (ZakFormValidator *validator,
+ gchar
+ *zak_form_validator_get_id (ZakFormValidator *validator)
+ {
+-	ZakFormValidatorPrivate *priv = zak_form_validator_get_instance_private (validator);
++	ZakFormValidatorPrivate *priv = ZAK_FORM_VALIDATOR_GET_PRIVATE (validator);
+ 
+ 	return g_strdup (priv->id);
+ }
