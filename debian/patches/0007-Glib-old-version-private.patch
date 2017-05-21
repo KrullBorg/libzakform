@@ -148,10 +148,10 @@ index 6d53784..f17663e 100644
  
  static void
  zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
-@@ -68,6 +68,8 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
- 														   "Enabled",
- 														   TRUE,
- 														   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+@@ -75,6 +75,8 @@ zak_form_element_filter_class_init (ZakFormElementFilterClass *class)
+ 	                                                       "Enabled",
+ 	                                                       TRUE,
+ 	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 +
 +	g_type_class_add_private (object_class, sizeof (ZakFormElementFilterPrivate));
  }

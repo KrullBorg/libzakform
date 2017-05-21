@@ -131,7 +131,7 @@ index eb00250..4c91a79 100644
 +};
 
  ZakFormElementFilterLuc *zak_form_element_filter_luc_new (void);
- gboolean zak_form_element_filter_luc_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
+ 
 diff --git a/src/formelementfiltertrim.h b/src/formelementfiltertrim.h
 index d74e0bf..0cb37e8 100644
 --- a/src/formelementfiltertrim.h
@@ -164,7 +164,7 @@ index d74e0bf..0cb37e8 100644
 +
 
  ZakFormElementFilterTrim *zak_form_element_filter_trim_new (void);
- gboolean zak_form_element_filter_trim_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
+ 
 diff --git a/src/formelementvalidator.h b/src/formelementvalidator.h
 index 2ef9407..9711b60 100644
 --- a/src/formelementvalidator.h
@@ -287,7 +287,7 @@ index 4bb8b42..f8e62e0 100644
 +	};
 
  ZakFormElementValidatorRegex *zak_form_element_validator_regex_new (void);
- gboolean zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
+ 
 diff --git a/src/formiprovider.h b/src/formiprovider.h
 index cabb51e..be970ae 100644
 --- a/src/formiprovider.h
@@ -369,7 +369,7 @@ index 02139d0..d4ab5ac 100644
 +
 
  ZakFormValidatorCompare *zak_form_validator_compare_new (void);
- gboolean zak_form_validator_compare_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
+ 
 diff --git a/src/formvalidatorcomparedate.h b/src/formvalidatorcomparedate.h
 index c8940ca..ec11584 100644
 --- a/src/formvalidatorcomparedate.h
@@ -401,4 +401,4 @@ index c8940ca..ec11584 100644
 +};
 
  ZakFormValidatorCompareDate *zak_form_validator_compare_date_new (void);
- gboolean zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements);
+ 
