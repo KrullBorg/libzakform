@@ -1,6 +1,6 @@
-libzakform (0.0.1-4~5.gbp9fc7ab) UNRELEASED; urgency=medium
+libzakform (0.0.1-4~6.gbp93b859) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @9fc7ab00af41a88b2167eda9cfee72280979b0c7 **
+  ** SNAPSHOT build @93b859fdaee31093247b0f27ff27ab846e1b83ee **
 
   [ Andrea Zagli ]
   * Initial release
@@ -49,4 +49,10 @@ libzakform (0.0.1-4~5.gbp9fc7ab) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- tux <tux@develop64.comune.scandicci.fi.it>  Sun, 21 May 2017 14:59:51 +0200
+  [ Andrea Zagli ]
+  * Debian pkg: updates due to upstream changes.
+  * Debian pkg: new patch for old get_private function.
+
+  [ tux ]
+
+ -- tux <tux@develop64.comune.scandicci.fi.it>  Sat, 27 May 2017 09:19:02 +0200
