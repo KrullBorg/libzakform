@@ -1,3 +1,5 @@
+DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
+
 SUBDIRS = po src tests
 
 ACLOCAL_AMFLAGS = -I m4

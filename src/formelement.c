@@ -941,7 +941,7 @@ zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
 }
 
 /**
- * zak_form_element_get_default_value_gvalue:
+ * zak_form_element_get_default_value:
  * @element:
  *
  */
