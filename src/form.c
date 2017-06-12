@@ -21,17 +21,18 @@
 #endif
 
 #include <glib/gi18n-lib.h>
-#include <gmodule.h>
 
 #include <libxml/xpath.h>
-
-#include "form.h"
-#include "formelementfilter.h"
-#include "formelementvalidator.h"
 
 #ifdef G_OS_WIN32
 	#include <windows.h>
 #endif
+
+#include "commons.h"
+#include "form.h"
+#include "formelementfilter.h"
+#include "formelementvalidator.h"
+
 
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
 
@@ -50,11 +51,8 @@ static void zak_form_form_get_property (GObject *object,
 static void zak_form_form_dispose (GObject *gobject);
 static void zak_form_form_finalize (GObject *gobject);
 
-static void zak_form_form_load_modules (ZakFormForm *zakform);
-
 typedef struct
 	{
-		GPtrArray *ar_modules;
 		GPtrArray *ar_elements;
 		GPtrArray *ar_validators;
 		GPtrArray *ar_messages;
@@ -106,7 +104,6 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 
 	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zak_form_form);
 
-	priv->ar_modules = NULL;
 	priv->ar_elements = g_ptr_array_new ();
 	priv->ar_validators = g_ptr_array_new ();
 	priv->ar_messages = g_ptr_array_new ();
@@ -142,7 +139,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 	textdomain (GETTEXT_PACKAGE);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 
-	zak_form_form_load_modules (zak_form_form);
+	zak_form_load_modules ();
 }
 
 void
@@ -175,7 +172,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 				{
 					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
-					extension_constructor = zak_form_form_get_form_element_extension (zakform, type);
+					extension_constructor = zak_form_get_form_element_extension (type);
 					if (extension_constructor != NULL)
 						{
 							extension = extension_constructor ();
@@ -194,7 +191,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 				{
 					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
-					filter_constructor = zak_form_form_get_form_element_filter (zakform, type);
+					filter_constructor = zak_form_get_form_element_filter (type);
 					if (filter_constructor != NULL)
 						{
 							filter = filter_constructor ();
@@ -213,7 +210,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 				{
 					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
-					validator_constructor = zak_form_form_get_form_element_validator (zakform, type);
+					validator_constructor = zak_form_get_form_element_validator (type);
 					if (validator_constructor != NULL)
 						{
 							validator = validator_constructor ();
@@ -245,113 +242,6 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 }
 
 /**
- * _zak_form_form_get_module_new:
- * @zakform:
- * @namespace:
- *
- * Returns: the constructor (_new) function for the module.
- */
-static gpointer
-_zak_form_form_get_module_new (ZakFormForm *zakform, const gchar *namespace)
-{
-	gpointer ret;
-
-	ZakFormFormPrivate *priv;
-
-	guint i;
-
-	priv = zak_form_form_get_instance_private (zakform);
-
-	for (i = 0; i < priv->ar_modules->len; i++)
-		{
-			if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-			                     g_strconcat (namespace, "_new", NULL),
-			                     (gpointer *)&ret))
-				{
-					break;
-				}
-		}
-
-	return ret;
-}
-
-/**
- * zak_form_form_get_form_element:
- * @zakform:
- * @namespace:
- *
- * Returns:
- */
-ZakFormElementConstructorFunc
-zak_form_form_get_form_element (ZakFormForm *zakform, const gchar *namespace)
-{
-	ZakFormElementConstructorFunc element_constructor;
-
-	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
-
-	element_constructor = (ZakFormElementConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
-
-	return element_constructor;
-}
-
-/**
- * zak_form_form_get_form_element_filter:
- * @zakform:
- * @namespace:
- *
- * Returns:
- */
-ZakFormElementFilterConstructorFunc
-zak_form_form_get_form_element_filter (ZakFormForm *zakform, const gchar *namespace)
-{
-	ZakFormElementFilterConstructorFunc filter_constructor;
-
-	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
-
-	filter_constructor = (ZakFormElementFilterConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
-
-	return filter_constructor;
-}
-
-/**
- * zak_form_form_get_form_element_validator:
- * @zakform:
- * @namespace:
- *
- * Returns:
- */
-ZakFormElementValidatorConstructorFunc
-zak_form_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespace)
-{
-	ZakFormElementValidatorConstructorFunc validator_constructor;
-
-	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
-
-	validator_constructor = (ZakFormElementValidatorConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
-
-	return validator_constructor;
-}
-
-/**
- * zak_form_form_get_form_element_extension:
- * @zakform:
- * @namespace:
- *
- * Returns:
- */
-ZakFormElementExtensionConstructorFunc
-zak_form_form_get_form_element_extension (ZakFormForm *zakform, const gchar *namespace)
-{
-	ZakFormElementExtensionConstructorFunc extension_constructor;
-
-	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
-
-	extension_constructor = (ZakFormElementExtensionConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
-
-	return extension_constructor;
-}
-
-/**
  * zak_form_form_load_from_xml:
  * @zakform:
  * @xmldoc:
@@ -374,7 +264,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 	gint y;
 
 	ZakFormElementConstructorFunc element_constructor;
-	FormValidatorConstructorFunc validator_constructor;
+	ZakFormValidatorConstructorFunc validator_constructor;
 
 	xmlXPathContextPtr xpcontext;
 	xmlXPathObjectPtr xpresult;
@@ -403,7 +293,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 
 									type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
 
-									element_constructor = zak_form_form_get_form_element (zakform, type);
+									element_constructor = zak_form_get_form_element (type);
 									if (element_constructor != NULL)
 										{
 											element = element_constructor ();
@@ -439,7 +329,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 								{
 									type = (gchar *)xmlGetProp (xnodeset->nodeTab[y], (const xmlChar *)"type");
 
-									validator_constructor = (FormValidatorConstructorFunc)_zak_form_form_get_module_new (zakform, type);
+									validator_constructor = (ZakFormValidatorConstructorFunc)zak_form_get_form_validator (type);
 									if (validator_constructor != NULL)
 										{
 											validator = validator_constructor ();
@@ -975,101 +865,4 @@ zak_form_form_finalize (GObject *gobject)
 
 	GObjectClass *parent_class = g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject));
 	parent_class->finalize (gobject);
-}
-
-static void
-zak_form_form_load_modules (ZakFormForm* zakform)
-{
-	ZakFormFormPrivate *priv;
-
-	gchar *modulesdir;
-	GDir *dir;
-	GError *error;
-
-	GModule *module;
-	const gchar *filename;
-
-	if (g_module_supported ())
-		{
-			priv = zak_form_form_get_instance_private (zakform);
-
-			modulesdir = (gchar *)g_getenv ("LIBZAKFORM_MODULESDIR");
-			if (modulesdir == NULL)
-				{
-#ifdef G_OS_WIN32
-
-					gchar *moddir;
-					gchar *p;
-
-					moddir = g_win32_get_package_installation_directory_of_module (backend_dll);
-
-					p = g_strrstr (moddir, g_strdup_printf ("%c", G_DIR_SEPARATOR));
-					if (p != NULL
-						&& (g_ascii_strcasecmp (p + 1, "src") == 0
-							|| g_ascii_strcasecmp (p + 1, ".libs") == 0))
-						{
-							modulesdir = g_strdup (MODULESDIR);
-						}
-					else
-						{
-							modulesdir = g_build_filename (moddir, "lib", PACKAGE, "modules", NULL);
-						}
-
-#else
-
-					modulesdir = g_strdup (MODULESDIR);
-
-#endif
-				}
-
-			/* load myself as module (for filters and validators) */
-			module = g_module_open (NULL, G_MODULE_BIND_LAZY);
-			if (module == NULL)
-				{
-					g_warning (_("Unable to load module of myself"));
-				}
-			else
-				{
-					if (priv->ar_modules == NULL)
-						{
-							priv->ar_modules = g_ptr_array_new ();
-						}
-					g_ptr_array_add (priv->ar_modules, (gpointer)module);
-				}
-
-			/* for each file in MODULESDIR */
-			error = NULL;
-			dir = g_dir_open (modulesdir, 0, &error);
-			if (dir != NULL && error == NULL)
-				{
-					while ((filename = g_dir_read_name (dir)) != NULL)
-						{
-							/* trying to open the module */
-							module = g_module_open (filename, G_MODULE_BIND_LAZY);
-							if (module != NULL)
-								{
-									if (priv->ar_modules == NULL)
-										{
-											priv->ar_modules = g_ptr_array_new ();
-										}
-								    g_ptr_array_add (priv->ar_modules, (gpointer)module);
-								}
-							else
-								{
-									g_warning (_("Unable to load %s: %s."), filename, g_module_error ());
-								}
-						}
-
-					g_dir_close (dir);
-				}
-			else
-				{
-					g_warning (_("Unable to open modules dir: %s."),
-							   error != NULL && error->message != NULL ? error->message : _("no details"));
-				}
-		}
-	else
-		{
-			g_warning (_("Modules not supported by this operating system."));
-		}
 }
