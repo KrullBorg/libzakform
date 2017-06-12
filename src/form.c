@@ -179,16 +179,14 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 	cur = xmlDocGetRootElement (xmldoc);
 	if (cur != NULL)
 		{
-			if (xmlStrcmp (cur->name, (const xmlChar *)"zakform") == 0)
+			if (xmlStrEqual (cur->name, (const xmlChar *)"zakform"))
 				{
 					ret = TRUE;
-
-					priv = zak_form_form_get_instance_private (zakform);
 
 					cur = cur->children;
 					while (cur)
 						{
-							if (xmlStrcmp (cur->name, (const xmlChar *)"element") == 0)
+							if (xmlStrEqual (cur->name, (const xmlChar *)"element"))
 								{
 									element = NULL;
 

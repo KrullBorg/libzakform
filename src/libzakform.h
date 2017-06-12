@@ -24,6 +24,8 @@
 
 #include <libzakform/formelement.h>
 
+#include <libzakform/formelementarray.h>
+
 #include <libzakform/formelementextension.h>
 
 #include <libzakform/formelementfilter.h>

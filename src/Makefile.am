@@ -19,6 +19,7 @@ libzakform_la_SOURCES = \
                         form.c \
                         formelement.c \
                         formelementextension.c \
+                        formelementarray.c \
                         formelementfilter.c \
                         formelementfilterluc.c \
                         formelementfiltertrim.c \
@@ -40,6 +41,7 @@ gir_include = \
                              form.h \
                              formelement.h \
                              formelementextension.h \
+                             formelementarray.h \
                              formelementfilter.h \
                              formelementfilterluc.h \
                              formelementfiltertrim.h \
