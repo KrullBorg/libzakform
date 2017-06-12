@@ -24,8 +24,11 @@
 
 #include <libzakutils/libzakutils.h>
 
+#include "commons.h"
 #include "zakformmarshal.h"
 #include "formelement.h"
+#include "formelementfilter.h"
+#include "formelementvalidator.h"
 
 enum
 {
@@ -1600,6 +1603,16 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 {
 	xmlNode *cur;
 
+	gchar *type;
+
+	ZakFormElementExtension *extension;
+	ZakFormElementFilter *filter;
+	ZakFormElementValidator *validator;
+
+	ZakFormElementExtensionConstructorFunc extension_constructor;
+	ZakFormElementFilterConstructorFunc filter_constructor;
+	ZakFormElementValidatorConstructorFunc validator_constructor;
+
 	gboolean to_unlink;
 	xmlNode *xnode_tmp;
 
@@ -1608,7 +1621,64 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 		{
 			to_unlink = FALSE;
 
-			if (xmlStrEqual (cur->name, (const xmlChar *)"name"))
+			if (xmlStrEqual (cur->name, (const xmlChar *)"extension"))
+				{
+					type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
+
+					extension_constructor = zak_form_get_form_element_extension (type);
+					if (extension_constructor != NULL)
+						{
+							extension = extension_constructor ();
+							zak_form_element_add_extension (element, extension);
+
+							zak_form_element_extension_xml_parsing (extension, cur);
+						}
+					else
+						{
+							g_warning ("Extension «%s» not found.", type);
+						}
+
+					to_unlink = TRUE;
+				}
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"filter"))
+				{
+					type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
+
+					filter_constructor = zak_form_get_form_element_filter (type);
+					if (filter_constructor != NULL)
+						{
+							filter = filter_constructor ();
+							zak_form_element_add_filter (element, filter);
+
+							zak_form_element_filter_xml_parsing (filter, cur);
+						}
+					else
+						{
+							g_warning ("Filter «%s» not found.", type);
+						}
+
+					to_unlink = TRUE;
+				}
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"validator"))
+				{
+					type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
+
+					validator_constructor = zak_form_get_form_element_validator (type);
+					if (validator_constructor != NULL)
+						{
+							validator = validator_constructor ();
+							zak_form_element_add_validator (element, validator);
+
+							zak_form_element_validator_xml_parsing (validator, cur);
+						}
+					else
+						{
+							g_warning ("Validator «%s» not found.", type);
+						}
+
+					to_unlink = TRUE;
+				}
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"name"))
 				{
 					zak_form_element_set_name (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;

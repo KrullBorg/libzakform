@@ -142,105 +142,6 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 	zak_form_load_modules ();
 }
 
-void
-zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element, xmlNode *xnode)
-{
-	ZakFormFormPrivate *priv;
-
-	gchar *type;
-	guint i;
-
-	ZakFormElementExtension *extension;
-	ZakFormElementFilter *filter;
-	ZakFormElementValidator *validator;
-
-	ZakFormElementExtensionConstructorFunc extension_constructor;
-	ZakFormElementFilterConstructorFunc filter_constructor;
-	ZakFormElementValidatorConstructorFunc validator_constructor;
-
-	gboolean to_unlink;
-	xmlNode *xnode_tmp;
-
-	priv = zak_form_form_get_instance_private (zakform);
-
-	xnode = xnode->children;
-	while (xnode)
-		{
-			to_unlink = FALSE;
-
-			if (xmlStrcmp (xnode->name, (const xmlChar *)"extension") == 0)
-				{
-					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
-
-					extension_constructor = zak_form_get_form_element_extension (type);
-					if (extension_constructor != NULL)
-						{
-							extension = extension_constructor ();
-							zak_form_element_add_extension (element, extension);
-
-							zak_form_element_extension_xml_parsing (extension, xnode);
-						}
-					else
-						{
-							g_warning ("Extension «%s» not found.", type);
-						}
-
-					to_unlink = TRUE;
-				}
-			else if (xmlStrcmp (xnode->name, (const xmlChar *)"filter") == 0)
-				{
-					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
-
-					filter_constructor = zak_form_get_form_element_filter (type);
-					if (filter_constructor != NULL)
-						{
-							filter = filter_constructor ();
-							zak_form_element_add_filter (element, filter);
-
-							zak_form_element_filter_xml_parsing (filter, xnode);
-						}
-					else
-						{
-							g_warning ("Filter «%s» not found.", type);
-						}
-
-					to_unlink = TRUE;
-				}
-			else if (xmlStrcmp (xnode->name, (const xmlChar *)"validator") == 0)
-				{
-					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
-
-					validator_constructor = zak_form_get_form_element_validator (type);
-					if (validator_constructor != NULL)
-						{
-							validator = validator_constructor ();
-							zak_form_element_add_validator (element, validator);
-
-							zak_form_element_validator_xml_parsing (validator, xnode);
-						}
-					else
-						{
-							g_warning ("Validator «%s» not found.", type);
-						}
-
-					to_unlink = TRUE;
-				}
-
-			if (to_unlink)
-				{
-					xnode_tmp = xnode;
-				}
-
-			xnode = xnode->next;
-
-			if (to_unlink)
-				{
-					xmlUnlinkNode (xnode_tmp);
-					xmlFreeNode (xnode_tmp);
-				}
-		}
-}
-
 /**
  * zak_form_form_load_from_xml:
  * @zakform:
@@ -302,7 +203,6 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 													zak_form_form_add_element (zakform, element);
 
 													cur_clean = xmlCopyNode (cur, 1);
-													zak_form_form_element_xml_parsing (zakform, element, cur_clean);
 													zak_form_element_xml_parsing (element, cur_clean);
 
 													xmlUnlinkNode (cur_clean);
