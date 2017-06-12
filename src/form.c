@@ -298,6 +298,25 @@ _zak_form_form_get_module_new (ZakFormForm *zakform, const gchar *namespace)
 }
 
 /**
+ * zak_form_form_get_form_element:
+ * @zakform:
+ * @namespace:
+ *
+ * Returns:
+ */
+ZakFormElementConstructorFunc
+zak_form_form_get_form_element (ZakFormForm *zakform, const gchar *namespace)
+{
+	ZakFormElementConstructorFunc element_constructor;
+
+	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
+
+	element_constructor = (ZakFormElementConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
+
+	return element_constructor;
+}
+
+/**
  * zak_form_form_get_form_element_filter:
  * @zakform:
  * @namespace:
@@ -357,7 +376,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 	guint i;
 	gint y;
 
-	FormElementConstructorFunc element_constructor;
+	ZakFormElementConstructorFunc element_constructor;
 	FormValidatorConstructorFunc validator_constructor;
 
 	xmlXPathContextPtr xpcontext;
@@ -387,33 +406,23 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 
 									type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
 
-									/* for each module */
-									for (i = 0; i < priv->ar_modules->len; i++)
+									element_constructor = zak_form_form_get_form_element (zakform, type);
+									if (element_constructor != NULL)
 										{
-											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-											                     g_strconcat (type, "_new", NULL),
-											                     (gpointer *)&element_constructor))
+											element = element_constructor ();
+											if (element != NULL)
 												{
-													if (element_constructor != NULL)
-														{
-															element = element_constructor ();
-															if (element != NULL)
-																{
-																	zak_form_form_add_element (zakform, element);
+													zak_form_form_add_element (zakform, element);
 
-																	cur_clean = xmlCopyNode (cur, 1);
-																	zak_form_form_element_xml_parsing (zakform, element, cur_clean);
-																	zak_form_element_xml_parsing (element, cur_clean);
+													cur_clean = xmlCopyNode (cur, 1);
+													zak_form_form_element_xml_parsing (zakform, element, cur_clean);
+													zak_form_element_xml_parsing (element, cur_clean);
 
-																	xmlUnlinkNode (cur_clean);
-																	xmlFreeNode (cur_clean);
-																}
-															break;
-														}
+													xmlUnlinkNode (cur_clean);
+													xmlFreeNode (cur_clean);
 												}
 										}
-
-									if (element == NULL)
+									else
 										{
 											g_warning (_("Unknown element type «%s»."), type);
 										}

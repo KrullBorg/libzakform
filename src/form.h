@@ -44,6 +44,9 @@ struct _ZakFormFormClass
 	void (*element_added) (ZakFormForm *zakform, ZakFormElement *element);
 };
 
+typedef ZakFormElement *(* ZakFormElementConstructorFunc) (void);
+ZakFormElementConstructorFunc zak_form_form_get_form_element (ZakFormForm *zakform, const gchar *namespace);
+
 typedef ZakFormElementFilter *(* ZakFormElementFilterConstructorFunc) (void);
 ZakFormElementFilterConstructorFunc zak_form_form_get_form_element_filter (ZakFormForm *zakform, const gchar *namespace);
 
