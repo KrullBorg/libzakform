@@ -34,7 +34,6 @@
 #endif
 
 typedef ZakFormElement *(* FormElementConstructorFunc) (void);
-typedef gboolean (* FormElementXmlParsingFunc) (ZakFormElement *, xmlNodePtr);
 typedef GObject *(* FormElementExtensionConstructorFunc) (void);
 typedef gboolean (* FormElementExtensionXmlParsingFunc) (GObject *, xmlNodePtr);
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
@@ -149,7 +148,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
 	zak_form_form_load_modules (zak_form_form);
 }
 
-static void
+void
 zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element, xmlNode *xnode)
 {
 	ZakFormFormPrivate *priv;
@@ -359,8 +358,6 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 	gint y;
 
 	FormElementConstructorFunc element_constructor;
-	FormElementXmlParsingFunc element_xml_parsing;
-
 	FormValidatorConstructorFunc validator_constructor;
 
 	xmlXPathContextPtr xpcontext;
@@ -406,16 +403,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 
 																	cur_clean = xmlCopyNode (cur, 1);
 																	zak_form_form_element_xml_parsing (zakform, element, cur_clean);
-
-																	if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-																	                     g_strconcat (type, "_xml_parsing", NULL),
-																	                     (gpointer *)&element_xml_parsing))
-																		{
-																			if (element_xml_parsing != NULL)
-																				{
-																					element_xml_parsing (element, cur_clean);
-																				}
-																		}
+																	zak_form_element_xml_parsing (element, cur_clean);
 
 																	xmlUnlinkNode (cur_clean);
 																	xmlFreeNode (cur_clean);
@@ -445,7 +433,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 								{
 									type = (gchar *)xmlGetProp (xnodeset->nodeTab[y], (const xmlChar *)"type");
 
-									validator_constructor = _zak_form_form_get_module_new (zakform, type);
+									validator_constructor = (FormValidatorConstructorFunc)_zak_form_form_get_module_new (zakform, type);
 									if (validator_constructor != NULL)
 										{
 											validator = validator_constructor ();

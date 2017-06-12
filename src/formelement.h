@@ -53,6 +53,8 @@ struct _ZakFormElementClass
 		guint after_validating_signal_id;
 	};
 
+void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode);
+
 void zak_form_element_set_name (ZakFormElement *element, const gchar *name);
 gchar *zak_form_element_get_name (ZakFormElement *element);
 

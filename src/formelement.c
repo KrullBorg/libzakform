@@ -63,8 +63,6 @@ static void zak_form_element_get_property (GObject *object,
 static void zak_form_element_dispose (GObject *gobject);
 static void zak_form_element_finalize (GObject *gobject);
 
-static void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode);
-
 typedef struct
 	{
 		gchar *name;
@@ -97,8 +95,6 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	object_class->get_property = zak_form_element_get_property;
 	object_class->dispose = zak_form_element_dispose;
 	object_class->finalize = zak_form_element_finalize;
-
-	class->xml_parsing = zak_form_element_xml_parsing;
 
 	g_object_class_install_property (object_class, PROP_NAME,
 	                                 g_param_spec_string ("name",
@@ -1571,7 +1567,7 @@ zak_form_element_finalize (GObject *gobject)
 	parent_class->finalize (gobject);
 }
 
-static void
+void
 zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 {
 	xmlNode *cur;
@@ -1663,5 +1659,10 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 					xmlUnlinkNode (xnode_tmp);
 					xmlFreeNode (xnode_tmp);
 				}
+		}
+
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->xml_parsing != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->xml_parsing (element, xmlnode);
 		}
 }
