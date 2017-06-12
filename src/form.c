@@ -247,7 +247,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 				{
 					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
-					validator_constructor = zak_form_get_form_element_validator (zakform, type);
+					validator_constructor = zak_form_form_get_form_element_validator (zakform, type);
 					if (validator_constructor != NULL)
 						{
 							validator = validator_constructor ();
@@ -286,7 +286,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
  * Returns: the constructor (_new) function for the module.
  */
 static gpointer
-_zak_form_get_module_new (ZakFormForm *zakform, const gchar *namespace)
+_zak_form_form_get_module_new (ZakFormForm *zakform, const gchar *namespace)
 {
 	gpointer ret;
 
@@ -310,20 +310,20 @@ _zak_form_get_module_new (ZakFormForm *zakform, const gchar *namespace)
 }
 
 /**
- * zak_form_get_form_element_validator:
+ * zak_form_form_get_form_element_validator:
  * @zakform:
  * @namespace:
  *
  * Returns:
  */
 ZakFormElementValidatorConstructorFunc
-zak_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespace)
+zak_form_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespace)
 {
 	ZakFormElementValidatorConstructorFunc validator_constructor;
 
 	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
 
-	validator_constructor = (ZakFormElementValidatorConstructorFunc)_zak_form_get_module_new (zakform, namespace);
+	validator_constructor = (ZakFormElementValidatorConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
 
 	return validator_constructor;
 }

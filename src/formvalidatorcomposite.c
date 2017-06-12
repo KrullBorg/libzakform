@@ -154,7 +154,7 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 							continue;
 						}
 
-					validator_constructor = zak_form_get_form_element_validator (form, (gchar *)xmlGetProp (cur, (xmlChar *)"validator"));
+					validator_constructor = zak_form_form_get_form_element_validator (form, (gchar *)xmlGetProp (cur, (xmlChar *)"validator"));
 					if (validator_constructor == NULL)
 						{
 							g_warning ("Validator «%s» not found.",
@@ -238,7 +238,7 @@ _zak_form_validator_composite_xml_parsing (ZakFormValidator *validator, xmlNode 
 
 					n = (Node *)g_new0 (Node, 1);
 
-					validator_constructor = zak_form_get_form_element_validator (form, (gchar *)xmlGetProp (cur, (xmlChar *)"type"));
+					validator_constructor = zak_form_form_get_form_element_validator (form, (gchar *)xmlGetProp (cur, (xmlChar *)"type"));
 					if (validator_constructor == NULL)
 						{
 							g_warning ("Validator «%s» not found.",
