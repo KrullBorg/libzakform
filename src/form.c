@@ -37,7 +37,6 @@ typedef ZakFormElement *(* FormElementConstructorFunc) (void);
 typedef gboolean (* FormElementXmlParsingFunc) (ZakFormElement *, xmlNodePtr);
 typedef GObject *(* FormElementExtensionConstructorFunc) (void);
 typedef gboolean (* FormElementExtensionXmlParsingFunc) (GObject *, xmlNodePtr);
-typedef ZakFormElementFilter *(* FormElementFilterConstructorFunc) (void);
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
@@ -164,7 +163,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 
 	FormElementExtensionConstructorFunc extension_constructor;
 	FormElementExtensionXmlParsingFunc extension_xml_parsing;
-	FormElementFilterConstructorFunc filter_constructor;
+	ZakFormElementFilterConstructorFunc filter_constructor;
 	ZakFormElementValidatorConstructorFunc validator_constructor;
 
 	gboolean to_unlink;
@@ -218,25 +217,15 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 				{
 					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
-					/* for each module */
-					for (i = 0; i < priv->ar_modules->len; i++)
+					filter_constructor = zak_form_form_get_form_element_filter (zakform, type);
+					if (filter_constructor != NULL)
 						{
-							if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-							                     g_strconcat (type, "_new", NULL),
-							                     (gpointer *)&filter_constructor))
-								{
-									if (filter_constructor != NULL)
-										{
-											filter = filter_constructor ();
-											zak_form_element_add_filter (element, filter);
+							filter = filter_constructor ();
+							zak_form_element_add_filter (element, filter);
 
-											zak_form_element_filter_xml_parsing (filter, xnode);
-
-											break;
-										}
-								}
+							zak_form_element_filter_xml_parsing (filter, xnode);
 						}
-					if (i >= priv->ar_modules->len)
+					else
 						{
 							g_warning ("Filter «%s» not found.", type);
 						}
@@ -307,6 +296,25 @@ _zak_form_form_get_module_new (ZakFormForm *zakform, const gchar *namespace)
 		}
 
 	return ret;
+}
+
+/**
+ * zak_form_form_get_form_element_filter:
+ * @zakform:
+ * @namespace:
+ *
+ * Returns:
+ */
+ZakFormElementFilterConstructorFunc
+zak_form_form_get_form_element_filter (ZakFormForm *zakform, const gchar *namespace)
+{
+	ZakFormElementFilterConstructorFunc filter_constructor;
+
+	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
+
+	filter_constructor = (ZakFormElementFilterConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
+
+	return filter_constructor;
 }
 
 /**
