@@ -43,11 +43,18 @@ struct _ZakFormElementClass
 		gboolean (*set_value) (ZakFormElement *element, GValue *value);
 		GValue *(*get_value) (ZakFormElement *element);
 
+		void (*set_as_original_value) (ZakFormElement *element);
+		gboolean (*is_changed) (ZakFormElement *element);
+
 		void (*set_visible) (ZakFormElement *element, gboolean visible);
 		gboolean (*get_visible) (ZakFormElement *element);
 
 		void (*set_editable) (ZakFormElement *element, gboolean editable);
 		gboolean (*get_editable) (ZakFormElement *element);
+
+		void (*clear) (ZakFormElement *element);
+
+		gboolean (*is_valid) (ZakFormElement *element);
 
 		guint before_validating_signal_id;
 		guint after_validating_signal_id;

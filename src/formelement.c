@@ -1020,7 +1020,14 @@ zak_form_element_set_original_value (ZakFormElement *element, const gchar *value
 void
 zak_form_element_set_as_original_value (ZakFormElement *element)
 {
-	zak_form_element_set_original_value_gvalue (element, zak_form_element_get_value_gvalue (element));
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->set_as_original_value != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->set_as_original_value (element);
+		}
+	else
+		{
+			zak_form_element_set_original_value_gvalue (element, zak_form_element_get_value_gvalue (element));
+		}
 }
 
 /**
@@ -1031,7 +1038,14 @@ zak_form_element_set_as_original_value (ZakFormElement *element)
 gboolean
 zak_form_element_is_changed (ZakFormElement *element)
 {
-	return (g_strcmp0 (zak_form_element_get_original_value (element), zak_form_element_get_value (element)) != 0);
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->is_changed != NULL)
+		{
+			return ZAK_FORM_ELEMENT_GET_CLASS (element)->is_changed (element);
+		}
+	else
+		{
+			return (g_strcmp0 (zak_form_element_get_original_value (element), zak_form_element_get_value (element)) != 0);
+		}
 }
 
 /**
@@ -1244,7 +1258,14 @@ zak_form_element_clear (ZakFormElement *element)
 
 	priv = zak_form_element_get_instance_private (element);
 
-	zak_form_element_set_value_gvalue (element, priv->default_value);
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->clear != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->clear (element);
+		}
+	else
+		{
+			zak_form_element_set_value_gvalue (element, priv->default_value);
+		}
 }
 
 /**
@@ -1332,16 +1353,23 @@ zak_form_element_is_valid (ZakFormElement *element)
 			ret = FALSE;
 		}
 
-	value = zak_form_element_get_value (element);
-
-	for (i = 0; i < priv->pa_validators->len; i++)
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->is_valid != NULL)
 		{
-			ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
-			if (!zak_form_element_validator_validate (validator, value))
-				{
-					g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->is_valid (element);
+		}
+	else
+		{
+			value = zak_form_element_get_value (element);
 
-					ret = FALSE;
+			for (i = 0; i < priv->pa_validators->len; i++)
+				{
+					ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
+					if (!zak_form_element_validator_validate (validator, value))
+						{
+							g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
+
+							ret = FALSE;
+						}
 				}
 		}
 
