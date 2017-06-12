@@ -18,6 +18,7 @@ libzakform_la_SOURCES = \
                         zakformmarshal.c \
                         form.c \
                         formelement.c \
+                        formelementextension.c \
                         formelementfilter.c \
                         formelementfilterluc.c \
                         formelementfiltertrim.c \
@@ -38,6 +39,7 @@ gir_include = \
                              zakformmarshal.h \
                              form.h \
                              formelement.h \
+                             formelementextension.h \
                              formelementfilter.h \
                              formelementfilterluc.h \
                              formelementfiltertrim.h \

@@ -33,9 +33,6 @@
 	#include <windows.h>
 #endif
 
-typedef ZakFormElement *(* FormElementConstructorFunc) (void);
-typedef GObject *(* FormElementExtensionConstructorFunc) (void);
-typedef gboolean (* FormElementExtensionXmlParsingFunc) (GObject *, xmlNodePtr);
 typedef ZakFormValidator *(* FormValidatorConstructorFunc) (void);
 
 static void zak_form_form_class_init (ZakFormFormClass *class);
@@ -156,12 +153,11 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 	gchar *type;
 	guint i;
 
-	GObject *extension;
+	ZakFormElementExtension *extension;
 	ZakFormElementFilter *filter;
 	ZakFormElementValidator *validator;
 
-	FormElementExtensionConstructorFunc extension_constructor;
-	FormElementExtensionXmlParsingFunc extension_xml_parsing;
+	ZakFormElementExtensionConstructorFunc extension_constructor;
 	ZakFormElementFilterConstructorFunc filter_constructor;
 	ZakFormElementValidatorConstructorFunc validator_constructor;
 
@@ -179,35 +175,17 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 				{
 					type = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type");
 
-					/* for each module */
-					for (i = 0; i < priv->ar_modules->len; i++)
+					extension_constructor = zak_form_form_get_form_element_extension (zakform, type);
+					if (extension_constructor != NULL)
 						{
-							if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-							                     g_strconcat (type, "_new", NULL),
-							                     (gpointer *)&extension_constructor))
-								{
-									if (extension_constructor != NULL)
-										{
-											extension = extension_constructor ();
-											zak_form_element_add_extension (element, extension);
+							extension = extension_constructor ();
+							zak_form_element_add_extension (element, extension);
 
-											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-											                     g_strconcat (type, "_xml_parsing", NULL),
-											                     (gpointer *)&extension_xml_parsing))
-												{
-													if (extension_xml_parsing != NULL)
-														{
-															extension_xml_parsing (extension, xnode);
-														}
-												}
-
-											break;
-										}
-								}
+							zak_form_element_extension_xml_parsing (extension, xnode);
 						}
-					if (i >= priv->ar_modules->len)
+					else
 						{
-							g_warning ("Filter «%s» not found.", type);
+							g_warning ("Extension «%s» not found.", type);
 						}
 
 					to_unlink = TRUE;
@@ -352,6 +330,25 @@ zak_form_form_get_form_element_validator (ZakFormForm *zakform, const gchar *nam
 	validator_constructor = (ZakFormElementValidatorConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
 
 	return validator_constructor;
+}
+
+/**
+ * zak_form_form_get_form_element_extension:
+ * @zakform:
+ * @namespace:
+ *
+ * Returns:
+ */
+ZakFormElementExtensionConstructorFunc
+zak_form_form_get_form_element_extension (ZakFormForm *zakform, const gchar *namespace)
+{
+	ZakFormElementExtensionConstructorFunc extension_constructor;
+
+	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
+
+	extension_constructor = (ZakFormElementExtensionConstructorFunc)_zak_form_form_get_module_new (zakform, namespace);
+
+	return extension_constructor;
 }
 
 /**

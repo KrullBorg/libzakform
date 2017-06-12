@@ -242,7 +242,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
  *
  */
 void
-zak_form_element_add_extension (ZakFormElement *element, GObject *extension)
+zak_form_element_add_extension (ZakFormElement *element, ZakFormElementExtension *extension)
 {
 	ZakFormElementPrivate *priv;
 

@@ -26,6 +26,7 @@
 
 #include "formelementfilter.h"
 #include "formelementvalidator.h"
+#include "formelementextension.h"
 
 
 G_BEGIN_DECLS
@@ -118,7 +119,7 @@ gboolean zak_form_element_get_to_save (ZakFormElement *element);
 
 void zak_form_element_clear (ZakFormElement *element);
 
-void zak_form_element_add_extension (ZakFormElement *element, GObject *extension);
+void zak_form_element_add_extension (ZakFormElement *element, ZakFormElementExtension *extension);
 
 GPtrArray *zak_form_element_get_extensions (ZakFormElement *element);
 GPtrArray *zak_form_element_get_extensions_by_type (ZakFormElement *element, GType type);

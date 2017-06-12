@@ -25,6 +25,7 @@
 #include <libxml/tree.h>
 
 #include "formelement.h"
+#include "formelementextension.h"
 #include "formiprovider.h"
 #include "formvalidator.h"
 
@@ -52,6 +53,9 @@ ZakFormElementFilterConstructorFunc zak_form_form_get_form_element_filter (ZakFo
 
 typedef ZakFormElementValidator *(* ZakFormElementValidatorConstructorFunc) (void);
 ZakFormElementValidatorConstructorFunc zak_form_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespace);
+
+typedef ZakFormElementExtension *(* ZakFormElementExtensionConstructorFunc) (void);
+ZakFormElementExtensionConstructorFunc zak_form_form_get_form_element_extension (ZakFormForm *zakform, const gchar *namespace);
 
 gboolean zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc);
 gboolean zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filename);
