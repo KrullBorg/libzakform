@@ -279,7 +279,38 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 }
 
 /**
- * zak_form_get_form_validator:
+ * _zak_form_get_module_new:
+ * @zakform:
+ * @namespace:
+ *
+ * Returns: the constructor (_new) function for the module.
+ */
+static gpointer
+_zak_form_get_module_new (ZakFormForm *zakform, const gchar *namespace)
+{
+	gpointer ret;
+
+	ZakFormFormPrivate *priv;
+
+	guint i;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	for (i = 0; i < priv->ar_modules->len; i++)
+		{
+			if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
+			                     g_strconcat (namespace, "_new", NULL),
+			                     (gpointer *)&ret))
+				{
+					break;
+				}
+		}
+
+	return ret;
+}
+
+/**
+ * zak_form_get_form_element_validator:
  * @zakform:
  * @namespace:
  *
@@ -288,27 +319,11 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 ZakFormElementValidatorConstructorFunc
 zak_form_get_form_element_validator (ZakFormForm *zakform, const gchar *namespace)
 {
-	ZakFormFormPrivate *priv;
-
 	ZakFormElementValidatorConstructorFunc validator_constructor;
-
-	guint i;
 
 	g_return_val_if_fail (ZAK_FORM_IS_FORM (zakform), NULL);
 
-	priv = zak_form_form_get_instance_private (zakform);
-
-	validator_constructor = NULL;
-
-	for (i = 0; i < priv->ar_modules->len; i++)
-		{
-			if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-			                     g_strconcat (namespace, "_new", NULL),
-			                     (gpointer *)&validator_constructor))
-				{
-					break;
-				}
-		}
+	validator_constructor = (ZakFormElementValidatorConstructorFunc)_zak_form_get_module_new (zakform, namespace);
 
 	return validator_constructor;
 }
