@@ -268,7 +268,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
 }
 
 /**
- * _zak_form_get_module_new:
+ * _zak_form_form_get_module_new:
  * @zakform:
  * @namespace:
  *
@@ -445,25 +445,15 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
 								{
 									type = (gchar *)xmlGetProp (xnodeset->nodeTab[y], (const xmlChar *)"type");
 
-									/* for each module */
-									for (i = 0; i < priv->ar_modules->len; i++)
+									validator_constructor = _zak_form_form_get_module_new (zakform, type);
+									if (validator_constructor != NULL)
 										{
-											if (g_module_symbol ((GModule *)g_ptr_array_index (priv->ar_modules, i),
-											                     g_strconcat (type, "_new", NULL),
-											                     (gpointer *)&validator_constructor))
-												{
-													if (validator_constructor != NULL)
-														{
-															validator = validator_constructor ();
-															zak_form_form_add_validator (zakform, validator);
+											validator = validator_constructor ();
+											zak_form_form_add_validator (zakform, validator);
 
-															zak_form_validator_xml_parsing (validator, xnodeset->nodeTab[y], zakform);
-
-															break;
-														}
-												}
+											zak_form_validator_xml_parsing (validator, xnodeset->nodeTab[y], zakform);
 										}
-									if (i >= priv->ar_modules->len)
+									else
 										{
 											g_warning ("Validator «%s» not found.", type);
 										}
