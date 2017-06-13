@@ -61,6 +61,8 @@ void zak_form_element_array_add_element (ZakFormElement *element, ZakFormElement
 
 GPtrArray *zak_form_element_array_get_elements (ZakFormElement *element);
 
+ZakFormElement *zak_form_element_array_get_element_by_id (ZakFormElement *element, const gchar *id);
+
 
 G_END_DECLS
 

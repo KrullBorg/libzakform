@@ -45,6 +45,7 @@ static void zak_form_element_array_finalize (GObject *gobject);
 static GValue *zak_form_element_array_get_value (ZakFormElementArray *element);
 static gboolean zak_form_element_array_set_value (ZakFormElementArray *element, GValue *value);
 static void zak_form_element_array_set_as_original_value (ZakFormElement *element);
+static void zak_form_element_array_clear (ZakFormElement *element);
 
 #define ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_ARRAY, ZakFormElementArrayPrivate))
 
@@ -70,6 +71,7 @@ zak_form_element_array_class_init (ZakFormElementArrayClass *klass)
 	elem_class->get_value = zak_form_element_array_get_value;
 	elem_class->set_value = zak_form_element_array_set_value;
 	elem_class->set_as_original_value = zak_form_element_array_set_as_original_value;
+	elem_class->clear = zak_form_element_array_clear;
 
 	elem_class->xml_parsing = zak_form_element_array_xml_parsing;
 
@@ -220,6 +222,40 @@ GPtrArray
 	return priv->ar_elements;
 }
 
+/**
+ * zak_form_element_array_get_element_by_id:
+ * @element:
+ * @id:
+ *
+ * Returns: the #ZakFormElement with @id.
+ */
+ZakFormElement
+*zak_form_element_array_get_element_by_id (ZakFormElement *element, const gchar *id)
+{
+	ZakFormElement *ret;
+
+	guint i;
+
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	ret = NULL;
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			gchar *name = zak_form_element_get_name (form_element);
+			if (g_strcmp0 (name, id) == 0)
+				{
+					ret = form_element;
+					g_free (name);
+					break;
+				}
+			g_free (name);
+		}
+
+	return ret;
+}
+
 /* PRIVATE */
 static void
 zak_form_element_array_set_property (GObject *object,
@@ -283,7 +319,29 @@ static GValue
 *zak_form_element_array_get_value (ZakFormElementArray *element)
 {
 	GValue *ret;
+	GString *str;
+	guint i;
 
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	str = g_string_new ("{");
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			g_string_append_printf (str,
+			                        "%s{\"%s\",\"%s\"}",
+			                        str->len > 1 ? "," : "",
+			                        zak_form_element_get_name (form_element),
+			                        zak_form_element_get_value (form_element));
+		}
+
+	g_string_append (str, "}");
+
+	ret = zak_utils_gvalue_new_string (str->str);
+
+	g_string_free (str, TRUE);
 
 	return ret;
 }
@@ -291,7 +349,76 @@ static GValue
 static gboolean
 zak_form_element_array_set_value (ZakFormElementArray *element, GValue *value)
 {
+	gchar **splitted;
+	guint i;
+	gchar *field;
+	gchar **field_splitted;
+	guint l;
 
+	gchar *field_name;
+	gchar *field_value;
+
+	ZakFormElement *form_element;
+
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	splitted = g_strsplit (g_value_get_string (value), "},{", -1);
+
+	for (i = 0; i < g_strv_length (splitted); i++)
+		{
+			if (i == 0)
+				{
+					field = g_strdup (splitted[0] + 1);
+				}
+			else if (i == (g_strv_length (splitted) - 1))
+				{
+					field = g_strndup (splitted[i], strlen (splitted[i]) - 1);
+				}
+			else
+				{
+					field = g_strdup (splitted [i]);
+				}
+
+			field_name = NULL;
+			field_value = NULL;
+
+			field_splitted = g_strsplit_set (field, "{\",}", -1);
+			for (l = 0; l < g_strv_length (field_splitted); l++)
+				{
+					if (strlen (field_splitted[l]) > 0)
+						{
+							if (field_name == NULL)
+								{
+									field_name = g_strdup (field_splitted[l]);
+								}
+							else
+								{
+									field_value = g_strdup (field_splitted[l]);
+									break;
+								}
+						}
+				}
+
+			/* assign value to the right FormElement */
+			if (field_name != NULL
+				&& field_value != NULL)
+				{
+					form_element = zak_form_element_array_get_element_by_id (ZAK_FORM_ELEMENT (element), field_name);
+					if (form_element != NULL)
+						{
+							zak_form_element_set_value (ZAK_FORM_ELEMENT (form_element), field_value);
+						}
+				}
+
+			g_free (field_name);
+			g_free (field_value);
+
+			g_strfreev (field_splitted);
+
+			g_free (field);
+		}
+
+	g_strfreev (splitted);
 
 	return TRUE;
 }
@@ -305,8 +432,23 @@ zak_form_element_array_set_as_original_value (ZakFormElement *element)
 
 	for (i = 0; i < priv->ar_elements->len; i++)
 		{
-			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
 
-			zak_form_element_set_as_original_value (element);
+			zak_form_element_set_as_original_value (form_element);
+		}
+}
+
+static void
+zak_form_element_array_clear (ZakFormElement *element)
+{
+	guint i;
+
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			zak_form_element_clear (form_element);
 		}
 }
