@@ -30,6 +30,9 @@ AC_PROG_LIBTOOL
 AC_PROG_RANLIB
 
 GTK_DOC_CHECK([1.14],[--flavour no-tmpl])
+
+GOBJECT_INTROSPECTION_CHECK([1.30.0])
+
 IT_PROG_INTLTOOL
 
 dnl ******************************

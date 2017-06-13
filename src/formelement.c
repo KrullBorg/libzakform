@@ -24,8 +24,11 @@
 
 #include <libzakutils/libzakutils.h>
 
+#include "commons.h"
 #include "zakformmarshal.h"
 #include "formelement.h"
+#include "formelementfilter.h"
+#include "formelementvalidator.h"
 
 enum
 {
@@ -63,8 +66,6 @@ static void zak_form_element_get_property (GObject *object,
 static void zak_form_element_dispose (GObject *gobject);
 static void zak_form_element_finalize (GObject *gobject);
 
-static void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode);
-
 typedef struct
 	{
 		gchar *name;
@@ -97,8 +98,6 @@ zak_form_element_class_init (ZakFormElementClass *class)
 	object_class->get_property = zak_form_element_get_property;
 	object_class->dispose = zak_form_element_dispose;
 	object_class->finalize = zak_form_element_finalize;
-
-	class->xml_parsing = zak_form_element_xml_parsing;
 
 	g_object_class_install_property (object_class, PROP_NAME,
 	                                 g_param_spec_string ("name",
@@ -246,7 +245,7 @@ zak_form_element_init (ZakFormElement *zak_form_element)
  *
  */
 void
-zak_form_element_add_extension (ZakFormElement *element, GObject *extension)
+zak_form_element_add_extension (ZakFormElement *element, ZakFormElementExtension *extension)
 {
 	ZakFormElementPrivate *priv;
 
@@ -941,7 +940,7 @@ zak_form_element_set_default_value (ZakFormElement *element, const gchar *value)
 }
 
 /**
- * zak_form_element_get_default_value_gvalue:
+ * zak_form_element_get_default_value:
  * @element:
  *
  */
@@ -1024,7 +1023,14 @@ zak_form_element_set_original_value (ZakFormElement *element, const gchar *value
 void
 zak_form_element_set_as_original_value (ZakFormElement *element)
 {
-	zak_form_element_set_original_value_gvalue (element, zak_form_element_get_value_gvalue (element));
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->set_as_original_value != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->set_as_original_value (element);
+		}
+	else
+		{
+			zak_form_element_set_original_value_gvalue (element, zak_form_element_get_value_gvalue (element));
+		}
 }
 
 /**
@@ -1035,7 +1041,14 @@ zak_form_element_set_as_original_value (ZakFormElement *element)
 gboolean
 zak_form_element_is_changed (ZakFormElement *element)
 {
-	return (g_strcmp0 (zak_form_element_get_original_value (element), zak_form_element_get_value (element)) != 0);
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->is_changed != NULL)
+		{
+			return ZAK_FORM_ELEMENT_GET_CLASS (element)->is_changed (element);
+		}
+	else
+		{
+			return (g_strcmp0 (zak_form_element_get_original_value (element), zak_form_element_get_value (element)) != 0);
+		}
 }
 
 /**
@@ -1248,7 +1261,14 @@ zak_form_element_clear (ZakFormElement *element)
 
 	priv = zak_form_element_get_instance_private (element);
 
-	zak_form_element_set_value_gvalue (element, priv->default_value);
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->clear != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->clear (element);
+		}
+	else
+		{
+			zak_form_element_set_value_gvalue (element, priv->default_value);
+		}
 }
 
 /**
@@ -1336,16 +1356,23 @@ zak_form_element_is_valid (ZakFormElement *element)
 			ret = FALSE;
 		}
 
-	value = zak_form_element_get_value (element);
-
-	for (i = 0; i < priv->pa_validators->len; i++)
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->is_valid != NULL)
 		{
-			ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
-			if (!zak_form_element_validator_validate (validator, value))
-				{
-					g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
+			ret = ZAK_FORM_ELEMENT_GET_CLASS (element)->is_valid (element);
+		}
+	else
+		{
+			value = zak_form_element_get_value (element);
 
-					ret = FALSE;
+			for (i = 0; i < priv->pa_validators->len; i++)
+				{
+					ZakFormElementValidator *validator = (ZakFormElementValidator *)g_ptr_array_index (priv->pa_validators, i);
+					if (!zak_form_element_validator_validate (validator, value))
+						{
+							g_ptr_array_add (priv->pa_messages, (gpointer)g_strdup (zak_form_element_validator_get_message (validator)));
+
+							ret = FALSE;
+						}
 				}
 		}
 
@@ -1571,10 +1598,20 @@ zak_form_element_finalize (GObject *gobject)
 	parent_class->finalize (gobject);
 }
 
-static void
+void
 zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 {
 	xmlNode *cur;
+
+	gchar *type;
+
+	ZakFormElementExtension *extension;
+	ZakFormElementFilter *filter;
+	ZakFormElementValidator *validator;
+
+	ZakFormElementExtensionConstructorFunc extension_constructor;
+	ZakFormElementFilterConstructorFunc filter_constructor;
+	ZakFormElementValidatorConstructorFunc validator_constructor;
 
 	gboolean to_unlink;
 	xmlNode *xnode_tmp;
@@ -1584,7 +1621,64 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 		{
 			to_unlink = FALSE;
 
-			if (xmlStrEqual (cur->name, (const xmlChar *)"name"))
+			if (xmlStrEqual (cur->name, (const xmlChar *)"extension"))
+				{
+					type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
+
+					extension_constructor = zak_form_get_form_element_extension (type);
+					if (extension_constructor != NULL)
+						{
+							extension = extension_constructor ();
+							zak_form_element_add_extension (element, extension);
+
+							zak_form_element_extension_xml_parsing (extension, cur);
+						}
+					else
+						{
+							g_warning ("Extension «%s» not found.", type);
+						}
+
+					to_unlink = TRUE;
+				}
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"filter"))
+				{
+					type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
+
+					filter_constructor = zak_form_get_form_element_filter (type);
+					if (filter_constructor != NULL)
+						{
+							filter = filter_constructor ();
+							zak_form_element_add_filter (element, filter);
+
+							zak_form_element_filter_xml_parsing (filter, cur);
+						}
+					else
+						{
+							g_warning ("Filter «%s» not found.", type);
+						}
+
+					to_unlink = TRUE;
+				}
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"validator"))
+				{
+					type = (gchar *)xmlGetProp (cur, (const xmlChar *)"type");
+
+					validator_constructor = zak_form_get_form_element_validator (type);
+					if (validator_constructor != NULL)
+						{
+							validator = validator_constructor ();
+							zak_form_element_add_validator (element, validator);
+
+							zak_form_element_validator_xml_parsing (validator, cur);
+						}
+					else
+						{
+							g_warning ("Validator «%s» not found.", type);
+						}
+
+					to_unlink = TRUE;
+				}
+			else if (xmlStrEqual (cur->name, (const xmlChar *)"name"))
 				{
 					zak_form_element_set_name (element, (const gchar *)xmlNodeGetContent (cur));
 					to_unlink = TRUE;
@@ -1663,5 +1757,10 @@ zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode)
 					xmlUnlinkNode (xnode_tmp);
 					xmlFreeNode (xnode_tmp);
 				}
+		}
+
+	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->xml_parsing != NULL)
+		{
+			ZAK_FORM_ELEMENT_GET_CLASS (element)->xml_parsing (element, xmlnode);
 		}
 }

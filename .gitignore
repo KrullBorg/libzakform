@@ -62,3 +62,5 @@ Rules-quot
 *.csv
 src/*marshal*.[ch]
 test-driver
+*.gir
+*.typelib
