@@ -47,6 +47,8 @@ static GValue *zak_form_element_array_get_value (ZakFormElementArray *element);
 static void zak_form_element_array_set_as_original_value (ZakFormElement *element);
 static void zak_form_element_array_set_visible (ZakFormElement *element, gboolean visible);
 static gboolean zak_form_element_array_get_visible (ZakFormElement *element);
+static void zak_form_element_array_set_editable (ZakFormElement *element, gboolean editable);
+static gboolean zak_form_element_array_get_editable (ZakFormElement *element);
 static void zak_form_element_array_clear (ZakFormElement *element);
 
 #define ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_ARRAY, ZakFormElementArrayPrivate))
@@ -76,6 +78,8 @@ zak_form_element_array_class_init (ZakFormElementArrayClass *klass)
 	elem_class->set_as_original_value = zak_form_element_array_set_as_original_value;
 	elem_class->set_visible = zak_form_element_array_set_visible;
 	elem_class->get_visible = zak_form_element_array_get_visible;
+	elem_class->set_editable = zak_form_element_array_set_editable;
+	elem_class->get_editable = zak_form_element_array_get_editable;
 	elem_class->clear = zak_form_element_array_clear;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementArrayPrivate));
@@ -463,7 +467,32 @@ zak_form_element_array_get_visible (ZakFormElement *element)
 
 	ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, 0);
 
-	zak_form_element_get_visible (form_element);
+	return zak_form_element_get_visible (form_element);
+}
+
+static void
+zak_form_element_array_set_editable (ZakFormElement *element, gboolean editable)
+{
+	guint i;
+
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			zak_form_element_set_editable (form_element, editable);
+		}
+}
+
+static gboolean
+zak_form_element_array_get_editable (ZakFormElement *element)
+{
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, 0);
+
+	return zak_form_element_get_editable (form_element);
 }
 
 static void
