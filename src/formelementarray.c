@@ -50,6 +50,7 @@ static gboolean zak_form_element_array_get_visible (ZakFormElement *element);
 static void zak_form_element_array_set_editable (ZakFormElement *element, gboolean editable);
 static gboolean zak_form_element_array_get_editable (ZakFormElement *element);
 static void zak_form_element_array_clear (ZakFormElement *element);
+static gboolean zak_form_element_array_is_valid (ZakFormElement *element);
 
 #define ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_ARRAY, ZakFormElementArrayPrivate))
 
@@ -81,6 +82,7 @@ zak_form_element_array_class_init (ZakFormElementArrayClass *klass)
 	elem_class->set_editable = zak_form_element_array_set_editable;
 	elem_class->get_editable = zak_form_element_array_get_editable;
 	elem_class->clear = zak_form_element_array_clear;
+	elem_class->is_valid = zak_form_element_array_is_valid;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementArrayPrivate));
 
@@ -507,5 +509,27 @@ zak_form_element_array_clear (ZakFormElement *element)
 			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
 
 			zak_form_element_clear (form_element);
+		}
+}
+
+static gboolean
+zak_form_element_array_is_valid (ZakFormElement *element)
+{
+	guint i;
+
+	gboolean ret;
+
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	ret = TRUE;
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			if (!zak_form_element_is_valid (form_element))
+				{
+					ret = FALSE;
+				}
 		}
 }
