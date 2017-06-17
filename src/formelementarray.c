@@ -45,6 +45,7 @@ static void zak_form_element_array_finalize (GObject *gobject);
 static gboolean zak_form_element_array_set_value (ZakFormElementArray *element, GValue *value);
 static GValue *zak_form_element_array_get_value (ZakFormElementArray *element);
 static void zak_form_element_array_set_as_original_value (ZakFormElement *element);
+static gboolean zak_form_element_array_is_changed (ZakFormElement *element);
 static void zak_form_element_array_set_visible (ZakFormElement *element, gboolean visible);
 static gboolean zak_form_element_array_get_visible (ZakFormElement *element);
 static void zak_form_element_array_set_editable (ZakFormElement *element, gboolean editable);
@@ -77,6 +78,7 @@ zak_form_element_array_class_init (ZakFormElementArrayClass *klass)
 	elem_class->set_value = zak_form_element_array_set_value;
 	elem_class->get_value = zak_form_element_array_get_value;
 	elem_class->set_as_original_value = zak_form_element_array_set_as_original_value;
+	elem_class->is_changed = zak_form_element_array_is_changed;
 	elem_class->set_visible = zak_form_element_array_set_visible;
 	elem_class->get_visible = zak_form_element_array_get_visible;
 	elem_class->set_editable = zak_form_element_array_set_editable;
@@ -447,6 +449,31 @@ zak_form_element_array_set_as_original_value (ZakFormElement *element)
 		}
 }
 
+static gboolean
+zak_form_element_array_is_changed (ZakFormElement *element)
+{
+	guint i;
+
+	gboolean ret;
+
+	ZakFormElementArrayPrivate *priv = ZAK_FORM_ELEMENT_ARRAY_GET_PRIVATE (element);
+
+	ret = FALSE;
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *form_element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			if (zak_form_element_is_changed (form_element))
+				{
+					ret = TRUE;
+					break;
+				}
+		}
+
+	return ret;
+}
+
 static void
 zak_form_element_array_set_visible (ZakFormElement *element, gboolean visible)
 {
@@ -532,4 +559,6 @@ zak_form_element_array_is_valid (ZakFormElement *element)
 					ret = FALSE;
 				}
 		}
+
+	return ret;
 }
