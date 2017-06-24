@@ -3,3 +3,4 @@ usr/lib/*/libzakform.la
 usr/lib/*/pkgconfig/*
 usr/include/libzakform*
 usr/share/gtk-doc/*
+usr/share/gir-1.0/*

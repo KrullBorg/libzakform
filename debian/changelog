@@ -1,6 +1,6 @@
-libzakform (0.0.1-4~7.gbpdc0f58) UNRELEASED; urgency=medium
+libzakform (0.0.1-4~8.gbpdaa847) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @dc0f58a402c4d3b9c900adf1eb54ec569f91029c **
+  ** SNAPSHOT build @daa8470b4dddc9ec839b6e4dd75150ba25681fc6 **
 
   [ Andrea Zagli ]
   * Initial release
@@ -79,4 +79,13 @@ libzakform (0.0.1-4~7.gbpdc0f58) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- tux <tux@develop64.example.tst>  Sat, 24 Jun 2017 10:34:40 +0200
+  [ Andrea Zagli ]
+  * Debian pkg: updates from upstream (start patching).
+  * Debian pkg: updates from upstream.
+  * Missing source file in translation.
+  * Debian pkg: disabled dh_auto_test.
+  * Debian pkg: missing gir files.
+
+  [ tux ]
+
+ -- tux <tux@develop64.example.tst>  Sat, 24 Jun 2017 11:42:54 +0200
