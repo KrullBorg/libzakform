@@ -3,18 +3,18 @@ Date: Sun, 21 May 2017 15:13:30 +0200
 Subject: Glib old version private.
 
 ---
- src/form.c                 | 4 ++--
+ src/form.c                 | 2 +-
  src/formelement.c          | 4 ++--
  src/formelementfilter.c    | 4 ++--
  src/formelementvalidator.c | 4 ++--
  src/formvalidator.c        | 4 ++--
- 5 files changed, 10 insertions(+), 10 deletions(-)
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/src/form.c b/src/form.c
-index db77782..3090dde 100644
+index b5917b4..ea86cc8 100644
 --- a/src/form.c
 +++ b/src/form.c
-@@ -627,7 +627,7 @@ ZakFormValidator
+@@ -422,7 +422,7 @@ ZakFormValidator
  
  	guint i;
  
@@ -24,10 +24,10 @@ index db77782..3090dde 100644
  	validator = NULL;
  
 diff --git a/src/formelement.c b/src/formelement.c
-index e37ee52..5f7c9ca 100644
+index 79efe25..0b74e43 100644
 --- a/src/formelement.c
 +++ b/src/formelement.c
-@@ -373,7 +373,7 @@ ZakFormElementFilter
+@@ -372,7 +372,7 @@ ZakFormElementFilter
  
  	guint i;
  
@@ -36,7 +36,7 @@ index e37ee52..5f7c9ca 100644
  
  	filter = NULL;
  
-@@ -1284,7 +1284,7 @@ ZakFormElementValidator
+@@ -1304,7 +1304,7 @@ ZakFormElementValidator
  
  	guint i;
  

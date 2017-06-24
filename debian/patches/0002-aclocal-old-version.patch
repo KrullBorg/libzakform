@@ -7,7 +7,7 @@ Subject: aclocal old version.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/autogen.sh b/autogen.sh
-index 83f5de2..9e5ebc4 100755
+index c32ddd7..2529218 100755
 --- a/autogen.sh
 +++ b/autogen.sh
 @@ -22,7 +22,7 @@ if [ "$#" = 0 -a "x$NOCONFIGURE" = "x" ]; then

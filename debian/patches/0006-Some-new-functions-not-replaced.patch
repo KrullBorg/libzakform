@@ -10,10 +10,10 @@ Subject: Some new functions not replaced.
  4 files changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/src/form.c b/src/form.c
-index 03c076f..4d6a76a 100644
+index ff60b3c..ed889e8 100644
 --- a/src/form.c
 +++ b/src/form.c
-@@ -113,7 +113,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
+@@ -106,7 +106,7 @@ zak_form_form_init (ZakFormForm *zak_form_form)
  {
  	gchar *localedir;
  
@@ -23,10 +23,10 @@ index 03c076f..4d6a76a 100644
  	priv->ar_elements = g_ptr_array_new ();
  	priv->ar_validators = g_ptr_array_new ();
 diff --git a/src/formelement.c b/src/formelement.c
-index ea3542c..93b29c4 100644
+index 44ca18a..240fd73 100644
 --- a/src/formelement.c
 +++ b/src/formelement.c
-@@ -222,7 +222,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
+@@ -221,7 +221,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
  static void
  zak_form_element_init (ZakFormElement *zak_form_element)
  {

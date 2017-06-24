@@ -1,0 +1,108 @@
+From: Andrea Zagli <azagli@libero.it>
+Date: Sat, 24 Jun 2017 11:08:48 +0200
+Subject: Glib old version private.
+
+---
+ src/formelementextension.c | 16 ++++++++++------
+ src/formelementextension.h | 16 ++++++++++++++--
+ 2 files changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/src/formelementextension.c b/src/formelementextension.c
+index 7a9f964..e82aea6 100644
+--- a/src/formelementextension.c
++++ b/src/formelementextension.c
+@@ -50,12 +50,14 @@ static void zak_form_element_extension_get_property (GObject *object,
+ static void zak_form_element_extension_dispose (GObject *gobject);
+ static void zak_form_element_extension_finalize (GObject *gobject);
+ 
++#define ZAK_FORM_ELEMENT_EXTENSION_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT_EXTENSION, ZakFormElementExtensionPrivate))
++
+ typedef struct
+ 	{
+ 		gpointer useless;
+ 	} ZakFormElementExtensionPrivate;
+ 
+-G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ZakFormElementExtension, zak_form_element_extension, G_TYPE_OBJECT)
++G_DEFINE_ABSTRACT_TYPE (ZakFormElementExtension, zak_form_element_extension, G_TYPE_OBJECT)
+ 
+ static void
+ zak_form_element_extension_class_init (ZakFormElementExtensionClass *class)
+@@ -66,12 +68,14 @@ zak_form_element_extension_class_init (ZakFormElementExtensionClass *class)
+ 	object_class->get_property = zak_form_element_extension_get_property;
+ 	object_class->dispose = zak_form_element_extension_dispose;
+ 	object_class->finalize = zak_form_element_extension_finalize;
++
++	g_type_class_add_private (object_class, sizeof (ZakFormElementExtensionPrivate));
+ }
+ 
+ static void
+ zak_form_element_extension_init (ZakFormElementExtension *zak_form_element)
+ {
+-	ZakFormElementExtensionPrivate *priv = zak_form_element_extension_get_instance_private (zak_form_element);
++	ZakFormElementExtensionPrivate *priv = ZAK_FORM_ELEMENT_EXTENSION_GET_PRIVATE (zak_form_element);
+ 
+ }
+ 
+@@ -98,7 +102,7 @@ zak_form_element_extension_set_property (GObject *object,
+                    GParamSpec *pspec)
+ {
+ 	ZakFormElementExtension *zak_form_element_extension = (ZakFormElementExtension *)object;
+-	ZakFormElementExtensionPrivate *priv = zak_form_element_extension_get_instance_private (zak_form_element_extension);
++	ZakFormElementExtensionPrivate *priv = ZAK_FORM_ELEMENT_EXTENSION_GET_PRIVATE (zak_form_element_extension);
+ 
+ 	switch (property_id)
+ 		{
+@@ -115,7 +119,7 @@ zak_form_element_extension_get_property (GObject *object,
+                    GParamSpec *pspec)
+ {
+ 	ZakFormElementExtension *zak_form_element_extension = (ZakFormElementExtension *)object;
+-	ZakFormElementExtensionPrivate *priv = zak_form_element_extension_get_instance_private (zak_form_element_extension);
++	ZakFormElementExtensionPrivate *priv = ZAK_FORM_ELEMENT_EXTENSION_GET_PRIVATE (zak_form_element_extension);
+ 
+ 	switch (property_id)
+ 		{
+@@ -129,7 +133,7 @@ static void
+ zak_form_element_extension_dispose (GObject *gobject)
+ {
+ 	ZakFormElementExtension *zak_form_element_extension = (ZakFormElementExtension *)gobject;
+-	ZakFormElementExtensionPrivate *priv = zak_form_element_extension_get_instance_private (zak_form_element_extension);
++	ZakFormElementExtensionPrivate *priv = ZAK_FORM_ELEMENT_EXTENSION_GET_PRIVATE (zak_form_element_extension);
+ 
+ 
+ 
+@@ -141,7 +145,7 @@ static void
+ zak_form_element_extension_finalize (GObject *gobject)
+ {
+ 	ZakFormElementExtension *zak_form_element_extension = (ZakFormElementExtension *)gobject;
+-	ZakFormElementExtensionPrivate *priv = zak_form_element_extension_get_instance_private (zak_form_element_extension);
++	ZakFormElementExtensionPrivate *priv = ZAK_FORM_ELEMENT_EXTENSION_GET_PRIVATE (zak_form_element_extension);
+ 
+ 
+ 
+diff --git a/src/formelementextension.h b/src/formelementextension.h
+index 35fac40..37d551e 100644
+--- a/src/formelementextension.h
++++ b/src/formelementextension.h
+@@ -28,8 +28,20 @@
+ G_BEGIN_DECLS
+ 
+ 
+-#define ZAK_FORM_TYPE_ELEMENT_EXTENSION zak_form_element_extension_get_type ()
+-G_DECLARE_DERIVABLE_TYPE (ZakFormElementExtension, zak_form_element_extension, ZAK_FORM, ELEMENT_EXTENSION, GObject)
++#define ZAK_FORM_TYPE_ELEMENT_EXTENSION                 (zak_form_element_extension_get_type ())
++#define ZAK_FORM_ELEMENT_EXTENSION(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), ZAK_FORM_TYPE_ELEMENT_EXTENSION, ZakFormElementExtension))
++#define ZAK_FORM_ELEMENT_EXTENSION_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), ZAK_FORM_TYPE_ELEMENT_EXTENSION, ZakFormElementExtensionClass))
++#define ZAK_FORM_IS_ELEMENT_EXTENSION(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ZAK_FORM_TYPE_ELEMENT_EXTENSION))
++#define ZAK_FORM_IS_ELEMENT_EXTENSION_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), ZAK_FORM_TYPE_ELEMENT_EXTENSION))
++#define ZAK_FORM_ELEMENT_EXTENSION_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), ZAK_FORM_TYPE_ELEMENT_EXTENSION, ZakFormElementExtensionClass))
++
++typedef struct _ZakFormElementExtension ZakFormElementExtension;
++typedef struct _ZakFormElementExtensionClass ZakFormElementExtensionClass;
++
++struct _ZakFormElementExtension
++	{
++		GObject parent;
++	};
+ 
+ struct _ZakFormElementExtensionClass
+ 	{

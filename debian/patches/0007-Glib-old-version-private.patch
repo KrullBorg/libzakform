@@ -11,10 +11,10 @@ Subject: Glib old version private.
  5 files changed, 22 insertions(+), 20 deletions(-)
 
 diff --git a/src/form.c b/src/form.c
-index 4d6a76a..db77782 100644
+index ed889e8..b5917b4 100644
 --- a/src/form.c
 +++ b/src/form.c
-@@ -556,7 +556,7 @@ ZakFormElement
+@@ -351,7 +351,7 @@ ZakFormElement
  GPtrArray
  *zak_form_form_get_elements (ZakFormForm *zakform)
  {
@@ -23,7 +23,7 @@ index 4d6a76a..db77782 100644
  
  	return priv->ar_elements;
  }
-@@ -576,7 +576,7 @@ GPtrArray
+@@ -371,7 +371,7 @@ GPtrArray
  
  	guint i;
  
@@ -32,7 +32,7 @@ index 4d6a76a..db77782 100644
  
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->ar_elements->len; i++)
-@@ -652,7 +652,7 @@ ZakFormValidator
+@@ -447,7 +447,7 @@ ZakFormValidator
  GPtrArray
  *zak_form_form_get_validators (ZakFormForm *zakform)
  {
@@ -41,7 +41,7 @@ index 4d6a76a..db77782 100644
  
  	return priv->ar_validators;
  }
-@@ -672,7 +672,7 @@ GPtrArray
+@@ -467,7 +467,7 @@ GPtrArray
  
  	guint i;
  
@@ -51,10 +51,10 @@ index 4d6a76a..db77782 100644
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->ar_validators->len; i++)
 diff --git a/src/formelement.c b/src/formelement.c
-index 93b29c4..e37ee52 100644
+index 240fd73..79efe25 100644
 --- a/src/formelement.c
 +++ b/src/formelement.c
-@@ -268,7 +268,7 @@ zak_form_element_add_extension (ZakFormElement *element, GObject *extension)
+@@ -267,7 +267,7 @@ zak_form_element_add_extension (ZakFormElement *element, ZakFormElementExtension
  GPtrArray
  *zak_form_element_get_extensions (ZakFormElement *element)
  {
@@ -63,7 +63,7 @@ index 93b29c4..e37ee52 100644
  
  	return priv->pa_extensions;
  }
-@@ -288,7 +288,7 @@ GPtrArray
+@@ -287,7 +287,7 @@ GPtrArray
  
  	guint i;
  
@@ -72,7 +72,7 @@ index 93b29c4..e37ee52 100644
  
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->pa_extensions->len; i++)
-@@ -314,7 +314,7 @@ zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filt
+@@ -313,7 +313,7 @@ zak_form_element_add_filter (ZakFormElement *element, ZakFormElementFilter *filt
  {
  	ZakFormElementPrivate *priv;
  
@@ -81,7 +81,7 @@ index 93b29c4..e37ee52 100644
  
  	g_ptr_array_add (priv->pa_filters, filter);
  }
-@@ -331,7 +331,7 @@ zak_form_element_filter (ZakFormElement *element)
+@@ -330,7 +330,7 @@ zak_form_element_filter (ZakFormElement *element)
  
  	ZakFormElementPrivate *priv;
  
@@ -90,7 +90,7 @@ index 93b29c4..e37ee52 100644
  
  	for (i = 0; i < priv->pa_filters->len; i++)
  		{
-@@ -355,7 +355,7 @@ zak_form_element_filter (ZakFormElement *element)
+@@ -354,7 +354,7 @@ zak_form_element_filter (ZakFormElement *element)
  GPtrArray
  *zak_form_element_get_filters (ZakFormElement *element)
  {
@@ -99,7 +99,7 @@ index 93b29c4..e37ee52 100644
  
  	return priv->pa_filters;
  }
-@@ -404,7 +404,7 @@ GPtrArray
+@@ -403,7 +403,7 @@ GPtrArray
  
  	guint i;
  
@@ -108,7 +108,7 @@ index 93b29c4..e37ee52 100644
  
  	ar = g_ptr_array_new ();
  	for (i = 0; i < priv->pa_filters->len; i++)
-@@ -1266,7 +1266,7 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
+@@ -1286,7 +1286,7 @@ zak_form_element_add_validator (ZakFormElement *element, ZakFormElementValidator
  {
  	ZakFormElementPrivate *priv;
  
@@ -117,7 +117,7 @@ index 93b29c4..e37ee52 100644
  
  	g_ptr_array_add (priv->pa_validators, validator);
  }
-@@ -1385,7 +1385,7 @@ GPtrArray
+@@ -1412,7 +1412,7 @@ GPtrArray
  GPtrArray
  *zak_form_element_get_validators(ZakFormElement *element)
  {
@@ -126,7 +126,7 @@ index 93b29c4..e37ee52 100644
  
  	return priv->pa_validators;
  }
-@@ -1405,7 +1405,7 @@ GPtrArray
+@@ -1432,7 +1432,7 @@ GPtrArray
  
  	guint i;
  

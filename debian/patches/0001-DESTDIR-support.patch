@@ -7,10 +7,10 @@ Subject: DESTDIR support.
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6c6f9b6..ee33785 100644
+index 4b3af31..af81c81 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -62,10 +62,10 @@
+@@ -62,10 +62,10 @@ libzakform_include_HEADERS = \
  libzakform_includedir = $(includedir)/libzakform
  
  install-exec-hook:
