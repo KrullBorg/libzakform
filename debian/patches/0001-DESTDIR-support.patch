@@ -10,7 +10,7 @@ diff --git a/src/Makefile.am b/src/Makefile.am
 index 6c6f9b6..ee33785 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -55,7 +55,7 @@ libzakform_include_HEADERS = \
+@@ -62,10 +62,10 @@
  libzakform_includedir = $(includedir)/libzakform
  
  install-exec-hook:
@@ -20,3 +20,6 @@ index 6c6f9b6..ee33785 100644
  uninstall-hook:
 -	rm -rf "$(libdir)/$(PACKAGE)"
 +	rm -rf "$(DESTDIR)$(libdir)/$(PACKAGE)"
+ 
+ CLEANFILES =
+ 

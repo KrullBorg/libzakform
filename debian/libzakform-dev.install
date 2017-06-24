@@ -2,3 +2,4 @@ usr/lib/*/libzakform.a
 usr/lib/*/libzakform.la
 usr/lib/*/pkgconfig/*
 usr/include/libzakform*
+usr/share/gtk-doc/*

@@ -1,3 +1,4 @@
 usr/lib/*/libzakform*.so*
 usr/lib/*/libzakform/modules
 usr/share/locale/*
+usr/lib/*/girepository-1.0/*

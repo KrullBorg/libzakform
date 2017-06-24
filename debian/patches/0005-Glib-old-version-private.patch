@@ -26,15 +26,15 @@ diff --git a/src/form.c b/src/form.c
 index 226ca90..03c076f 100644
 --- a/src/form.c
 +++ b/src/form.c
-@@ -57,6 +57,8 @@ static void zak_form_form_finalize (GObject *gobject);
- 
- static void zak_form_form_load_modules (ZakFormForm *zakform);
+@@ -51,6 +51,8 @@
+ static void zak_form_form_dispose (GObject *gobject);
+ static void zak_form_form_finalize (GObject *gobject);
  
 +#define ZAK_FORM_FORM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_FORM, ZakFormFormPrivate))
 +
  typedef struct
  	{
- 		GPtrArray *ar_modules;
+ 		GPtrArray *ar_elements;
 @@ -65,7 +67,7 @@ typedef struct
  		GPtrArray *ar_messages;
  	} ZakFormFormPrivate;
@@ -53,24 +53,6 @@ index 226ca90..03c076f 100644
  	class->get_elements = zak_form_form_get_elements;
  }
  
-@@ -170,7 +174,7 @@ zak_form_form_element_xml_parsing (ZakFormForm *zakform, ZakFormElement *element
- 	gboolean to_unlink;
- 	xmlNode *xnode_tmp;
- 
--	priv = zak_form_form_get_instance_private (zakform);
-+	priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
- 
- 	xnode = xnode->children;
- 	while (xnode)
-@@ -356,7 +360,7 @@ zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc)
- 				{
- 					ret = TRUE;
- 
--					priv = zak_form_form_get_instance_private (zakform);
-+					priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
- 
- 					cur = cur->children;
- 					while (cur)
 @@ -497,7 +501,7 @@ zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
  
  	ZakFormFormPrivate *priv;
@@ -224,22 +206,13 @@ index 226ca90..03c076f 100644
  
  
  
-@@ -984,7 +988,7 @@ zak_form_form_load_modules (ZakFormForm* zakform)
- 
- 	if (g_module_supported ())
- 		{
--			priv = zak_form_form_get_instance_private (zakform);
-+			priv = ZAK_FORM_FORM_GET_PRIVATE (zakform);
- 
- 			modulesdir = (gchar *)g_getenv ("LIBZAKFORM_MODULESDIR");
- 			if (modulesdir == NULL)
 diff --git a/src/formelement.c b/src/formelement.c
 index eb9a601..ea3542c 100644
 --- a/src/formelement.c
 +++ b/src/formelement.c
-@@ -65,6 +65,8 @@ static void zak_form_element_finalize (GObject *gobject);
- 
- static void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode);
+@@ -66,6 +65,8 @@
+ static void zak_form_element_dispose (GObject *gobject);
+ static void zak_form_element_finalize (GObject *gobject);
  
 +#define ZAK_FORM_ELEMENT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_ELEMENT, ZakFormElementPrivate))
 +
@@ -255,9 +228,8 @@ index eb9a601..ea3542c 100644
  
  static void
  zak_form_element_class_init (ZakFormElementClass *class)
-@@ -100,6 +102,8 @@ zak_form_element_class_init (ZakFormElementClass *class)
- 
- 	class->xml_parsing = zak_form_element_xml_parsing;
+@@ -100,5 +102,7 @@ zak_form_element_class_init (ZakFormElementClass *class)
+ 	object_class->finalize = zak_form_element_finalize;
  
 +	g_type_class_add_private (object_class, sizeof (ZakFormElementPrivate));
 +
@@ -489,15 +461,15 @@ index eb9a601..ea3542c 100644
  
  	return priv->to_save;
  }
-@@ -1246,7 +1250,7 @@ zak_form_element_clear (ZakFormElement *element)
+@@ -1259,7 +1259,7 @@ zak_form_element_clear (ZakFormElement *element)
  {
  	ZakFormElementPrivate *priv;
  
 -	priv = zak_form_element_get_instance_private (element);
 +	priv = ZAK_FORM_ELEMENT_GET_PRIVATE (element);
  
- 	zak_form_element_set_value_gvalue (element, priv->default_value);
- }
+ 	if (ZAK_FORM_ELEMENT_GET_CLASS (element)->clear != NULL)
+ 		{
 @@ -1314,7 +1318,7 @@ zak_form_element_is_valid (ZakFormElement *element)
  
  	ZakFormElementClass *klass = ZAK_FORM_ELEMENT_GET_CLASS (element);

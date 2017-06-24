@@ -1,6 +1,6 @@
-libzakform (0.0.1-4~6.gbp93b859) UNRELEASED; urgency=medium
+libzakform (0.0.1-4~7.gbpdc0f58) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @93b859fdaee31093247b0f27ff27ab846e1b83ee **
+  ** SNAPSHOT build @dc0f58a402c4d3b9c900adf1eb54ec569f91029c **
 
   [ Andrea Zagli ]
   * Initial release
@@ -55,4 +55,28 @@ libzakform (0.0.1-4~6.gbp93b859) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- tux <tux@develop64.comune.scandicci.fi.it>  Sat, 27 May 2017 09:19:02 +0200
+  [ Andrea Zagli ]
+  * Debian pkg: locale files in dev (closes #1121).
+  * Enabled gtk-doc.
+  * Enabled gir.
+  * Added private function ZakForm::get_module_new.
+  * Renamed function ZakFormForm::get_form_element_validator.
+  * Added function ZakFormForm::get_form_element_filter.
+  * Use of ZakFormForm::get_module_new in FormValidator construct from xml.
+  * Make public function ZakFormElement::xml_parsing.
+  * Added function ZakFormForm::get_form_element.
+  * Added some member functions to ZakFormElement.
+  * Added class ZakFormElementExtension.
+  * Moved functions ZakFormForm::get_form_* to commons.
+  * Moved function ZakFormForm::element_xml_parsing in ZakFormElement.
+  * Start of implementation of FormElementArray.
+  * Added function ZakFormElementArray::get_element_by_id.
+  * Wrong comparision value in ZakForm*ValidatorCompare*.
+  * Implemented functions ZakFormElementArray::[gs]et_visible.
+  * Implemented functions ZakFormElementArray::[gs]et_editable.
+  * Implemented functions ZakFormElementArray::is_valid.
+  * Implemented functions ZakFormElementArray::is_changed.
+
+  [ tux ]
+
+ -- tux <tux@develop64.example.tst>  Sat, 24 Jun 2017 10:34:40 +0200

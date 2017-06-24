@@ -20,8 +20,8 @@ index 03c076f..4d6a76a 100644
 -	ZakFormFormPrivate *priv = zak_form_form_get_instance_private (zak_form_form);
 +	ZakFormFormPrivate *priv = ZAK_FORM_FORM_GET_PRIVATE (zak_form_form);
  
- 	priv->ar_modules = NULL;
  	priv->ar_elements = g_ptr_array_new ();
+ 	priv->ar_validators = g_ptr_array_new ();
 diff --git a/src/formelement.c b/src/formelement.c
 index ea3542c..93b29c4 100644
 --- a/src/formelement.c

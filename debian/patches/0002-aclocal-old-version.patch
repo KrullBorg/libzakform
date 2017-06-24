@@ -17,5 +17,5 @@ index 83f5de2..9e5ebc4 100755
 -aclocal --install || exit 1
 +aclocal --install -I m4 || exit 1
  glib-gettextize --force --copy || exit 1
- #gtkdocize --copy || exit 1
+ gtkdocize --copy || exit 1
  intltoolize --force --copy --automake || exit 1
