@@ -2,6 +2,7 @@
 src/commons.c
 src/form.c
 src/formelement.c
+src/formelementarray.c
 src/formelementfilter.c
 src/formelementfilterluc.c
 src/formelementfiltertrim.c
