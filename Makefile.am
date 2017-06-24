@@ -1,4 +1,6 @@
-SUBDIRS = po src tests
+DISTCHECK_CONFIGURE_FLAGS = --enable-introspection --enable-gtk-doc
+
+SUBDIRS = po src tests docs
 
 ACLOCAL_AMFLAGS = -I m4
 

@@ -37,6 +37,16 @@ m4/
 missing
 config.h
 config.status
+docs/reference/*.args
+docs/reference/*.hierarchy
+docs/reference/*.interfaces
+docs/reference/*.prerequisites
+docs/reference/*.signals
+docs/reference/*-decl.txt
+docs/reference/*-decl-list.txt
+docs/reference/*-undeclared.txt
+docs/reference/*-undocumented.txt
+docs/reference/*-unused.txt
 docs/reference/version.xml
 docs/reference/html/
 docs/reference/xml/
@@ -51,4 +61,7 @@ Rules-quot
 *.exe
 *.csv
 src/*marshal*.[ch]
+test-driver
+*.gir
+*.typelib
 build/

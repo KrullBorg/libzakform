@@ -26,6 +26,7 @@
 
 #include "formelementfilter.h"
 #include "formelementvalidator.h"
+#include "formelementextension.h"
 
 
 G_BEGIN_DECLS
@@ -43,15 +44,24 @@ struct _ZakFormElementClass
 		gboolean (*set_value) (ZakFormElement *element, GValue *value);
 		GValue *(*get_value) (ZakFormElement *element);
 
+		void (*set_as_original_value) (ZakFormElement *element);
+		gboolean (*is_changed) (ZakFormElement *element);
+
 		void (*set_visible) (ZakFormElement *element, gboolean visible);
 		gboolean (*get_visible) (ZakFormElement *element);
 
 		void (*set_editable) (ZakFormElement *element, gboolean editable);
 		gboolean (*get_editable) (ZakFormElement *element);
 
+		void (*clear) (ZakFormElement *element);
+
+		gboolean (*is_valid) (ZakFormElement *element);
+
 		guint before_validating_signal_id;
 		guint after_validating_signal_id;
 	};
+
+void zak_form_element_xml_parsing (ZakFormElement *element, xmlNode *xmlnode);
 
 void zak_form_element_set_name (ZakFormElement *element, const gchar *name);
 gchar *zak_form_element_get_name (ZakFormElement *element);
@@ -109,7 +119,7 @@ gboolean zak_form_element_get_to_save (ZakFormElement *element);
 
 void zak_form_element_clear (ZakFormElement *element);
 
-void zak_form_element_add_extension (ZakFormElement *element, GObject *extension);
+void zak_form_element_add_extension (ZakFormElement *element, ZakFormElementExtension *extension);
 
 GPtrArray *zak_form_element_get_extensions (ZakFormElement *element);
 GPtrArray *zak_form_element_get_extensions_by_type (ZakFormElement *element, GType type);

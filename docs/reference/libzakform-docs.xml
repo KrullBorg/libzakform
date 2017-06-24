@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY % gtkdocentities SYSTEM "xml/gtkdocentities.ent">
+  %gtkdocentities;
+]>
+<book id="index">
+  <bookinfo>
+    <title>&package_name; Reference Manual</title>
+    <releaseinfo>
+      for &package_string;.
+      The latest version of this documentation can be found on-line at
+      <ulink role="online-location" url="http://[SERVER]/&package_name;/index.html">http://[SERVER]/&package_name;/</ulink>.
+    </releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>[Insert title here]</title>
+        <xi:include href="xml/commons.xml"/>
+    <xi:include href="xml/form.xml"/>
+    <xi:include href="xml/formelement.xml"/>
+    <xi:include href="xml/formelementfilter.xml"/>
+    <xi:include href="xml/formelementfilterluc.xml"/>
+    <xi:include href="xml/formelementfiltertrim.xml"/>
+    <xi:include href="xml/formelementvalidator.xml"/>
+    <xi:include href="xml/formelementvalidatordate.xml"/>
+    <xi:include href="xml/formelementvalidatornotempty.xml"/>
+    <xi:include href="xml/formelementvalidatorregex.xml"/>
+    <xi:include href="xml/formiprovider.xml"/>
+    <xi:include href="xml/formvalidator.xml"/>
+    <xi:include href="xml/formvalidatorcompare.xml"/>
+    <xi:include href="xml/formvalidatorcomparedate.xml"/>
+    <xi:include href="xml/formvalidatorcomposite.xml"/>
+
+  </chapter>
+  <chapter id="object-tree">
+    <title>Object Hierarchy</title>
+    <xi:include href="xml/tree_index.sgml"/>
+  </chapter>
+  <index id="api-index-full">
+    <title>API Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
+  <index id="deprecated-api-index" role="deprecated">
+    <title>Index of deprecated API</title>
+    <xi:include href="xml/api-index-deprecated.xml"><xi:fallback /></xi:include>
+  </index>
+  <!-- enable this when you use gobject introspection annotations
+  <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+  -->
+</book>

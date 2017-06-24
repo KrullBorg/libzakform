@@ -23,6 +23,8 @@
 
 
 #include "formelement.h"
+#include "formelementextension.h"
+#include "formvalidator.h"
 
 
 G_BEGIN_DECLS
@@ -42,6 +44,24 @@ ZakFormCompareType zak_form_get_compare_type_from_string (const gchar *str);
 const gchar *zak_form_get_compare_type_stringify (ZakFormCompareType type);
 
 ZakFormElement *zak_form_get_element_by_id (GPtrArray *ar_elements, const gchar *id);
+
+
+void zak_form_load_modules (void);
+
+typedef ZakFormElement *(* ZakFormElementConstructorFunc) (void);
+ZakFormElementConstructorFunc zak_form_get_form_element (const gchar *namespace);
+
+typedef ZakFormElementFilter *(* ZakFormElementFilterConstructorFunc) (void);
+ZakFormElementFilterConstructorFunc zak_form_get_form_element_filter (const gchar *namespace);
+
+typedef ZakFormElementValidator *(* ZakFormElementValidatorConstructorFunc) (void);
+ZakFormElementValidatorConstructorFunc zak_form_get_form_element_validator (const gchar *namespace);
+
+typedef ZakFormElementExtension *(* ZakFormElementExtensionConstructorFunc) (void);
+ZakFormElementExtensionConstructorFunc zak_form_get_form_element_extension (const gchar *namespace);
+
+typedef ZakFormValidator *(* ZakFormValidatorConstructorFunc) (void);
+ZakFormValidatorConstructorFunc zak_form_get_form_validator (const gchar *namespace);
 
 
 G_END_DECLS
