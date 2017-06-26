@@ -1,6 +1,6 @@
-libzakform (0.0.1-4~8.gbpdaa847) UNRELEASED; urgency=medium
+libzakform (0.0.1-4~9.gbpfc0c6b) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @daa8470b4dddc9ec839b6e4dd75150ba25681fc6 **
+  ** SNAPSHOT build @fc0c6b499f9e7418dad46f232f29732652836929 **
 
   [ Andrea Zagli ]
   * Initial release
@@ -88,4 +88,10 @@ libzakform (0.0.1-4~8.gbpdaa847) UNRELEASED; urgency=medium
 
   [ tux ]
 
- -- tux <tux@develop64.example.tst>  Sat, 24 Jun 2017 11:42:54 +0200
+  [ Andrea Zagli ]
+  * Debian pkg: missing gir files.
+  * In FormElementArray setted value in any case.
+
+  [ tux ]
+
+ -- tux <tux@develop64.example.tst>  Mon, 26 Jun 2017 15:20:26 +0200
