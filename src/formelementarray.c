@@ -411,12 +411,15 @@ zak_form_element_array_set_value (ZakFormElementArray *element, GValue *value)
 				}
 
 			/* assign value to the right FormElement */
-			if (field_name != NULL
-				&& field_value != NULL)
+			if (field_name != NULL)
 				{
 					form_element = zak_form_element_array_get_element_by_id (ZAK_FORM_ELEMENT (element), field_name);
 					if (form_element != NULL)
 						{
+							if (field_value == NULL)
+								{
+									field_value = zak_utils_gvalue_new_string ("");
+								}
 							zak_form_element_set_value (ZAK_FORM_ELEMENT (form_element), field_value);
 						}
 				}
