@@ -306,6 +306,41 @@ zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
 }
 
 /**
+ * zak_form_form_remove_element_by_id:
+ * @zakform:
+ * @id:
+ *
+ * Returns: #TRUE if @element is removed; FALSE otherwise.
+ */
+gboolean
+zak_form_form_remove_element_by_id (ZakFormForm *zakform, const gchar *id)
+{
+	gboolean ret;
+
+	ZakFormFormPrivate *priv;
+
+	guint i;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	ret = FALSE;
+
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			if (g_strcmp0 (zak_form_element_get_name (element), id) == 0)
+				{
+					g_ptr_array_remove_index (priv->ar_elements, i);
+					ret = TRUE;
+					break;
+				}
+		}
+
+	return ret;
+}
+
+/**
  * zak_form_form_get_element_by_id:
  * @zakform:
  * @id:
