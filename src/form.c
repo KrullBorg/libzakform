@@ -306,6 +306,23 @@ zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element)
 }
 
 /**
+ * zak_form_form_remove_element:
+ * @zakform:
+ * @element:
+ *
+ * Returns: #TRUE if @element is added; FALSE otherwise.
+ */
+gboolean
+zak_form_form_remove_element (ZakFormForm *zakform, ZakFormElement *element)
+{
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	return g_ptr_array_remove (priv->ar_elements, (gpointer)element);
+}
+
+/**
  * zak_form_form_remove_element_by_id:
  * @zakform:
  * @id:
