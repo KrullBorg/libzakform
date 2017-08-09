@@ -358,6 +358,23 @@ zak_form_form_remove_element_by_id (ZakFormForm *zakform, const gchar *id)
 }
 
 /**
+ * zak_form_form_remove_element_by_idx:
+ * @zakform:
+ * @idx:
+ *
+ * Returns: #TRUE if @element is removed; FALSE otherwise.
+ */
+gboolean
+zak_form_form_remove_element_by_idx (ZakFormForm *zakform, guint idx)
+{
+	ZakFormFormPrivate *priv;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	return (g_ptr_array_remove_index (priv->ar_elements, idx) != NULL);
+}
+
+/**
  * zak_form_form_get_element_by_id:
  * @zakform:
  * @id:

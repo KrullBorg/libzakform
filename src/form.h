@@ -51,6 +51,7 @@ gboolean zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filena
 gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element);
 gboolean zak_form_form_remove_element (ZakFormForm *zakform, ZakFormElement *element);
 gboolean zak_form_form_remove_element_by_id (ZakFormForm *zakform, const gchar *id);
+gboolean zak_form_form_remove_element_by_idx (ZakFormForm *zakform, guint idx);
 ZakFormElement *zak_form_form_get_element_by_id (ZakFormForm *zakform, const gchar *id);
 guint zak_form_form_get_element_idx_by_id (ZakFormForm *zakform, const gchar *id);
 GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
