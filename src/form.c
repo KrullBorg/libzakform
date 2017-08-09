@@ -391,6 +391,39 @@ ZakFormElement
 }
 
 /**
+ * zak_form_form_get_element_idx_by_id:
+ * @zakform:
+ * @id:
+ *
+ * Returns: the index of the #ZakFormElement with id @id.
+ */
+guint
+zak_form_form_get_element_idx_by_id (ZakFormForm *zakform, const gchar *id)
+{
+	guint ret;
+
+	ZakFormFormPrivate *priv;
+
+	guint i;
+
+	priv = zak_form_form_get_instance_private (zakform);
+
+	ret = -1;
+	for (i = 0; i < priv->ar_elements->len; i++)
+		{
+			ZakFormElement *element = (ZakFormElement *)g_ptr_array_index (priv->ar_elements, i);
+
+			if (g_strcmp0 (zak_form_element_get_name (element), id) == 0)
+				{
+					ret = i;
+					break;
+				}
+		}
+
+	return ret;
+}
+
+/**
  * zak_form_form_get_elements:
  * @zakform:
  *
