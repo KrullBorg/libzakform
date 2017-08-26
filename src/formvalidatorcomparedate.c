@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include <libzakutils/libzakutils.h>
 
 #include "commons.h"
+#include "form.h"
 #include "formvalidator.h"
 #include "formvalidatorcomparedate.h"
 
@@ -32,17 +33,18 @@ static void zak_form_validator_compare_date_class_init (ZakFormValidatorCompareD
 static void zak_form_validator_compare_date_init (ZakFormValidatorCompareDate *validator);
 
 static void zak_form_validator_compare_date_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                                          guint property_id,
+                                                          const GValue *value,
+                                                          GParamSpec *pspec);
 static void zak_form_validator_compare_date_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                                          guint property_id,
+                                                          GValue *value,
+                                                          GParamSpec *pspec);
 
 static void zak_form_validator_compare_date_dispose (GObject *gobject);
 static void zak_form_validator_compare_date_finalize (GObject *gobject);
 
+static gboolean zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form);
 static gboolean zak_form_validator_compare_date_validate (ZakFormValidator *validator_notempty);
 
 struct _ZakFormValidatorCompareDate
@@ -53,18 +55,6 @@ struct _ZakFormValidatorCompareDate
 };
 
 #define ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_FORM_TYPE_VALIDATOR_COMPARE_DATE, ZakFormValidatorCompareDatePrivate))
-
-enum
-	{
-		LESSER,
-		LESSER_EQUAL,
-		EQUAL,
-		NOT_EQUAL,
-		GREATER,
-		GREATER_EQUAL
-	};
-
-static gchar *msgs[6];
 
 typedef struct _ZakFormValidatorCompareDatePrivate ZakFormValidatorCompareDatePrivate;
 struct _ZakFormValidatorCompareDatePrivate
@@ -91,6 +81,7 @@ zak_form_validator_compare_date_class_init (ZakFormValidatorCompareDateClass *cl
 	object_class->dispose = zak_form_validator_compare_date_dispose;
 	object_class->finalize = zak_form_validator_compare_date_finalize;
 
+	parent_class->xml_parsing = zak_form_validator_compare_date_xml_parsing;
 	parent_class->validate = zak_form_validator_compare_date_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormValidatorCompareDatePrivate));
@@ -103,13 +94,6 @@ zak_form_validator_compare_date_init (ZakFormValidatorCompareDate *validator)
 
 	priv->v1 = NULL;
 	priv->v2 = NULL;
-
-	msgs[0] = _("lesser than");
-	msgs[1] = _("lesser or equal to");
-	msgs[2] = _("equal to");
-	msgs[3] = _("different from");
-	msgs[4] = _("greater than");
-	msgs[5] = _("greater or equal to");
 }
 
 /**
@@ -131,53 +115,35 @@ ZakFormValidatorCompareDate
  * zak_form_validator_compare_date_xml_parsing:
  * @validator:
  * @xnode:
- * @ar_elements:
+ * @form:
  *
  */
-gboolean
-zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, GPtrArray *ar_elements)
+static gboolean
+zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer form)
 {
 	gchar *prop;
 
 	ZakFormValidatorCompareDatePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE (validator);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"type_comp");
-	if (g_strcmp0 (prop, "lt") == 0)
-		{
-			priv->type = LESSER;
-		}
-	else if (g_strcmp0 (prop, "let") == 0)
-		{
-			priv->type = LESSER_EQUAL;
-		}
-	else if (g_strcmp0 (prop, "e") == 0)
-		{
-			priv->type = EQUAL;
-		}
-	else if (g_strcmp0 (prop, "ne") == 0)
-		{
-			priv->type = NOT_EQUAL;
-		}
-	else if (g_strcmp0 (prop, "gt") == 0)
-		{
-			priv->type = GREATER;
-		}
-	else if (g_strcmp0 (prop, "get") == 0)
-		{
-			priv->type = GREATER_EQUAL;
-		}
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"type_comp");
+	priv->type = zak_form_get_compare_type_from_string (prop);
+	g_free (prop);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"element1");
-	priv->v1 = zak_form_get_element_by_id (ar_elements, prop);
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element1");
+	priv->v1 = zak_form_form_get_element_by_id ((ZakFormForm *)form, prop);
+	g_free (prop);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"element2");
-	priv->v2 = zak_form_get_element_by_id (ar_elements, prop);
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"element2");
+	priv->v2 = zak_form_form_get_element_by_id ((ZakFormForm *)form, prop);
+	g_free (prop);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"format1");
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"format1");
 	priv->format1 = g_strdup (prop);
+	g_free (prop);
 
-	prop = xmlGetProp (xnode, (const xmlChar *)"format2");
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"format2");
 	priv->format2 = g_strdup (prop);
+	g_free (prop);
 
 	return TRUE;
 }
@@ -185,9 +151,9 @@ zak_form_validator_compare_date_xml_parsing (ZakFormValidator *validator, xmlNod
 /* PRIVATE */
 static void
 zak_form_validator_compare_date_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                              guint property_id,
+                                              const GValue *value,
+                                              GParamSpec *pspec)
 {
 	ZakFormValidatorCompareDate *validator = (ZakFormValidatorCompareDate *)object;
 	ZakFormValidatorCompareDatePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE (validator);
@@ -202,9 +168,9 @@ zak_form_validator_compare_date_set_property (GObject *object,
 
 static void
 zak_form_validator_compare_date_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                              guint property_id,
+                                              GValue *value,
+                                              GParamSpec *pspec)
 {
 	ZakFormValidatorCompareDate *validator = (ZakFormValidatorCompareDate *)object;
 	ZakFormValidatorCompareDatePrivate *priv = ZAK_FORM_VALIDATOR_COMPARE_DATE_GET_PRIVATE (validator);
@@ -277,21 +243,19 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 					switch (comp)
 						{
 						case -1:
-							ret = (priv->type == LESSER
-							       || priv->type == LESSER_EQUAL
-							       || priv->type == NOT_EQUAL);
+							ret = (priv->type == ZAK_FORM_COMPARE_TYPE_LESSER
+							       || priv->type == ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL);
 							break;
 
 						case 0:
-							ret = (priv->type == LESSER_EQUAL
-							       || priv->type == EQUAL
-							       || priv->type == GREATER_EQUAL);
+							ret = (priv->type == ZAK_FORM_COMPARE_TYPE_LESSER_EQUAL
+							       || priv->type == ZAK_FORM_COMPARE_TYPE_EQUAL
+							       || priv->type == ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL);
 							break;
 
 						case 1:
-							ret = (priv->type == GREATER
-							       || priv->type == GREATER_EQUAL
-							       || priv->type == NOT_EQUAL);
+							ret = (priv->type == ZAK_FORM_COMPARE_TYPE_GREATER
+							       || priv->type == ZAK_FORM_COMPARE_TYPE_GREATER_EQUAL);
 							break;
 						};
 				}
@@ -300,7 +264,7 @@ zak_form_validator_compare_date_validate (ZakFormValidator *validator)
 				{
 					msg = g_strdup_printf (_("«%s» must be %s «%s»"),
 					                       zak_form_element_get_long_name (priv->v1),
-					                       msgs[priv->type],
+					                       zak_form_get_compare_type_stringify (priv->type),
 					                       zak_form_element_get_long_name (priv->v2));
 					zak_form_validator_set_message (validator, msg);
 					g_free (msg);

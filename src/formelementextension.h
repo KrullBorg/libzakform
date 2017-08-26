@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,27 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __ZAK_FORM_VALIDATOR_COMPARE_H__
-#define __ZAK_FORM_VALIDATOR_COMPARE_H__
+#ifndef __ZAK_FORM_ELEMENT_EXTENSION_H__
+#define __ZAK_FORM_ELEMENT_EXTENSION_H__
 
 
 #include <glib-object.h>
 
 #include <libxml/tree.h>
 
-#include "formvalidator.h"
-
 
 G_BEGIN_DECLS
 
 
-#define ZAK_FORM_TYPE_VALIDATOR_COMPARE zak_form_validator_compare_get_type ()
-G_DECLARE_FINAL_TYPE (ZakFormValidatorCompare, zak_form_validator_compare, ZAK_FORM, VALIDATOR_COMPARE, ZakFormValidator)
+#define ZAK_FORM_TYPE_ELEMENT_EXTENSION zak_form_element_extension_get_type ()
+G_DECLARE_DERIVABLE_TYPE (ZakFormElementExtension, zak_form_element_extension, ZAK_FORM, ELEMENT_EXTENSION, GObject)
 
-ZakFormValidatorCompare *zak_form_validator_compare_new (void);
+struct _ZakFormElementExtensionClass
+	{
+		GObjectClass parent_class;
+
+		void (*xml_parsing) (ZakFormElementExtension *element, xmlNode *xmlnode);
+	};
+
+void zak_form_element_extension_xml_parsing (ZakFormElementExtension *element, xmlNode *xmlnode);
 
 
 G_END_DECLS
 
 
-#endif /* __ZAK_FORM_VALIDATOR_COMPARE_H__ */
+#endif /* __ZAK_FORM_ELEMENT_EXTENSION_H__ */

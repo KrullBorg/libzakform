@@ -44,6 +44,7 @@ static void zak_form_element_validator_regex_get_property (GObject *object,
 static void zak_form_element_validator_regex_dispose (GObject *gobject);
 static void zak_form_element_validator_regex_finalize (GObject *gobject);
 
+static gboolean zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode);
 static gboolean zak_form_element_validator_regex_validate (ZakFormElementValidator *validator_regex, const gchar *value);
 
 struct _ZakFormElementValidatorRegex
@@ -74,6 +75,7 @@ zak_form_element_validator_regex_class_init (ZakFormElementValidatorRegexClass *
 	object_class->dispose = zak_form_element_validator_regex_dispose;
 	object_class->finalize = zak_form_element_validator_regex_finalize;
 
+	parent_class->xml_parsing = zak_form_element_validator_regex_xml_parsing;
 	parent_class->validate = zak_form_element_validator_regex_validate;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementValidatorRegexPrivate));
@@ -117,7 +119,7 @@ ZakFormElementValidatorRegex
  * @xnode:
  *
  */
-gboolean
+static gboolean
 zak_form_element_validator_regex_xml_parsing (ZakFormElementValidator *validator, xmlNode *xnode)
 {
 	zak_form_element_validator_regex_set_regex (ZAK_FORM_ELEMENT_VALIDATOR_REGEX (validator), (gchar *)xmlNodeGetContent (xnode));

@@ -16,10 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #ifndef _ZAK_FORM_VALIDATOR_H_
 #define _ZAK_FORM_VALIDATOR_H_
 
 #include <glib-object.h>
+
+#include <libxml/xpath.h>
 
 
 G_BEGIN_DECLS
@@ -32,13 +35,19 @@ struct _ZakFormValidatorClass
 {
 	GObjectClass parent_class;
 
+	gboolean (*xml_parsing) (ZakFormValidator *self, xmlNode *xnode, gpointer zakform);
 	gboolean (*validate) (ZakFormValidator *self);
 };
+
+gboolean zak_form_validator_xml_parsing (ZakFormValidator *validator, xmlNode *xnode, gpointer zakform);
+
+gchar *zak_form_validator_get_id (ZakFormValidator *validator);
+void zak_form_validator_set_id (ZakFormValidator *validator, const gchar *id);
 
 gboolean zak_form_validator_validate (ZakFormValidator *self);
 
 void zak_form_validator_set_message (ZakFormValidator *validator,
-									 const gchar *message);
+                                     const gchar *message);
 gchar *zak_form_validator_get_message (ZakFormValidator *validator);
 
 gboolean zak_form_validator_get_enabled (ZakFormValidator *validator);

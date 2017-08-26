@@ -27,6 +27,7 @@
 enum
 	{
 		PROP_0,
+		PROP_ID,
 		PROP_ENABLED,
 		PROP_MESSAGE
 	};
@@ -48,6 +49,7 @@ static void zak_form_element_validator_finalize (GObject *gobject);
 
 typedef struct
 	{
+		gchar *id;
 		gboolean enabled;
 		gchar *message;
 	} ZakFormElementValidatorPrivate;
@@ -64,25 +66,71 @@ zak_form_element_validator_class_init (ZakFormElementValidatorClass *class)
 	object_class->dispose = zak_form_element_validator_dispose;
 	object_class->finalize = zak_form_element_validator_finalize;
 
+	g_object_class_install_property (object_class, PROP_ID,
+	                                 g_param_spec_string ("id",
+	                                                      "Id",
+	                                                      "Id",
+	                                                      "",
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
 	g_object_class_install_property (object_class, PROP_ENABLED,
-									 g_param_spec_boolean ("enabled",
-														   "Enabled",
-														   "Enabled",
-														   TRUE,
-														   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                 g_param_spec_boolean ("enabled",
+	                                                       "Enabled",
+	                                                       "Enabled",
+	                                                       TRUE,
+	                                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property (object_class, PROP_MESSAGE,
-									 g_param_spec_string ("message",
-														  "Message",
-														  "Message",
-														  _("Invalid value"),
-														  G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	                                 g_param_spec_string ("message",
+	                                                      "Message",
+	                                                      "Message",
+	                                                      _("Invalid value"),
+	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
 zak_form_element_validator_init (ZakFormElementValidator *zak_form_element_validator)
 {
 	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (zak_form_element_validator);
+}
+
+gboolean
+zak_form_element_validator_xml_parsing (ZakFormElementValidator *self, xmlNode *xnode)
+{
+	gboolean ret;
+
+	gchar *prop;
+
+	g_return_val_if_fail (ZAK_FORM_IS_ELEMENT_VALIDATOR (self), FALSE);
+
+	ret = TRUE;
+
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"id");
+	if (prop != NULL)
+		{
+			zak_form_element_validator_set_id (self, prop);
+			g_free (prop);
+		}
+
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"message");
+	if (prop != NULL)
+		{
+			zak_form_element_validator_set_message (self, prop);
+			g_free (prop);
+		}
+
+	prop = (gchar *)xmlGetProp (xnode, (const xmlChar *)"disabled");
+	if (prop != NULL)
+		{
+			zak_form_element_validator_set_enabled (self, FALSE);
+			g_free (prop);
+		}
+
+	if (ZAK_FORM_ELEMENT_VALIDATOR_GET_CLASS (self)->xml_parsing != NULL)
+		{
+			ret = ZAK_FORM_ELEMENT_VALIDATOR_GET_CLASS (self)->xml_parsing (self, xnode);
+		}
+	return ret;
 }
 
 gboolean
@@ -102,6 +150,42 @@ zak_form_element_validator_validate (ZakFormElementValidator *self, const gchar 
 }
 
 /**
+ * zak_form_element_validator_set_id:
+ * @validator:
+ * @id:
+ *
+ */
+void
+zak_form_element_validator_set_id (ZakFormElementValidator *validator,
+                                   const gchar *id)
+{
+	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
+
+	if (id == NULL)
+		{
+			priv->id = g_strdup ("");
+		}
+	else
+		{
+			priv->id = g_strdup (id);
+		}
+}
+
+/**
+ * zak_form_element_validator_get_id:
+ * @validator:
+ *
+ * Returns:
+ */
+gchar
+*zak_form_element_validator_get_id (ZakFormElementValidator *validator)
+{
+	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
+
+	return g_strdup (priv->id);
+}
+
+/**
  * zak_form_element_validator_set_message:
  * @validator:
  * @message:
@@ -109,7 +193,7 @@ zak_form_element_validator_validate (ZakFormElementValidator *self, const gchar 
  */
 void
 zak_form_element_validator_set_message (ZakFormElementValidator *validator,
-										const gchar *message)
+                                        const gchar *message)
 {
 	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
 
@@ -127,7 +211,7 @@ gchar
 {
 	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (validator);
 
-    return g_strdup (priv->message);
+	return g_strdup (priv->message);
 }
 
 /**
@@ -161,15 +245,19 @@ zak_form_element_validator_set_enabled (ZakFormElementValidator *validator, gboo
 /* PRIVATE */
 static void
 zak_form_element_validator_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                         guint property_id,
+                                         const GValue *value,
+                                         GParamSpec *pspec)
 {
 	ZakFormElementValidator *zak_form_element_validator = (ZakFormElementValidator *)object;
 	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (zak_form_element_validator);
 
 	switch (property_id)
 		{
+		case PROP_ID:
+			zak_form_element_validator_set_id (zak_form_element_validator, g_value_dup_string (value));
+			break;
+
 		case PROP_ENABLED:
 			zak_form_element_validator_set_enabled (zak_form_element_validator, g_value_get_boolean (value));
 			break;
@@ -186,15 +274,19 @@ zak_form_element_validator_set_property (GObject *object,
 
 static void
 zak_form_element_validator_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                         guint property_id,
+                                         GValue *value,
+                                         GParamSpec *pspec)
 {
 	ZakFormElementValidator *zak_form_element_validator = (ZakFormElementValidator *)object;
 	ZakFormElementValidatorPrivate *priv = zak_form_element_validator_get_instance_private (zak_form_element_validator);
 
 	switch (property_id)
 		{
+		case PROP_ID:
+			g_value_set_string (value, zak_form_element_validator_get_id (zak_form_element_validator));
+			break;
+
 		case PROP_ENABLED:
 			g_value_set_boolean (value, zak_form_element_validator_get_enabled (zak_form_element_validator));
 			break;

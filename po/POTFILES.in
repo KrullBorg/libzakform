@@ -1,6 +1,17 @@
 # List of source files which contain translatable strings.
+src/commons.c
 src/form.c
 src/formelement.c
+src/formelementarray.c
+src/formelementfilter.c
+src/formelementfilterluc.c
+src/formelementfiltertrim.c
 src/formelementvalidator.c
+src/formelementvalidatordate.c
+src/formelementvalidatornotempty.c
+src/formelementvalidatorregex.c
+src/formiprovider.c
+src/formvalidator.c
 src/formvalidatorcompare.c
 src/formvalidatorcomparedate.c
+src/formvalidatorcomposite.c

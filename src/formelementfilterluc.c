@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@ static void zak_form_element_filter_luc_get_property (GObject *object,
 static void zak_form_element_filter_luc_dispose (GObject *gobject);
 static void zak_form_element_filter_luc_finalize (GObject *gobject);
 
+static gboolean zak_form_element_filter_luc_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
 static gchar *zak_form_element_filter_luc_filter (ZakFormElementFilter *filter_luc, const gchar *value);
 
 enum
@@ -79,6 +80,7 @@ zak_form_element_filter_luc_class_init (ZakFormElementFilterLucClass *class)
 	object_class->dispose = zak_form_element_filter_luc_dispose;
 	object_class->finalize = zak_form_element_filter_luc_finalize;
 
+	parent_class->xml_parsing = zak_form_element_filter_luc_xml_parsing;
 	parent_class->filter = zak_form_element_filter_luc_filter;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementFilterLucPrivate));
@@ -111,7 +113,7 @@ ZakFormElementFilterLuc
  * @xnode:
  *
  */
-gboolean
+static gboolean
 zak_form_element_filter_luc_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode)
 {
 	gchar *content;
@@ -138,9 +140,9 @@ zak_form_element_filter_luc_xml_parsing (ZakFormElementFilter *filter, xmlNode *
 /* PRIVATE */
 static void
 zak_form_element_filter_luc_set_property (GObject *object,
-                   guint property_id,
-                   const GValue *value,
-                   GParamSpec *pspec)
+                                          guint property_id,
+                                          const GValue *value,
+                                          GParamSpec *pspec)
 {
 	ZakFormElementFilterLuc *zak_form_element = (ZakFormElementFilterLuc *)object;
 	ZakFormElementFilterLucPrivate *priv = ZAK_FORM_ELEMENT_FILTER_LUC_GET_PRIVATE (zak_form_element);
@@ -155,9 +157,9 @@ zak_form_element_filter_luc_set_property (GObject *object,
 
 static void
 zak_form_element_filter_luc_get_property (GObject *object,
-                   guint property_id,
-                   GValue *value,
-                   GParamSpec *pspec)
+                                          guint property_id,
+                                          GValue *value,
+                                          GParamSpec *pspec)
 {
 	ZakFormElementFilterLuc *zak_form_element = (ZakFormElementFilterLuc *)object;
 	ZakFormElementFilterLucPrivate *priv = ZAK_FORM_ELEMENT_FILTER_LUC_GET_PRIVATE (zak_form_element);
@@ -196,7 +198,7 @@ zak_form_element_filter_luc_finalize (GObject *gobject)
 
 static gchar
 *zak_form_element_filter_luc_filter (ZakFormElementFilter *filter_luc,
-									  const gchar *value)
+                                     const gchar *value)
 {
 	gchar *ret;
 	gchar *_value;

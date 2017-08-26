@@ -29,8 +29,16 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 AC_PROG_RANLIB
 
-GTK_DOC_CHECK(1.0)
+GTK_DOC_CHECK([1.14],[--flavour no-tmpl])
+
+GOBJECT_INTROSPECTION_CHECK([1.30.0])
+
 IT_PROG_INTLTOOL
+
+dnl ******************************
+dnl glib-genmarshal
+dnl ******************************
+AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal)
 
 dnl ******************************
 dnl Translations
@@ -79,6 +87,8 @@ AM_CONDITIONAL(PLATFORM_WIN32, [test $platform_win32 = yes])
 AC_CONFIG_FILES([
 	libzakform.pc
 	Makefile
+	docs/Makefile
+	docs/reference/Makefile
 	po/Makefile.in
 	src/Makefile
 	tests/Makefile

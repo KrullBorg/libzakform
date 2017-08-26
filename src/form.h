@@ -25,6 +25,7 @@
 #include <libxml/tree.h>
 
 #include "formelement.h"
+#include "formelementextension.h"
 #include "formiprovider.h"
 #include "formvalidator.h"
 
@@ -44,16 +45,20 @@ struct _ZakFormFormClass
 	void (*element_added) (ZakFormForm *zakform, ZakFormElement *element);
 };
 
-
 gboolean zak_form_form_load_from_xml (ZakFormForm *zakform, xmlDoc *xmldoc);
 gboolean zak_form_form_load_from_file (ZakFormForm *zakform, const gchar *filename);
 
 gboolean zak_form_form_add_element (ZakFormForm *zakform, ZakFormElement *element);
+gboolean zak_form_form_remove_element (ZakFormForm *zakform, ZakFormElement *element);
+gboolean zak_form_form_remove_element_by_id (ZakFormForm *zakform, const gchar *id);
+gboolean zak_form_form_remove_element_by_idx (ZakFormForm *zakform, guint idx);
 ZakFormElement *zak_form_form_get_element_by_id (ZakFormForm *zakform, const gchar *id);
+guint zak_form_form_get_element_idx_by_id (ZakFormForm *zakform, const gchar *id);
 GPtrArray *zak_form_form_get_elements (ZakFormForm *zakform);
 GPtrArray *zak_form_form_get_elements_by_type (ZakFormForm *zakform, GType type);
 
 gboolean zak_form_form_add_validator (ZakFormForm *zakform, ZakFormValidator *validator);
+ZakFormValidator *zak_form_form_get_validator_by_id (ZakFormForm *zakform, const gchar *id);
 GPtrArray *zak_form_form_get_validators (ZakFormForm *zakform);
 GPtrArray *zak_form_form_get_validators_by_type (ZakFormForm *zakform, GType type);
 

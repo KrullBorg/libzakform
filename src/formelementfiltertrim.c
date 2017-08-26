@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2015-2017 Andrea Zagli <azagli@libero.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,17 +27,18 @@ static void zak_form_element_filter_trim_class_init (ZakFormElementFilterTrimCla
 static void zak_form_element_filter_trim_init (ZakFormElementFilterTrim *zak_form_element);
 
 static void zak_form_element_filter_trim_set_property (GObject *object,
-                               guint property_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
+                                                       guint property_id,
+                                                       const GValue *value,
+                                                       GParamSpec *pspec);
 static void zak_form_element_filter_trim_get_property (GObject *object,
-                               guint property_id,
-                               GValue *value,
-                               GParamSpec *pspec);
+                                                       guint property_id,
+                                                       GValue *value,
+                                                       GParamSpec *pspec);
 
 static void zak_form_element_filter_trim_dispose (GObject *gobject);
 static void zak_form_element_filter_trim_finalize (GObject *gobject);
 
+static gboolean zak_form_element_filter_trim_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode);
 static gchar *zak_form_element_filter_trim_filter (ZakFormElementFilter *filter_trim, const gchar *value);
 
 struct _ZakFormElementFilterTrim
@@ -68,6 +69,7 @@ zak_form_element_filter_trim_class_init (ZakFormElementFilterTrimClass *class)
 	object_class->dispose = zak_form_element_filter_trim_dispose;
 	object_class->finalize = zak_form_element_filter_trim_finalize;
 
+	parent_class->xml_parsing = zak_form_element_filter_trim_xml_parsing;
 	parent_class->filter = zak_form_element_filter_trim_filter;
 
 	g_type_class_add_private (object_class, sizeof (ZakFormElementFilterTrimPrivate));
@@ -100,7 +102,7 @@ ZakFormElementFilterTrim
  * @xnode:
  *
  */
-gboolean
+static gboolean
 zak_form_element_filter_trim_xml_parsing (ZakFormElementFilter *filter, xmlNode *xnode)
 {
 	/* nothing to do */
@@ -172,7 +174,7 @@ zak_form_element_filter_trim_finalize (GObject *gobject)
 
 static gchar
 *zak_form_element_filter_trim_filter (ZakFormElementFilter *filter_trim,
-									  const gchar *value)
+                                      const gchar *value)
 {
 	gchar *ret;
 	gchar *_value;
@@ -181,7 +183,7 @@ static gchar
 
 	_value = g_strdup (value);
 
-    ret = g_strdup (g_strstrip (_value));
+	ret = g_strdup (g_strstrip (_value));
 
 	return ret;
 }

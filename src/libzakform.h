@@ -24,6 +24,10 @@
 
 #include <libzakform/formelement.h>
 
+#include <libzakform/formelementarray.h>
+
+#include <libzakform/formelementextension.h>
+
 #include <libzakform/formelementfilter.h>
 #include <libzakform/formelementfilterluc.h>
 #include <libzakform/formelementfiltertrim.h>
@@ -38,6 +42,7 @@
 #include <libzakform/formvalidator.h>
 #include <libzakform/formvalidatorcompare.h>
 #include <libzakform/formvalidatorcomparedate.h>
+#include <libzakform/formvalidatorcomposite.h>
 
 
 #endif /* __LIBZAKFORM_H__ */
